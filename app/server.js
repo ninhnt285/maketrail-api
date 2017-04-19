@@ -1,5 +1,6 @@
 import express from 'express';
 import { PORT } from './config';
+import connectDb from './database/connectDb';
 
 const app = express();
 
@@ -12,4 +13,4 @@ function onConnected() {
   });
 }
 
-onConnected();
+connectDb(onConnected);
