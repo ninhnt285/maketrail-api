@@ -2,14 +2,24 @@ import UserModel from '../models/user';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import { getType } from '../../lib/idUtils';
+import SocialUtils from '../../lib/social';
 
-const Service = {};
+const UserService = {};
 
-Service.canGetUser = async function (user, userId) {
+UserService.canGetUser = async function (user, userId) {
   return (user && userId);
 };
 
-Service.getById = async function (user, id) {
+UserService.findById = async function (id) {
+  try {
+    return await UserModel.findById(id);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+UserService.getById = async function (user, id) {
   try {
     const bcanGetUser = await this.canGetUser(user, id);
     if (bcanGetUser) {
@@ -22,7 +32,7 @@ Service.getById = async function (user, id) {
   return null;
 };
 
-Service.register = async function (username, email, password, fullName) {
+UserService.register = async function (username, email, password, fullName) {
   try {
     if (await UserModel.findOne({ $or: [{ username }, { email }] })) {
       return {
@@ -43,7 +53,7 @@ Service.register = async function (username, email, password, fullName) {
   }
 };
 
-Service.loginViaEmail = async function (email, password) {
+UserService.loginViaEmail = async function (email, password) {
   try {
     const passwordHash = await generateHash(password);
     const user = await UserModel.findOne({ email, password: passwordHash });
@@ -64,7 +74,7 @@ Service.loginViaEmail = async function (email, password) {
   }
 };
 
-Service.loginViaUsername = async function (username, password) {
+UserService.loginViaUsername = async function (username, password) {
   try {
     const passwordHash = await generateHash(password);
     const user = await UserModel.findOne({ username, password: passwordHash });
@@ -85,7 +95,7 @@ Service.loginViaUsername = async function (username, password) {
   }
 };
 
-Service.findOneOrCreate = async function (condition, doc) {
+UserService.findOneOrCreate = async function (condition, doc) {
   let user = await UserModel.findOneAndUpdate(condition, { $set: doc }, { new: true });
   if (!user) {
     user = await UserModel.create(doc);
@@ -93,14 +103,16 @@ Service.findOneOrCreate = async function (condition, doc) {
   return user;
 };
 
-Service.loginViaSocialNetwork = async function (type, socialInfo) {
+UserService.loginViaSocialNetwork = async function (provider, token) {
   try {
+    let socialInfo = null;
     let user = null;
-    if (type === 'facebook') {
+    if (provider === 'facebook') {
+      socialInfo = SocialUtils.FACEBOOK.getInfo(token);
       user = await this.findOneOrCreate({ 'facebook.id': socialInfo.id }, { facebook: socialInfo });
-    } else if (type === 'google') {
+    } else if (provider === 'google') {
       user = await this.findOneOrCreate({ 'google.id': socialInfo.id }, { google: socialInfo });
-    } else if (type === 'twitter') {
+    } else if (provider === 'twitter') {
       user = await this.findOneOrCreate({ 'twitter.id': socialInfo.id }, { twitter: socialInfo });
     }
     const accessToken = generateToken(user);
@@ -116,4 +128,4 @@ Service.loginViaSocialNetwork = async function (type, socialInfo) {
 };
 
 
-export default Service;
+export default UserService;

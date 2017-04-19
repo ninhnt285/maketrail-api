@@ -1,25 +1,11 @@
 const TYPES = [
   'UserType',
-  'ProjectType',
-  'RoundType',
-  'LineType',
-  'JobType',
-  'AttachmentType',
-  'WishlistItemType',
-  'TeamType',
-  'TaskType'
+  'TripType'
 ];
 
 export const Type = {
   USER: 'UserType',
-  PROJECT: 'ProjectType',
-  ROUND: 'RoundType',
-  LINE: 'LineType',
-  JOB: 'JobType',
-  ATTACHMENT: 'AttachmentType',
-  WISH_ITEM: 'WishlistItemType',
-  TEAM: 'TeamType',
-  TASK: 'TaskType'
+  TRIP: 'TripType',
 };
 
 function random() {
