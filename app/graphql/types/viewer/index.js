@@ -5,6 +5,7 @@ import {
 } from 'graphql';
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
+import { tripConnection } from '../../connections/trip';
 import UserService from '../../../database/helpers/user';
 import UserType from '../user';
 import Trip from './Trip';
@@ -28,7 +29,8 @@ const ViewerType = new GraphQLObjectType({
       }
     },
 
-    Trip
+    Trip,
+    allTrips: tripConnection
   },
 
   interfaces: [nodeInterface]

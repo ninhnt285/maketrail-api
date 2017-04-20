@@ -16,7 +16,6 @@ const TripQuery = {
 
   resolve: async (parentValue, { id }, { user }) => {
     const trip = await TripService.getById(user, id);
-    console.log(trip);
     return trip;
   }
 };

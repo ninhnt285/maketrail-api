@@ -1,4 +1,5 @@
 import TripModel from '../models/trip';
+import UserTripRelationModel from '../models/userTripRelation';
 
 const TripService = {};
 
@@ -15,6 +16,7 @@ TripService.add = async function (user, trip) {
   try {
     if (this.canAddTrip(user)) {
       item = await TripModel.create(trip);
+      await UserTripRelationModel.create({ userId: user.id, tripId: item.id, roleId: 0 });
       return {
         item
       };

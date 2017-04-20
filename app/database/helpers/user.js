@@ -108,7 +108,8 @@ UserService.loginViaSocialNetwork = async function (provider, token) {
     let socialInfo = null;
     let user = null;
     if (provider === 'facebook') {
-      socialInfo = SocialUtils.FACEBOOK.getInfo(token);
+      socialInfo = await SocialUtils.FACEBOOK.getInfo(token);
+      socialInfo.token = token;
       user = await this.findOneOrCreate({ 'facebook.id': socialInfo.id }, { facebook: socialInfo });
     } else if (provider === 'google') {
       user = await this.findOneOrCreate({ 'google.id': socialInfo.id }, { google: socialInfo });
