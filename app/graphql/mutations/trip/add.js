@@ -64,7 +64,7 @@ const AddTripMutation = mutationWithClientMutationId({
     } else {
       return {
         success: true,
-        trip: res.item
+        item: res.item
       };
     }
   }
