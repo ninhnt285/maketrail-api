@@ -9,6 +9,7 @@ import { tripConnection } from '../../connections/trip';
 import UserService from '../../../database/helpers/user';
 import UserType from '../user';
 import Trip from './Trip';
+import Locality from './Locality';
 
 const ViewerType = new GraphQLObjectType({
   name: 'Viewer',
@@ -30,6 +31,7 @@ const ViewerType = new GraphQLObjectType({
     },
 
     Trip,
+    Locality,
     allTrips: tripConnection
   },
 

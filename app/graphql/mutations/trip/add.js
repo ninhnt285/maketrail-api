@@ -61,12 +61,11 @@ const AddTripMutation = mutationWithClientMutationId({
         success: false,
         errors
       };
-    } else {
-      return {
-        success: true,
-        item: res.item
-      };
     }
+    return {
+      success: true,
+      item: res.item
+    };
   }
 });
 

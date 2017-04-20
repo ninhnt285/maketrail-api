@@ -5,8 +5,8 @@ export default (req, res, next) => {
   let user = null;
 
   try {
-    // user = verifyToken(token);
-    user = { id: '1630c5040000000000000000' };
+    user = verifyToken(token);
+    // user = { id: '1630c5040000000000000000' };
   } catch (e) {
     console.log(`Invalid token! ${e}`);
     next();

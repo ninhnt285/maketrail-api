@@ -1,11 +1,13 @@
 const TYPES = [
   'UserType',
-  'TripType'
+  'TripType',
+  'LocalityType'
 ];
 
 export const Type = {
   USER: 'UserType',
   TRIP: 'TripType',
+  LOCALITY: 'LocalityType'
 };
 
 function random() {
