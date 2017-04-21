@@ -1,14 +1,7 @@
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-
-export async function getPhotoFromReference(referenceId) {
-  const key = 'AIzaSyDMFSsb4IlS2ReTJmI8HNlPmdNAvRwt-7k';
-  const apiUrl = `https://maps.googleapis.com/maps/api/place/photo?key=${key}&maxheight=400&photoreference=${referenceId}`;
-
-  const result = await downloadFile(apiUrl, path.join(__dirname, '../../../../static/locality/test.jpg'));
-  return result;
-}
+import { GOOGLE_API_KEY } from '../../../config';
 
 export function downloadFile(url, dest) {
   const file = fs.createWriteStream(dest);
@@ -37,3 +30,14 @@ export function downloadFile(url, dest) {
     });
   });
 }
+
+export async function getPhotoFromReference(referenceId, filename) {
+  try {
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/photo?key=${GOOGLE_API_KEY}&maxheight=400&photoreference=${referenceId}`;
+    const result = await downloadFile(apiUrl, path.join(__dirname, `../../../../static/${filename}`));
+    return result;
+  } catch (e) {
+    return null;
+  }
+}
+

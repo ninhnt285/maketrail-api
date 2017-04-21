@@ -30,11 +30,14 @@ const LocalityType = new GraphQLObjectType({
           lat: {
             type: GraphQLString
           },
-          long: {
+          lng: {
             type: GraphQLString
           }
         }
       })
+    },
+    previewPhotoUrl: {
+      type: GraphQLString
     }
   },
 

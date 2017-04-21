@@ -1,5 +1,6 @@
 import {
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLString
 } from 'graphql';
 
 import {
@@ -12,6 +13,8 @@ import LocalityModel from '../../database/models/locality';
 import TripLocalityRelation from '../../database/models/tripLocalityRelation';
 import { connectionFromModel } from '../../database/helpers/connection';
 import { connectionFromArray } from '../../lib/connection';
+import { Type, getType } from '../../lib/idUtils';
+import LocalityService from '../../database/helpers/locality';
 
 const {
   connectionType: LocalityConnection,
@@ -25,27 +28,36 @@ const localityConnection = {
   type: new GraphQLNonNull(LocalityConnection),
 
   args: {
-    ...connectionArgs
+    ...connectionArgs,
+    query: {
+      type: GraphQLString
+    }
   },
 
-  resolve: async ({ id }, { ...args }, { user }) => {
+  resolve: async ({ id }, { ...args, query }, { user }) => {
     if (!user) {
       return connectionFromArray([], args);
     }
+    if (getType(id) === Type.TRIP) {
+      const localityEdges = await connectionFromModel(TripLocalityRelation,
+        {
+          user,
+          ...args,
+          filter: { tripId: id }
+        },
+        async (r) => {
+          const locality = await LocalityModel.findById(r.localityId).exec();
+          return locality;
+        }
+      );
+      return localityEdges;
+    }
+    if (query) {
+      const localities = await LocalityService.seachLocality(query);
+      if (localities) return connectionFromArray(localities, []);
+    }
 
-    const localityEdges = await connectionFromModel(TripLocalityRelation,
-      {
-        user,
-        ...args,
-        filter: { tripId: id }
-      },
-      async (r) => {
-        const locality = await LocalityModel.findById(r.localityId).exec();
-        return locality;
-      }
-    );
-
-    return localityEdges;
+    return connectionFromArray([], []);
   }
 };
 

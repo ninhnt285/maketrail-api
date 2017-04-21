@@ -1,5 +1,8 @@
+import request from 'request-promise';
 import LocalityModel from '../models/locality';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
+import { GOOGLE_API_KEY } from '../../config';
+import { getPhotoFromReference } from '../../lib/google/place/photo';
 
 const LocalityService = {};
 
@@ -14,17 +17,18 @@ LocalityService.canRemoveLocality = async function (user, tripId) {
 LocalityService.findOneOrCreate = async function (condition, doc) {
   let user = await LocalityModel.findOne(condition);
   if (!user) {
-    user = await LocalityModel.create(doc);
+    if (doc.photo_reference) getPhotoFromReference(doc.photo_reference, doc.previewPhotoUrl);
+    const res = await Promise.all([LocalityModel.create(doc), getPhotoFromReference(doc.photo_reference, doc.previewPhotoUrl)]);
+    user = res[0];
   }
   return user;
 };
 
-LocalityService.add = async function (user, tripId, locality) {
-  let item = null;
+LocalityService.add = async function (user, tripId, localityId) {
+  const item = null;
   try {
     if (this.canAddLocality(user, tripId)) {
-      item = await this.findOneOrCreate({ googlePlaceId: locality.googlePlaceId }, locality);
-      await TripLocalityRelationModel.create({ tripId, localityId: item.id });
+      await TripLocalityRelationModel.create({ tripId, localityId });
       return {
         item
       };
@@ -68,5 +72,39 @@ LocalityService.getById = async function (id) {
   }
   return item;
 };
+
+LocalityService.seachLocality = async function (query) {
+  try {
+    const options = {
+      method: 'GET',
+      uri: 'https://maps.googleapis.com/maps/api/place/textsearch/json',
+      qs: {
+        key: GOOGLE_API_KEY,
+        query,
+        types: 'locality|political'
+      },
+      encoding: 'utf8'
+    };
+    const res = JSON.parse(await request(options)
+      .then(ggRes => ggRes));
+    const localities = res.results;
+    return await Promise.all(localities.map(async (locality) => {
+      const tmp = {
+        googlePlaceId: locality.place_id,
+        types: locality.types,
+        name: locality.name,
+        description: locality.formatted_address,
+        location: locality.geometry.location,
+        photo_reference: locality.photos[0].photo_reference,
+        previewPhotoUrl: `/locality/${locality.place_id}.jpg`
+      };
+      return await this.findOneOrCreate({ googlePlaceId: locality.place_id }, tmp);
+    }));
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 
 export default LocalityService;

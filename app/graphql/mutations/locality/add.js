@@ -22,28 +22,9 @@ const AddLocalityMutation = mutationWithClientMutationId({
     tripId: {
       type: new GraphQLNonNull(GraphQLString)
     },
-    name: {
+    localityId: {
       type: new GraphQLNonNull(GraphQLString)
     },
-    googlePlaceId: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    description: {
-      type: GraphQLString
-    },
-    location: {
-      type: new GraphQLInputObjectType({
-        name: 'locationInput',
-        fields: {
-          lat: {
-            type: GraphQLString
-          },
-          long: {
-            type: GraphQLString
-          }
-        }
-      })
-    }
   },
 
   outputFields: {
@@ -65,7 +46,7 @@ const AddLocalityMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ tripId, googlePlaceId, name, description, location }, { user }) => {
+  mutateAndGetPayload: async ({ tripId, localityId }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -78,7 +59,7 @@ const AddLocalityMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await LocalityService.add(user, tripId, { googlePlaceId, name, description, location });
+    const res = await LocalityService.add(user, tripId, localityId);
     if (res.errors) {
       return {
         success: false,

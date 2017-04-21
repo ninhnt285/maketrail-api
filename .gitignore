@@ -1,6 +1,7 @@
 /.idea/
 /.DS_Store
 /node_modules
+/static
 /npm-debug.log
 /app/graphql/schema.graphql
 /app/graphql/schema.json

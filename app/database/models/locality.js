@@ -11,8 +11,10 @@ const localitySchema = new Schema(
     description: String,
     location: {
       lat: String,
-      long: String
-    }
+      lng: String
+    },
+    types: [String],
+    previewPhotoUrl: String
   }, {
     timestamps: true,
     toJSON: {
