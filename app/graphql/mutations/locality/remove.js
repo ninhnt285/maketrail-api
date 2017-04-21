@@ -9,16 +9,19 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import TripType from '../../types/trip';
-import TripService from '../../../database/helpers/trip';
-import { TripEdge } from '../../connections/trip';
+import LocalityType from '../../types/locality';
+import LocalityService from '../../../database/helpers/locality';
+import { LocalityEdge } from '../../connections/locality';
 import { edgeFromNode } from '../../../lib/connection';
 
-const AddTripMutation = mutationWithClientMutationId({
-  name: 'AddTrip',
+const RemoveLocalityMutation = mutationWithClientMutationId({
+  name: 'RemoveLocality',
 
   inputFields: {
-    name: {
+    tripId: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    localityId: {
       type: new GraphQLNonNull(GraphQLString)
     }
   },
@@ -32,22 +35,22 @@ const AddTripMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    trip: {
-      type: TripType,
+    locality: {
+      type: LocalityType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: TripEdge,
+      type: LocalityEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ name }, { user }) => {
+  mutateAndGetPayload: async ({ tripId, localityId }, { user }) => {
     let errors = [];
 
     if (!user) {
       errors = [
-        'Please login to add new trip.'
+        'Please login to remove locality.'
       ];
       return {
         success: false,
@@ -55,7 +58,7 @@ const AddTripMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await TripService.add(user, { name, userId: user.id });
+    const res = await LocalityService.remove(user, tripId, localityId);
     if (res.errors) {
       return {
         success: false,
@@ -69,4 +72,4 @@ const AddTripMutation = mutationWithClientMutationId({
   }
 });
 
-export default AddTripMutation;
+export default RemoveLocalityMutation;

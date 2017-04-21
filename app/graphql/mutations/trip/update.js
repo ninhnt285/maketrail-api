@@ -1,25 +1,29 @@
 import {
   GraphQLNonNull,
+  GraphQLID,
+  GraphQLBoolean,
   GraphQLString,
-  GraphQLList,
-  GraphQLBoolean
+  GraphQLList
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import TripType from '../../types/trip';
 import TripService from '../../../database/helpers/trip';
+import TripType from '../../types/trip';
 import { TripEdge } from '../../connections/trip';
 import { edgeFromNode } from '../../../lib/connection';
 
-const AddTripMutation = mutationWithClientMutationId({
-  name: 'AddTrip',
+const UpdateTripMutation = mutationWithClientMutationId({
+  name: 'UpdateTrip',
 
   inputFields: {
+    id: {
+      type: new GraphQLNonNull(GraphQLID)
+    },
     name: {
-      type: new GraphQLNonNull(GraphQLString)
+      type: GraphQLString
     }
   },
 
@@ -42,20 +46,10 @@ const AddTripMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ name }, { user }) => {
-    let errors = [];
-
-    if (!user) {
-      errors = [
-        'Please login to add new trip.'
-      ];
-      return {
-        success: false,
-        errors
-      };
-    }
-
-    const res = await TripService.add(user, { name, userId: user.id });
+  mutateAndGetPayload: async ({ id, ...args }, { user }) => {
+    const newArgs = Object.assign({}, args);
+    delete newArgs.clientMutationId;
+    const res = await TripService.update(user, id, newArgs);
     if (res.errors) {
       return {
         success: false,
@@ -69,4 +63,4 @@ const AddTripMutation = mutationWithClientMutationId({
   }
 });
 
-export default AddTripMutation;
+export default UpdateTripMutation;

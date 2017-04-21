@@ -82,7 +82,7 @@ const AddLocalityMutation = mutationWithClientMutationId({
     if (res.errors) {
       return {
         success: false,
-        errors
+        errors: res.errors
       };
     }
     return {

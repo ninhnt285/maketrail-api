@@ -7,6 +7,10 @@ LocalityService.canAddLocality = async function (user, tripId) {
   return (user && tripId);
 };
 
+LocalityService.canRemoveLocality = async function (user, tripId) {
+  return (user && tripId);
+};
+
 LocalityService.findOneOrCreate = async function (condition, doc) {
   let user = await LocalityModel.findOne(condition);
   if (!user) {
@@ -27,6 +31,25 @@ LocalityService.add = async function (user, tripId, locality) {
     }
     return {
       errors: ['You does not have permission to add new locality.']
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+LocalityService.remove = async function (user, tripId, localityId) {
+  try {
+    if (this.canRemoveLocality(user, tripId)) {
+      const res = await Promise.all([TripLocalityRelationModel.remove({ tripId, localityId }), LocalityModel.findById(localityId)]);
+      return {
+        item: res[1]
+      };
+    }
+    return {
+      errors: ['You does not have permission to remove locality.']
     };
   } catch (e) {
     console.log(e);
