@@ -1,0 +1,3 @@
+import { getPhotoFromReference } from '../lib/google/place/photo';
+
+getPhotoFromReference('CoQBdwAAABWkwyvUqxNAsn6gqUE3cR0RHSwvXk48gjA10TC58isYqpklhu0IEKnMWTmit4fEIHLgdBq-0bpAy5kmXJQKKG-qPZTVvUMI4dDYYE-IRkKnW4SPW22kSHKqtHRzbW8QQMeeZbX8Nu7bJ_oT5d4rYe_Yhxf8_g4q2BS2MryMU8sUEhC3X64qfwp22eOru2_oA8c3GhRDL0cCRVxsdWtK2P4uCEMCxYupKw');

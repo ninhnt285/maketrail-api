@@ -7,7 +7,8 @@
     "test": "jest",
     "lint": "eslint --ignore-path .gitignore app",
     "update-schema": "NODE_PATH=./app babel-node app/graphql/updateSchema.js",
-    "start": "babel-node app/server.js"
+    "start": "babel-node app/server.js",
+    "download-file": "babel-node app/scripts/downloadFile"
   },
   "repository": {
     "type": "git",
