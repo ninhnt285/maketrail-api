@@ -103,7 +103,7 @@ UserService.findOneOrCreate = async function (condition, doc) {
   return user;
 };
 
-UserService.loginViaSocialNetwork = async function (provider, token) {
+UserService.loginViaSocialNetwork = async function (provider, token, tokenSecret) {
   try {
     let socialInfo = null;
     let user = null;
@@ -112,8 +112,13 @@ UserService.loginViaSocialNetwork = async function (provider, token) {
       socialInfo.token = token;
       user = await this.findOneOrCreate({ 'facebook.id': socialInfo.id }, { facebook: socialInfo });
     } else if (provider === 'google') {
+      socialInfo = await SocialUtils.GOOGLE.getInfo(token);
+      socialInfo.token = token;
       user = await this.findOneOrCreate({ 'google.id': socialInfo.id }, { google: socialInfo });
     } else if (provider === 'twitter') {
+      socialInfo = await SocialUtils.TWITTER.getInfo(token, tokenSecret);
+      socialInfo.token = token;
+      socialInfo.tokenSecret = tokenSecret;
       user = await this.findOneOrCreate({ 'twitter.id': socialInfo.id }, { twitter: socialInfo });
     }
     const accessToken = generateToken(user);

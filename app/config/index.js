@@ -13,3 +13,7 @@ export const MAIL_PASS = 'anhhoang';
 
 export const GOOGLE_API_KEY = 'AIzaSyDMFSsb4IlS2ReTJmI8HNlPmdNAvRwt-7k';
 
+export const TWITTER_CONSUMER_KEY = 'rutFsCBUT8Nn2ifowAqIkM7hw';
+
+export const TWITTER_CONSUMER_SECRET = 'KvFL1PFxhYwjs3QuarNwzviVaHCnQNaqfvgn5OZLr8M2Ycrgfw';
+

@@ -30,6 +30,10 @@ const LoginMutation = mutationWithClientMutationId({
 
     socialToken: {
       type: GraphQLString
+    },
+
+    socialTokenSecret: {
+      type: GraphQLString
     }
 
   },
@@ -49,7 +53,7 @@ const LoginMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ usernameOrEmail, password, provider, socialToken }) => {
+  mutateAndGetPayload: async ({ usernameOrEmail, password, provider, socialToken, socialTokenSecret }) => {
     let res = null;
     if (!provider || provider === 'local') {
       if (usernameOrEmail.indexOf('@') >= 0) {
@@ -58,7 +62,7 @@ const LoginMutation = mutationWithClientMutationId({
         res = await UserService.loginViaUsername(usernameOrEmail, password);
       }
     } else {
-      res = await UserService.loginViaSocialNetwork(provider, socialToken);
+      res = await UserService.loginViaSocialNetwork(provider, socialToken, socialTokenSecret);
     }
     if (res && !res.accessToken) {
       return {

@@ -26,6 +26,7 @@ const userSchema = new Schema(
     twitter: {
       id: String,
       token: String,
+      tokenSecret: String,
       email: String,
       name: String
     }
