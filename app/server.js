@@ -1,6 +1,7 @@
 import express from 'express';
 import { PORT } from './config';
 import connectDb from './database/connectDb';
+import { prepareDir } from './lib/google/place/photo';
 
 const app = express();
 
@@ -14,3 +15,5 @@ function onConnected() {
 }
 
 connectDb(onConnected);
+prepareDir();
+

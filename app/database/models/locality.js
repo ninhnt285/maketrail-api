@@ -10,8 +10,8 @@ const localitySchema = new Schema(
     name: String,
     description: String,
     location: {
-      lat: String,
-      lng: String
+      lat: Number,
+      lng: Number
     },
     types: [String],
     previewPhotoUrl: String

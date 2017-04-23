@@ -2,7 +2,7 @@ import request from 'request-promise';
 import LocalityModel from '../models/locality';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 import { GOOGLE_API_KEY } from '../../config';
-import { getPhotoFromReference } from '../../lib/google/place/photo';
+import { getPhotoFromReference, resize } from '../../lib/google/place/photo';
 
 const LocalityService = {};
 
@@ -17,9 +17,10 @@ LocalityService.canRemoveLocality = async function (user, tripId) {
 LocalityService.findOneOrCreate = async function (condition, doc) {
   let user = await LocalityModel.findOne(condition);
   if (!user) {
-    if (doc.photo_reference) getPhotoFromReference(doc.photo_reference, doc.previewPhotoUrl);
-    const res = await Promise.all([LocalityModel.create(doc), getPhotoFromReference(doc.photo_reference, doc.previewPhotoUrl)]);
+    const photoUri = doc.previewPhotoUrl.replace('%s', '');
+    const res = await Promise.all([LocalityModel.create(doc), getPhotoFromReference(doc.photo_reference, photoUri)]);
     user = res[0];
+    resize(photoUri);
   }
   return user;
 };
@@ -88,6 +89,7 @@ LocalityService.seachLocality = async function (query) {
     const res = JSON.parse(await request(options)
       .then(ggRes => ggRes));
     const localities = res.results;
+    const date = new Date();
     return await Promise.all(localities.map(async (locality) => {
       const tmp = {
         googlePlaceId: locality.place_id,
@@ -96,7 +98,7 @@ LocalityService.seachLocality = async function (query) {
         description: locality.formatted_address,
         location: locality.geometry.location,
         photo_reference: locality.photos[0].photo_reference,
-        previewPhotoUrl: `/locality/${locality.place_id}.jpg`
+        previewPhotoUrl: `/locality/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${locality.place_id}%s.jpg`
       };
       return await this.findOneOrCreate({ googlePlaceId: locality.place_id }, tmp);
     }));

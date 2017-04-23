@@ -2,7 +2,8 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLString,
-  GraphQLObjectType
+  GraphQLObjectType,
+  GraphQLFloat
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
@@ -28,10 +29,10 @@ const LocalityType = new GraphQLObjectType({
         name: 'location',
         fields: {
           lat: {
-            type: GraphQLString
+            type: GraphQLFloat
           },
           lng: {
-            type: GraphQLString
+            type: GraphQLFloat
           }
         }
       })
