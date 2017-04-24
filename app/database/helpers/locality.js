@@ -18,20 +18,22 @@ LocalityService.findOneOrCreate = async function (condition, doc) {
   let user = await LocalityModel.findOne(condition);
   if (!user) {
     const photoUri = doc.previewPhotoUrl.replace('%s', '');
-    const res = await Promise.all([LocalityModel.create(doc), getPhotoFromReference(doc.photo_reference, photoUri)]);
-    user = res[0];
+    if (!await getPhotoFromReference(doc.photo_reference, photoUri)) {
+      // eslint-disable-next-line no-param-reassign
+      delete doc.previewPhotoUrl;
+    }
+    user = await LocalityModel.create(doc);
     resize(photoUri);
   }
   return user;
 };
 
 LocalityService.add = async function (user, tripId, localityId) {
-  const item = null;
   try {
     if (this.canAddLocality(user, tripId)) {
-      await TripLocalityRelationModel.create({ tripId, localityId });
+      const res = await Promise.all(LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId }));
       return {
-        item
+        item: res[0]
       };
     }
     return {
@@ -97,9 +99,9 @@ LocalityService.seachLocality = async function (query) {
         name: locality.name,
         description: locality.formatted_address,
         location: locality.geometry.location,
-        photo_reference: locality.photos[0].photo_reference,
         previewPhotoUrl: `/locality/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${locality.place_id}%s.jpg`
       };
+      if (locality.photos && locality.photos.length > 0) tmp.photo_reference = locality.photos[0].photo_reference;
       return await this.findOneOrCreate({ googlePlaceId: locality.place_id }, tmp);
     }));
   } catch (e) {

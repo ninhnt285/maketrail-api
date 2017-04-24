@@ -68,14 +68,14 @@ export function downloadFile(url, dest) {
 
 export async function getPhotoFromReference(referenceId, filename) {
   try {
-    if (!referenceId) return null;
+    if (!referenceId) return false;
     const apiUrl = `https://maps.googleapis.com/maps/api/place/photo?key=${GOOGLE_API_KEY}&maxheight=400&photoreference=${referenceId}`;
     const dest = path.join(__dirname, `../../../../static/${filename}`);
-    const result = await downloadFile(apiUrl, dest);
-    return result;
+    await downloadFile(apiUrl, dest);
+    return true;
   } catch (e) {
     console.log(e);
-    return null;
+    return false;
   }
 }
 

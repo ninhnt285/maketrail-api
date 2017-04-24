@@ -1,7 +1,6 @@
 import UserModel from '../models/user';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
-import { getType } from '../../lib/idUtils';
 import SocialUtils from '../../lib/social';
 
 const UserService = {};

@@ -52,6 +52,10 @@ export function getType(id) {
     return null;
   }
 
+  if (id === 'viewer-fixed') {
+    return 'ViewerType';
+  }
+
   const typeIndex = parseInt(newId.substr(-2), 16);
   if (typeIndex < 0 || typeIndex >= TYPES.length) {
     console.log(`Invalid Id, cannot find valid typeIndex: ${newId}`);
