@@ -23,7 +23,7 @@ TripService.canAddTrip = async function (user) {
 TripService.add = async function (user, trip) {
   let item = null;
   try {
-    if (this.canAddTrip(user)) {
+    if (await this.canAddTrip(user)) {
       item = await TripModel.create(trip);
       await UserTripRelationModel.create({ userId: user.id, tripId: item.id, roleId: 0 });
       return {
@@ -43,7 +43,7 @@ TripService.add = async function (user, trip) {
 
 TripService.delete = async function (user, tripId) {
   try {
-    if (this.canDeleteTrip(user, tripId)) {
+    if (await this.canDeleteTrip(user, tripId)) {
       const res = await Promise.all([TripModel.findByIdAndRemove(tripId), UserTripRelationModel.remove(tripId), TripLocalityRelationModel.remove(tripId)]);
       return {
         item: res[0]
@@ -62,7 +62,7 @@ TripService.delete = async function (user, tripId) {
 
 TripService.update = async function (user, tripId, args) {
   try {
-    if (this.canUpdateTrip(user, tripId)) {
+    if (await this.canUpdateTrip(user, tripId)) {
       const item = await TripModel.findByIdAndUpdate(tripId, { $set: args }, { new: true });
       return {
         item
@@ -82,7 +82,7 @@ TripService.update = async function (user, tripId, args) {
 TripService.getById = async function (user, id) {
   let item = null;
   try {
-    if (this.canGetTrip(user, id)) {
+    if (await this.canGetTrip(user, id)) {
       item = await TripModel.findById(id);
     }
   } catch (e) {

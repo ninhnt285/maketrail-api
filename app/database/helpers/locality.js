@@ -30,8 +30,8 @@ LocalityService.findOneOrCreate = async function (condition, doc) {
 
 LocalityService.add = async function (user, tripId, localityId) {
   try {
-    if (this.canAddLocality(user, tripId)) {
-      const res = await Promise.all(LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId }));
+    if (await this.canAddLocality(user, tripId)) {
+      const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId })]);
       return {
         item: res[0]
       };
@@ -49,7 +49,7 @@ LocalityService.add = async function (user, tripId, localityId) {
 
 LocalityService.remove = async function (user, tripId, localityId) {
   try {
-    if (this.canRemoveLocality(user, tripId)) {
+    if (await this.canRemoveLocality(user, tripId)) {
       const res = await Promise.all([TripLocalityRelationModel.remove({ tripId, localityId }), LocalityModel.findById(localityId)]);
       return {
         item: res[1]
