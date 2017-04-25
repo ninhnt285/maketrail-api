@@ -8,6 +8,7 @@ import {
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 
+const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
 const LocalityType = new GraphQLObjectType({
   name: 'Locality',
 
@@ -38,7 +39,10 @@ const LocalityType = new GraphQLObjectType({
       })
     },
     previewPhotoUrl: {
-      type: GraphQLString
+      type: GraphQLString,
+      resolve(obj) {
+        return prefix + obj.previewPhotoUrl;
+      }
     }
   },
 

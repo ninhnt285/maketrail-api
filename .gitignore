@@ -5,3 +5,4 @@
 /npm-debug.log
 /app/graphql/schema.graphql
 /app/graphql/schema.json
+/app-pm2.json
