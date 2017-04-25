@@ -11,7 +11,7 @@ export function edgeFromNode(node) {
   if (node) {
     return {
       node,
-      cursor: base64(node.id)
+      cursor: node.cursor ? base64(node.cursor) : base64(node.id)
     };
   }
 
@@ -21,7 +21,7 @@ export function edgeFromNode(node) {
 export function connectionFromArray(nodes, args) {
   const edges = nodes.map(node => ({
     node,
-    cursor: base64(node.id)
+    cursor: node.cursor ? base64(node.cursor) : base64(node.id)
   }));
 
   const firstEdge = edges[0];

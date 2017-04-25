@@ -47,6 +47,7 @@ const localityConnection = {
         },
         async (r) => {
           const locality = await LocalityModel.findById(r.localityId).exec();
+          locality.cursor = r.id;
           return locality;
         }
       );
