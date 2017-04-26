@@ -105,7 +105,7 @@ LocalityService.seachLocality = async function (query) {
       qs: {
         key: GOOGLE_API_KEY,
         query,
-        types: 'tripLocality|political'
+        types: 'locality|political'
       },
       encoding: 'utf8'
     };
