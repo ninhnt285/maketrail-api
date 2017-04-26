@@ -33,11 +33,14 @@ LocalityService.add = async function (user, tripId, localityId) {
     if (await this.canAddLocality(user, tripId)) {
       const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId })]);
       return {
-        item: res[0]
+        item: {
+          id: res[1].id,
+          originLocality: res[0]
+        }
       };
     }
     return {
-      errors: ['You does not have permission to add new locality.']
+      errors: ['You does not have permission to add new tripLocality.']
     };
   } catch (e) {
     console.log(e);
@@ -47,16 +50,20 @@ LocalityService.add = async function (user, tripId, localityId) {
   }
 };
 
-LocalityService.remove = async function (user, tripId, localityId) {
+LocalityService.remove = async function (user, tripId, tripLocalityId) {
   try {
     if (await this.canRemoveLocality(user, tripId)) {
-      const res = await Promise.all([TripLocalityRelationModel.remove({ tripId, localityId }), LocalityModel.findById(localityId)]);
+      const tmp = await TripLocalityRelationModel.findByIdAndRemove(tripLocalityId);
+      const locality = await LocalityModel.findById(tmp.localityId);
       return {
-        item: res[1]
+        item: {
+          id: tripLocalityId,
+          originLocality: locality
+        }
       };
     }
     return {
-      errors: ['You does not have permission to remove locality.']
+      errors: ['You does not have permission to remove this tripLocality.']
     };
   } catch (e) {
     console.log(e);
@@ -76,6 +83,20 @@ LocalityService.getById = async function (id) {
   return item;
 };
 
+LocalityService.findTripLocalityById = async function (id) {
+  try {
+    const tmp = await TripLocalityRelationModel.findById(id);
+    const originLocality = await LocalityModel.findById(tmp.localityId);
+    return {
+      id: tmp.id,
+      originLocality
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 LocalityService.seachLocality = async function (query) {
   try {
     const options = {
@@ -84,7 +105,7 @@ LocalityService.seachLocality = async function (query) {
       qs: {
         key: GOOGLE_API_KEY,
         query,
-        types: 'locality|political'
+        types: 'tripLocality|political'
       },
       encoding: 'utf8'
     };

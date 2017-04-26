@@ -2,29 +2,28 @@ import {
   GraphQLNonNull,
   GraphQLString,
   GraphQLList,
-  GraphQLBoolean,
-  GraphQLInputObjectType
+  GraphQLBoolean
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import LocalityType from '../../types/locality';
+import TripLocalityType from '../../types/tripLocality';
 import LocalityService from '../../../database/helpers/locality';
-import { LocalityEdge } from '../../connections/locality';
+import { TripLocalityEdge } from '../../connections/tripLocality';
 import { edgeFromNode } from '../../../lib/connection';
 
-const AddLocalityMutation = mutationWithClientMutationId({
-  name: 'AddLocality',
+const RemoveTripLocalityMutation = mutationWithClientMutationId({
+  name: 'RemoveTripLocality',
 
   inputFields: {
     tripId: {
       type: new GraphQLNonNull(GraphQLString)
     },
-    localityId: {
+    tripLocalityId: {
       type: new GraphQLNonNull(GraphQLString)
-    },
+    }
   },
 
   outputFields: {
@@ -36,22 +35,22 @@ const AddLocalityMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    locality: {
-      type: LocalityType,
+    tripLocality: {
+      type: TripLocalityType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: LocalityEdge,
+      type: TripLocalityEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ tripId, localityId }, { user }) => {
+  mutateAndGetPayload: async ({ tripId, tripLocalityId }, { user }) => {
     let errors = [];
 
     if (!user) {
       errors = [
-        'Please login to add new locality.'
+        'Please login to remove tripLocality.'
       ];
       return {
         success: false,
@@ -59,7 +58,7 @@ const AddLocalityMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await LocalityService.add(user, tripId, localityId);
+    const res = await LocalityService.remove(user, tripId, tripLocalityId);
     if (res.errors) {
       return {
         success: false,
@@ -73,4 +72,4 @@ const AddLocalityMutation = mutationWithClientMutationId({
   }
 });
 
-export default AddLocalityMutation;
+export default RemoveTripLocalityMutation;
