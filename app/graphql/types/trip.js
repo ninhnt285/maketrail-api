@@ -6,7 +6,7 @@ import {
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
-import { localityConnection } from '../connections/locality';
+import { localityConnection } from '../connections/tripLocality';
 
 const TripType = new GraphQLObjectType({
   name: 'Trip',

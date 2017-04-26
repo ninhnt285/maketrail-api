@@ -38,21 +38,6 @@ const localityConnection = {
     if (!user) {
       return connectionFromArray([], args);
     }
-    if (getType(id) === Type.TRIP) {
-      const localityEdges = await connectionFromModel(TripLocalityRelation,
-        {
-          user,
-          ...args,
-          filter: { tripId: id }
-        },
-        async (r) => {
-          const locality = await LocalityModel.findById(r.localityId).exec();
-          locality.cursor = r.id;
-          return locality;
-        }
-      );
-      return localityEdges;
-    }
     if (query) {
       const localities = await LocalityService.seachLocality(query);
       if (localities) return connectionFromArray(localities, []);
