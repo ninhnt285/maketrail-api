@@ -2,6 +2,8 @@ import { nodeDefinitions } from 'graphql-relay';
 import { getType, Type } from '../../lib/idUtils';
 import UserModel from '../../database/models/user';
 import TripModel from '../../database/models/trip';
+import VenueModel from '../../database/models/venue';
+import CategoryModel from '../../database/models/category';
 import LocalityModel from '../../database/models/locality';
 import LocalityService from '../../database/helpers/locality';
 
@@ -18,6 +20,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.TRIP: return TripModel.findById(globalId);
       case Type.LOCALITY: return LocalityModel.findById(globalId);
       case Type.TRIP_LOCALITY: return LocalityService.findTripLocalityById(globalId);
+      case Type.CATEGORY: return CategoryModel.findById(globalId);
+      case Type.VENUE: return VenueModel.findById(globalId);
       default: return {
         id: 'viewer-fixed'
       };
@@ -35,6 +39,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.TRIP: return require('../types/trip').default;
       case Type.LOCALITY: return require('../types/locality').default;
       case Type.TRIP_LOCALITY: return require('../types/tripLocality').default;
+      case Type.CATEGORY: return require('../types/category').default;
+      case Type.VENUE: return require('../types/venue').default;
       default: return require('../types/viewer').default;
       /* eslint-enable */
     }

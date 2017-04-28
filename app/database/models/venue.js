@@ -3,19 +3,18 @@ import preSave from '../preSave';
 
 const { Types } = mongoose.Schema;
 
-const localitySchema = new Schema(
+const venueSchema = new Schema(
   {
     _id: Types.ObjectId,
-    googlePlaceId: String,
+    foursquareId: String,
     name: String,
-    description: String,
-    highlights: [String],
+    address: String,
     location: {
       lat: Number,
       lng: Number
     },
-    types: [String],
-    previewPhotoUrl: String
+    phone: String,
+    photos: [String]
   }, {
     timestamps: true,
     toJSON: {
@@ -27,8 +26,8 @@ const localitySchema = new Schema(
   }
 );
 
-localitySchema.pre('save', preSave('LocalityType'));
+venueSchema.pre('save', preSave('VenueType'));
 
-const LocalityModel = mongoose.model('Locality', localitySchema);
+const VenueModel = mongoose.model('Venue', venueSchema);
 
-export default LocalityModel;
+export default VenueModel;

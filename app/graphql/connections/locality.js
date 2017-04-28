@@ -9,11 +9,7 @@ import {
 } from 'graphql-relay';
 
 import LocalityType from '../types/locality';
-import LocalityModel from '../../database/models/locality';
-import TripLocalityRelation from '../../database/models/tripLocalityRelation';
-import { connectionFromModel } from '../../database/helpers/connection';
 import { connectionFromArray } from '../../lib/connection';
-import { Type, getType } from '../../lib/idUtils';
 import LocalityService from '../../database/helpers/locality';
 
 const {
@@ -40,7 +36,7 @@ const localityConnection = {
     }
     if (query) {
       const localities = await LocalityService.seachLocality(query);
-      if (localities) return connectionFromArray(localities, []);
+      if (localities) return connectionFromArray(localities, args);
     }
 
     return connectionFromArray([], []);

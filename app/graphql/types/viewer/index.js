@@ -10,7 +10,10 @@ import UserService from '../../../database/helpers/user';
 import UserType from '../user';
 import Trip from './Trip';
 import Locality from './Locality';
+import TripLocality from './TripLocality';
 import { localityConnection } from '../../connections/locality';
+import { categoryConnection } from '../../connections/category';
+import { venueConnection } from '../../connections/venue';
 
 const ViewerType = new GraphQLObjectType({
   name: 'Viewer',
@@ -33,8 +36,11 @@ const ViewerType = new GraphQLObjectType({
 
     Trip,
     Locality,
+    TripLocality,
     searchLocality: localityConnection,
-    allTrips: tripConnection
+    searchVenue: venueConnection,
+    allTrips: tripConnection,
+    categories: categoryConnection
   },
 
   interfaces: [nodeInterface]

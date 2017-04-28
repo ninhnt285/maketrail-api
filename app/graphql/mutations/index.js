@@ -5,6 +5,8 @@ import updateTripMutation from './trip/update';
 import deleteTripMutation from './trip/delete';
 import addTripLocalityMutation from './tripLocality/add';
 import removeTripLocalityMutation from './tripLocality/remove';
+import addLocalityVenueMutation from './localityVenue/add';
+import removeLocalityVenueMutation from './localityVenue/remove';
 
 export default {
   login: loginMutation,
@@ -15,5 +17,8 @@ export default {
   deleteTrip: deleteTripMutation,
 
   addTripLocality: addTripLocalityMutation,
-  removeTripLocality: removeTripLocalityMutation
+  removeTripLocality: removeTripLocalityMutation,
+
+  addLocalityVenue: addLocalityVenueMutation,
+  removeLocalityVenue: removeLocalityVenueMutation
 };
