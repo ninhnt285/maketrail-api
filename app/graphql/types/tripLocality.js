@@ -6,7 +6,7 @@ import {
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 import LocalityType from './locality';
-import { localityVenueConnection } from '../connections/venue';
+import { localityVenueConnection } from '../connections/localityVenue';
 
 const TripLocalityType = new GraphQLObjectType({
   name: 'TripLocality',
@@ -18,7 +18,7 @@ const TripLocalityType = new GraphQLObjectType({
     originLocality: {
       type: LocalityType
     },
-    tripVenues: localityVenueConnection
+    localityVenues: localityVenueConnection
   },
 
   interfaces: [nodeInterface]

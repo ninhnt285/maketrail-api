@@ -1,11 +1,12 @@
 import https from 'https';
+import request from 'request-promise';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 import mkdirp from 'mkdirp';
 const CronJob = require('cron').CronJob;
 
-import { GOOGLE_API_KEY } from '../../../config';
+import { GOOGLE_API_KEY, FOURSQUARE_TOKEN } from '../../../config';
 
 const dimens = [
   {
@@ -69,7 +70,34 @@ export function downloadFile(url, dest) {
 export async function getPhotoFromReference(referenceId, filename) {
   try {
     if (!referenceId) return false;
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/photo?key=${GOOGLE_API_KEY}&maxheight=400&photoreference=${referenceId}`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/photo?key=${GOOGLE_API_KEY}&photoreference=${referenceId}`;
+    const dest = path.join(__dirname, `../../../../static/${filename}`);
+    await downloadFile(apiUrl, dest);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
+export async function getPhotoFromFoursquareId(foursquareId, filename) {
+  try {
+    if (!foursquareId) return false;
+    const options = {
+      method: 'GET',
+      uri: `https://api.foursquare.com/v2/venues/${foursquareId}/photos`,
+      qs: {
+        oauth_token: FOURSQUARE_TOKEN,
+        v: '20170428',
+        limit: 1,
+      },
+      encoding: 'utf8'
+    };
+    const res = JSON.parse(await request(options)
+      .then(ggRes => ggRes));
+    const prefix = res.response.photos.items[0].prefix;
+    const suffix = res.response.photos.items[0].suffix;
+    const apiUrl = `${prefix}original${suffix}`;
     const dest = path.join(__dirname, `../../../../static/${filename}`);
     await downloadFile(apiUrl, dest);
     return true;
@@ -82,9 +110,12 @@ export async function getPhotoFromReference(referenceId, filename) {
 const makeDir = function () {
   const date = new Date();
   const dir = path.join(__dirname, `../../../../static/locality/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
+  const dir2 = path.join(__dirname, `../../../../static/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
   mkdirp(dir, (err) => {
     if (err) console.log(err);
-    else console.log('dir created');
+  });
+  mkdirp(dir2, (err) => {
+    if (err) console.log(err);
   });
 };
 

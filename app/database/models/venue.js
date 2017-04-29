@@ -14,7 +14,7 @@ const venueSchema = new Schema(
       lng: Number
     },
     phone: String,
-    photos: [String]
+    previewPhotoUrl: String
   }, {
     timestamps: true,
     toJSON: {

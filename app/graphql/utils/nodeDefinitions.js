@@ -6,6 +6,7 @@ import VenueModel from '../../database/models/venue';
 import CategoryModel from '../../database/models/category';
 import LocalityModel from '../../database/models/locality';
 import LocalityService from '../../database/helpers/locality';
+import VenueService from '../../database/helpers/venue';
 
 const { nodeInterface, nodeField } = nodeDefinitions(
   (globalId, { user }) => {
@@ -22,6 +23,7 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.TRIP_LOCALITY: return LocalityService.findTripLocalityById(globalId);
       case Type.CATEGORY: return CategoryModel.findById(globalId);
       case Type.VENUE: return VenueModel.findById(globalId);
+      case Type.LOCALITY_VENUE: return VenueService.findLocalityVenueById(globalId);
       default: return {
         id: 'viewer-fixed'
       };
@@ -41,6 +43,7 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.TRIP_LOCALITY: return require('../types/tripLocality').default;
       case Type.CATEGORY: return require('../types/category').default;
       case Type.VENUE: return require('../types/venue').default;
+      case Type.LOCALITY_VENUE: return require('../types/localityVenue').default;
       default: return require('../types/viewer').default;
       /* eslint-enable */
     }

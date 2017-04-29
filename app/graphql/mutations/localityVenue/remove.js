@@ -9,16 +9,16 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import VenueType from '../../types/venue';
+import LocalityVenueType from '../../types/localityVenue';
 import VenueService from '../../../database/helpers/venue';
-import { VenueEdge } from '../../connections/venue';
+import { LocalityVenueEdge } from '../../connections/localityVenue';
 import { edgeFromNode } from '../../../lib/connection';
 
 const RemoveLocalityVenueMutation = mutationWithClientMutationId({
   name: 'RemoveLocalityVenue',
 
   inputFields: {
-    venueId: {
+    localityVenueId: {
       type: new GraphQLNonNull(GraphQLString)
     },
     tripLocalityId: {
@@ -35,17 +35,17 @@ const RemoveLocalityVenueMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    tripLocality: {
-      type: VenueType,
+    localityVenue: {
+      type: LocalityVenueType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: VenueEdge,
+      type: LocalityVenueEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ tripLocalityId, venueId }, { user }) => {
+  mutateAndGetPayload: async ({ tripLocalityId, localityVenueId }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -58,7 +58,7 @@ const RemoveLocalityVenueMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await VenueService.remove(user, tripLocalityId, venueId);
+    const res = await VenueService.remove(user, tripLocalityId, localityVenueId);
     if (res.errors) {
       return {
         success: false,

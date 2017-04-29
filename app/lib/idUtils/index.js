@@ -5,7 +5,7 @@ const TYPES = [
   'TripLocalityType',
   'CategoryType',
   'VenueType',
-  'LocalityVenue'
+  'LocalityVenueType'
 ];
 
 export const Type = {

@@ -6,8 +6,7 @@ import {
   GraphQLID
 } from 'graphql';
 
-import { categoryConnection } from '../connections/category';
-
+const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
 const VenueType = new GraphQLObjectType({
   name: 'Venue',
 
@@ -40,7 +39,12 @@ const VenueType = new GraphQLObjectType({
     phone: {
       type: GraphQLString
     },
-    categories: categoryConnection
+    previewPhotoUrl: {
+      type: GraphQLString,
+      resolve(obj) {
+        return prefix + obj.previewPhotoUrl;
+      }
+    },
   },
 
 });

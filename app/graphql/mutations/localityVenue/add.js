@@ -9,9 +9,9 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import VenueType from '../../types/venue';
+import LocalityVenueType from '../../types/localityVenue';
 import VenueService from '../../../database/helpers/venue';
-import { VenueEdge } from '../../connections/venue';
+import { LocalityVenueEdge } from '../../connections/localityVenue';
 import { edgeFromNode } from '../../../lib/connection';
 
 const AddLocalityVenueMutation = mutationWithClientMutationId({
@@ -36,11 +36,11 @@ const AddLocalityVenueMutation = mutationWithClientMutationId({
       resolve: ({ errors }) => errors
     },
     localityVenue: {
-      type: VenueType,
+      type: LocalityVenueType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: VenueEdge,
+      type: LocalityVenueEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },

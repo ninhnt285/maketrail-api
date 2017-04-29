@@ -3,6 +3,7 @@ import VenueModel from '../models/venue';
 import LocalityModel from '../models/locality';
 import LocalityVenueRelationModel from '../models/localityVenueRelation';
 import { FOURSQUARE_TOKEN } from '../../config';
+import { getPhotoFromFoursquareId, resize } from '../../lib/google/place/photo';
 
 const VenueService = {};
 
@@ -17,7 +18,13 @@ VenueService.canRemoveVenue = async function (user, tripLocalityId) {
 VenueService.findOneOrCreate = async function (condition, doc) {
   let venue = await VenueModel.findOne(condition);
   if (!venue) {
+    const photoUri = doc.previewPhotoUrl.replace('%s', '');
+    if (!await getPhotoFromFoursquareId(doc.foursquareId, photoUri)) {
+      // eslint-disable-next-line no-param-reassign
+      delete doc.previewPhotoUrl;
+    }
     venue = await VenueModel.create(doc);
+    resize(photoUri);
   }
   return venue;
 };
@@ -25,14 +32,12 @@ VenueService.findOneOrCreate = async function (condition, doc) {
 VenueService.add = async function (user, tripLocalityId, venueId) {
   try {
     if (await this.canAddVenue(user, tripLocalityId)) {
-      if (await LocalityVenueRelationModel.findOne({ tripLocalityId, venueId })) {
-        return {
-          errors: ['The venue has been in tripLocality.']
-        };
-      }
       const res = await Promise.all([VenueModel.findById(venueId), LocalityVenueRelationModel.create({ tripLocalityId, venueId })]);
       return {
-        item: res[0]
+        item: {
+          id: res[1].id,
+          originVenue: res[0]
+        }
       };
     }
     return {
@@ -46,13 +51,16 @@ VenueService.add = async function (user, tripLocalityId, venueId) {
   }
 };
 
-VenueService.remove = async function (user, tripLocalityId, venueId) {
+VenueService.remove = async function (user, tripLocalityId, localityVenueId) {
   try {
     if (await this.canRemoveVenue(user, tripLocalityId)) {
-      await LocalityVenueRelationModel.remove({ tripLocalityId, venueId });
-      const venue = await VenueModel.findById(venueId);
+      const tmp = await LocalityVenueRelationModel.findByIdAndRemove(localityVenueId);
+      const venue = await VenueModel.findById(tmp.venueId);
       return {
-        item: venue
+        item: {
+          id: localityVenueId,
+          originVenue: venue
+        }
       };
     }
     return {
@@ -80,7 +88,10 @@ VenueService.findLocalityVenueById = async function (id) {
   try {
     const tmp = await LocalityVenueRelationModel.findById(id);
     const originVenue = await VenueModel.findById(tmp.venueId);
-    return originVenue;
+    return {
+      id,
+      originVenue
+    };
   } catch (e) {
     console.log(e);
     return null;
@@ -97,6 +108,7 @@ VenueService.seachVenue = async function (localityId, query, categories) {
         oauth_token: FOURSQUARE_TOKEN,
         v: '20170428',
         query,
+        limit: 10,
         categoryId: categories ? categories.join() : undefined,
         ll: `${locality.location.lat},${locality.location.lng}`
       },
@@ -105,6 +117,7 @@ VenueService.seachVenue = async function (localityId, query, categories) {
     const res = JSON.parse(await request(options)
       .then(ggRes => ggRes));
     const venues = res.response.venues;
+    const date = new Date();
     return await Promise.all(venues.map(async (venue) => {
       const tmp = {
         foursquareId: venue.id,
@@ -114,7 +127,8 @@ VenueService.seachVenue = async function (localityId, query, categories) {
           lat: venue.location.lat,
           lng: venue.location.lng
         } : undefined,
-        phone: venue.contact ? venue.contact.phone : undefined
+        phone: venue.contact ? venue.contact.phone : undefined,
+        previewPhotoUrl: `/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${venue.id}%s.jpg`
       };
       return await this.findOneOrCreate({ foursquareId: venue.id }, tmp);
     }));
