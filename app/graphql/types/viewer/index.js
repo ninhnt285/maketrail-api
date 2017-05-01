@@ -11,6 +11,7 @@ import UserType from '../user';
 import Trip from './Trip';
 import Locality from './Locality';
 import TripLocality from './TripLocality';
+import Weather from './Weather';
 import { localityConnection } from '../../connections/locality';
 import { categoryConnection } from '../../connections/category';
 import { venueConnection } from '../../connections/venue';
@@ -37,6 +38,7 @@ const ViewerType = new GraphQLObjectType({
     Trip,
     Locality,
     TripLocality,
+    Weather,
     searchLocality: localityConnection,
     searchVenue: venueConnection,
     allTrips: tripConnection,
