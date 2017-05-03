@@ -6,6 +6,7 @@ import {
   GraphQLID
 } from 'graphql';
 
+const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
 const VenueType = new GraphQLObjectType({
   name: 'Venue',
@@ -42,7 +43,7 @@ const VenueType = new GraphQLObjectType({
     previewPhotoUrl: {
       type: GraphQLString,
       resolve(obj) {
-        return prefix + obj.previewPhotoUrl;
+        return obj.previewPhotoUrl ? prefix + obj.previewPhotoUrl : prefix + DEFAULT_IMAGE;
       }
     },
   },

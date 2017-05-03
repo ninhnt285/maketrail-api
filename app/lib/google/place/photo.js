@@ -22,6 +22,10 @@ const dimens = [
     size: [250, null]
   },
   {
+    name: '500_square',
+    size: [500, 500]
+  },
+  {
     name: '500',
     size: [500, null]
   },
@@ -31,11 +35,14 @@ const dimens = [
   },
 ];
 
-export async function resize(filename) {
+export async function resize(filename, force = false) {
   const photo = path.join(__dirname, `../../../../static/${filename}`);
   const f = photo.split('.');
   dimens.forEach((dimen) => {
-    sharp(photo).resize(dimen.size[0], dimen.size[1]).toFile(`${f[0]}_${dimen.name}.${f[1]}`, null);
+    const fpath = `${f[0]}_${dimen.name}.${f[1]}`;
+    if (force || !fs.existsSync(fpath)) {
+      sharp(photo).resize(dimen.size[0], dimen.size[1]).toFile(fpath, null);
+    }
   });
 }
 
@@ -77,6 +84,24 @@ export async function getPhotoFromReference(referenceId, filename) {
   } catch (e) {
     console.log(e);
     return false;
+  }
+}
+
+export async function getPhotoFromPlaceId(placeId, filename) {
+  const options = {
+    method: 'GET',
+    uri: 'https://maps.googleapis.com/maps/api/place/details/json',
+    qs: {
+      key: GOOGLE_API_KEY,
+      placeid: placeId
+    },
+    encoding: 'utf8'
+  };
+  const res = JSON.parse(await request(options)
+    .then(ggRes => ggRes));
+  const locality = res.result;
+  if (locality.photos && locality.photos.length > 0) {
+    getPhotoFromReference(locality.photos[0].photo_reference, filename);
   }
 }
 
