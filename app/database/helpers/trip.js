@@ -59,26 +59,26 @@ TripService.inviteMember = async function (user, tripId, userId, email) {
     if (await this.canInviteMember(user)) {
       item = await TripModel.findById(tripId);
       if (item) {
-        let uid = userId;
-        if (!userId && email) {
-          const userTmp = await UserModel.findOne({ email });
-          if (userTmp) {
-            uid = userTmp.id;
-          } else {
-            return {
-              tripEncrypt: base64(tripId),
-              item
-            };
-          }
-        }
-        if (await this.isMember(uid, tripId)) {
+        if (await this.isMember(userId, tripId)) {
           return {
             errors: ['User is already a member of this group.']
           };
         }
-        await UserTripRelationModel.create({ userId: uid, tripId: item.id, roleId: 0 });
+        let userTmp = null;
+        if (userId) {
+          userTmp = await UserModel.findById(userId);
+        } else if (email) {
+          userTmp = await UserModel.findOne({ email });
+          if (!userTmp) {
+            // TODO: send invite email
+            return {
+              errors: ['We have sent an invitation to this email.']
+            };
+          }
+        }
+        await UserTripRelationModel.create({ userId: userTmp.id, tripId: item.id, roleId: 0 });
         return {
-          item
+          item: userTmp
         };
       }
     }

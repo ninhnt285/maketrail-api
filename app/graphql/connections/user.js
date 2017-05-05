@@ -1,5 +1,6 @@
 import {
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLString
 } from 'graphql';
 
 import {
@@ -26,7 +27,38 @@ const userConnection = {
   type: new GraphQLNonNull(UserConnection),
 
   args: {
-    ...connectionArgs
+    ...connectionArgs,
+    query: {
+      type: GraphQLString
+    }
+  },
+
+  resolve: async ({ id }, { ...args, query }, { user }) => {
+    if (!user) {
+      return connectionFromArray([], args);
+    }
+
+    try {
+      let users = [];
+      if (query) {
+        const q = new RegExp(`${query}`, 'i');
+        users = await UserModel.find({ $or: [{ username: q }, { email: q }] }).exec();
+      } else {
+        users = await UserModel.find();
+      }
+      return connectionFromArray(users, args);
+    } catch (e) {
+      console.log(e);
+      return connectionFromArray([], args);
+    }
+  }
+};
+
+const memberConnection = {
+  type: new GraphQLNonNull(UserConnection),
+
+  args: {
+    ...connectionArgs,
   },
 
   resolve: async ({ id }, { ...args }, { user }) => {
@@ -52,6 +84,7 @@ const userConnection = {
       }
     } catch (e) {
       console.log(e);
+      return connectionFromArray([], args);
     }
     return connectionFromArray([], args);
   }
@@ -59,5 +92,6 @@ const userConnection = {
 
 export {
   UserEdge,
-  userConnection
+  userConnection,
+  memberConnection
 };

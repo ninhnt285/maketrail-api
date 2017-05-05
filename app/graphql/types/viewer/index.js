@@ -6,6 +6,7 @@ import {
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
 import { tripConnection } from '../../connections/trip';
+import { userConnection } from '../../connections/user';
 import UserService from '../../../database/helpers/user';
 import UserType from '../user';
 import Trip from './Trip';
@@ -39,6 +40,7 @@ const ViewerType = new GraphQLObjectType({
     Locality,
     TripLocality,
     Weather,
+    searchUser: userConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,
     allTrips: tripConnection,

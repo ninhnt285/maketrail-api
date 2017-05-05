@@ -10,9 +10,9 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import TripType from '../../types/trip';
+import UserType from '../../types/user';
 import TripService from '../../../database/helpers/trip';
-import { TripEdge } from '../../connections/trip';
+import { UserEdge } from '../../connections/user';
 import { edgeFromNode } from '../../../lib/connection';
 
 const InviteMemberMutation = mutationWithClientMutationId({
@@ -39,17 +39,13 @@ const InviteMemberMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    trip: {
-      type: TripType,
+    user: {
+      type: UserType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: TripEdge,
+      type: UserEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    },
-    tripHash: {
-      type: GraphQLString,
-      resolve: ({ tripHash }) => tripHash
     }
   },
 

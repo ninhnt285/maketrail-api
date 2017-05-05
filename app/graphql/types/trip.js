@@ -7,7 +7,7 @@ import {
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { localityConnection } from '../connections/tripLocality';
-import { userConnection } from '../connections/user';
+import { memberConnection } from '../connections/user';
 
 const TripType = new GraphQLObjectType({
   name: 'Trip',
@@ -20,7 +20,7 @@ const TripType = new GraphQLObjectType({
       type: GraphQLString
     },
     localities: localityConnection,
-    members: userConnection
+    members: memberConnection
   },
 
   interfaces: [nodeInterface]
