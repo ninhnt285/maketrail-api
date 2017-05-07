@@ -44,6 +44,7 @@ const localityConnection = {
           const locality = await LocalityModel.findById(r.localityId).exec();
           return {
             id: r.id,
+            arrivalTime: r.arrivalTime,
             originLocality: locality
           };
         }

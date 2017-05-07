@@ -2,6 +2,7 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLObjectType,
+  GraphQLInt
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
@@ -17,6 +18,9 @@ const TripLocalityType = new GraphQLObjectType({
     },
     originLocality: {
       type: LocalityType
+    },
+    arrivalTime: {
+      type: GraphQLInt
     },
     localityVenues: localityVenueConnection
   },

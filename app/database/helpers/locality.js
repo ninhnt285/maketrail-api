@@ -8,6 +8,10 @@ const LocalityService = {};
 
 LocalityService.canAddLocality = async function (user, tripId) {
   return (user && tripId);
+}
+
+LocalityService.canUpdateLocality = async function (user, tripId) {
+  return (user && tripId);
 };
 
 LocalityService.canRemoveLocality = async function (user, tripId) {
@@ -89,11 +93,36 @@ LocalityService.findTripLocalityById = async function (id) {
     const originLocality = await LocalityModel.findById(tmp.localityId);
     return {
       id: tmp.id,
+      arrivalTime: tmp.arrivalTime,
       originLocality
     };
   } catch (e) {
     console.log(e);
     return null;
+  }
+};
+
+LocalityService.updateTripLocality = async function (user, tripId, tripLocalityId, args) {
+  try {
+    if (await this.canUpdateLocality(user, tripId)) {
+      const item = await TripLocalityRelationModel.findByIdAndUpdate(tripLocalityId, { $set: args }, { new: true })
+      const originLocality = await LocalityModel.findById(item.localityId);
+      return {
+        item: {
+          id: item.id,
+          arrivalTime: item.arrivalTime,
+          originLocality
+        }
+      };
+    }
+    return {
+      errors: ['You does not have permission to update trip.']
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
   }
 };
 
