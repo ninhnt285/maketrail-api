@@ -5,7 +5,9 @@ const TYPES = [
   'TripLocalityType',
   'CategoryType',
   'VenueType',
-  'LocalityVenueType'
+  'LocalityVenueType',
+  'FeedType',
+  'ItemType'
 ];
 
 export const Type = {
@@ -15,7 +17,9 @@ export const Type = {
   TRIP_LOCALITY: 'TripLocalityType',
   CATEGORY: 'CategoryType',
   VENUE: 'VenueType',
-  LOCALITY_VENUE: 'LocalityVenueType'
+  LOCALITY_VENUE: 'LocalityVenueType',
+  FEED: 'FeedType',
+  ITEM: 'ItemType'
 };
 
 function random() {
@@ -44,6 +48,7 @@ export function genId(type) {
 }
 
 export function getType(id) {
+  if (!id) return null;
   let newId = id;
   if (typeof id !== 'string') {
     if (id.toString) {

@@ -9,6 +9,10 @@ import updateTripLocalityMutation from './tripLocality/update';
 import removeTripLocalityMutation from './tripLocality/remove';
 import addLocalityVenueMutation from './localityVenue/add';
 import removeLocalityVenueMutation from './localityVenue/remove';
+import likeMutation from './activity/like';
+import shareMutation from './activity/share';
+import postMutation from './activity/post';
+import commentMutation from './activity/comment';
 
 export default {
   login: loginMutation,
@@ -24,5 +28,10 @@ export default {
   removeTripLocality: removeTripLocalityMutation,
 
   addLocalityVenue: addLocalityVenueMutation,
-  removeLocalityVenue: removeLocalityVenueMutation
+  removeLocalityVenue: removeLocalityVenueMutation,
+
+  like: likeMutation,
+  share: shareMutation,
+  post: postMutation,
+  comment: commentMutation
 };
