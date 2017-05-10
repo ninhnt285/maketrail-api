@@ -102,7 +102,7 @@ FeedService.post = async function (user, objectId, text, items) {
   try {
     const item = await FeedModel.create({
       userId: user.id,
-      objectId,
+      objectId: objectId || user.id,
       type: Activity.POST,
       privacy: 0,
       content: {

@@ -3,6 +3,14 @@ import path from 'path';
 import uniqid from 'uniqid';
 import crypto from 'crypto';
 import ItemModel from '../models/item';
+import { resize } from '../../lib/google/place/photo';
+
+const videoMimes = ['mkv', 'flv', 'vob', 'avi', 'mov', 'wmv', 'rm', 'rmvb', 'amv', 'mp4', 'mpg', 'mpeg', 'm4v', '3gp'];
+
+function isVideo(mimeType) {
+  if (videoMimes.indexOf(mimeType) >= 0) return true;
+  return false;
+}
 
 const ItemService = {};
 
@@ -48,18 +56,26 @@ ItemService.upload = async function (user, file, caption) {
     };
   }
   const mimeType = file.originalname.substring(file.originalname.lastIndexOf('.'));
-  const imageName = crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex') + mimeType;
-
-  const fileName = path.join(__dirname, '../../../static/items/', imageName);
+  let imageName;
+  const date = new Date();
+  const isV = isVideo(mimeType);
+  if (isV) {
+    imageName = `/item/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}.${mimeType}`;
+  } else {
+    imageName = `/item/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s.${mimeType}`;
+  }
+  const uri = imageName.replace('%s', '');
+  const fileName = path.join(__dirname, '../../../static/', uri);
 
   try {
     await fs.writeFile(fileName, file.buffer);
     const item = await ItemModel.create({
-      url: `/items/${user.id}${imageName}`,
+      url: imageName,
       userId: user.id,
       caption,
       privacy: 0
     });
+    if (!isV) resize(uri);
     return {
       item
     };

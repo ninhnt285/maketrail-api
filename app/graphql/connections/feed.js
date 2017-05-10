@@ -1,5 +1,6 @@
 import {
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLID
 } from 'graphql';
 
 import {
@@ -10,6 +11,7 @@ import {
 import FeedType from '../types/feed';
 import FeedModel from '../../database/models/feed';
 import { connectionFromArray } from '../../lib/connection';
+import { Type, getType } from '../../lib/idUtils';
 
 const {
   connectionType: FeedConnection,
@@ -23,15 +25,27 @@ const feedConnection = {
   type: new GraphQLNonNull(FeedConnection),
 
   args: {
-    ...connectionArgs
+    ...connectionArgs,
+    parentId: {
+      type: GraphQLID
+    }
   },
 
-  resolve: async ({ id }, { ...args }, { user }) => {
+  resolve: async ({ id }, { ...args, parentId }, { user }) => {
     if (!user) {
       return connectionFromArray([], args);
     }
-
-    const feeds = await FeedModel.find({}).exec();
+    let feeds = [];
+    if (!parentId) {
+      feeds = await FeedModel.find({}).exec();
+    } else {
+      const type = getType(parentId);
+      if (type === Type.USER) {
+        feeds = await FeedModel.find({ $or: [{ objectId: parentId }, { userId: parentId, type: 2 }] }).exec();
+      } else if (type === Type.TRIP) {
+        feeds = await FeedModel.find({ objectId: parentId }).exec();
+      }
+    }
 
     return connectionFromArray(feeds, args);
   }
