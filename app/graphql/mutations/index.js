@@ -31,9 +31,9 @@ export default {
   addLocalityVenue: addLocalityVenueMutation,
   removeLocalityVenue: removeLocalityVenueMutation,
 
-  like: likeMutation,
-  share: shareMutation,
-  post: postMutation,
-  comment: commentMutation,
-  upload: uploadMutation
+  addLike: likeMutation,
+  addShare: shareMutation,
+  addFeed: postMutation,
+  addComment: commentMutation,
+  addItem: uploadMutation
 };

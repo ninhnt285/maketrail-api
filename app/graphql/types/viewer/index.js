@@ -45,7 +45,7 @@ const ViewerType = new GraphQLObjectType({
     Weather,
     Feed,
     Item,
-    newFeeds: feedConnection,
+    allFeeds: feedConnection,
     searchUser: userConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,

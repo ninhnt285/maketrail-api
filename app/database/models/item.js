@@ -9,7 +9,8 @@ const itemSchema = new Schema(
     userId: Types.ObjectId,
     caption: String,
     url: String,
-    privacy: Number
+    privacy: Number,
+    parentId: Types.ObjectId
   }, {
     timestamps: true,
     toJSON: {
