@@ -3,7 +3,7 @@ import {
 } from 'graphql';
 import { Type, getType } from '../../../lib/idUtils';
 
-const ItemType = require('./item').default;
+const ItemType = require('./../item').default;
 const FeedPreviewType = require('./preview').default;
 
 const resolveType = (data) => {

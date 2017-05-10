@@ -13,6 +13,7 @@ import likeMutation from './activity/like';
 import shareMutation from './activity/share';
 import postMutation from './activity/post';
 import commentMutation from './activity/comment';
+import uploadMutation from './activity/upload';
 
 export default {
   login: loginMutation,
@@ -33,5 +34,6 @@ export default {
   like: likeMutation,
   share: shareMutation,
   post: postMutation,
-  comment: commentMutation
+  comment: commentMutation,
+  upload: uploadMutation
 };

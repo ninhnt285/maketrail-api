@@ -4,7 +4,6 @@ import {
   GraphQLEnumType,
   GraphQLObjectType,
   GraphQLString,
-  GraphQLList,
   GraphQLInt
 } from 'graphql';
 
@@ -13,8 +12,8 @@ import UserType from '../user';
 import UserService from '../../../database/helpers/user';
 import FeedService from '../../../database/helpers/feed';
 import FeedTargetType from './target';
-import ItemType from './item';
 import { getNodeFromId } from '../../../database/helpers/node';
+import { itemConnection } from '../../connections/item';
 
 const FeedType = new GraphQLObjectType({
   name: 'Feed',
@@ -63,14 +62,7 @@ const FeedType = new GraphQLObjectType({
           text: {
             type: GraphQLString
           },
-          items: {
-            type: new GraphQLList(ItemType),
-            resolve: parentValue => parentValue.items.map(id => ({
-              id,
-              caption: 'hehe',
-              sourceUrl: 'abc'
-            }))
-          }
+          items: itemConnection
         }
       })
     },

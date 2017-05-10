@@ -49,7 +49,9 @@ FeedService.like = async function (user, objectId) {
     };
   } catch (e) {
     console.log(e);
-    return null;
+    return {
+      errors: ['Internal error']
+    };
   }
 };
 
@@ -66,7 +68,9 @@ FeedService.share = async function (user, objectId) {
     };
   } catch (e) {
     console.log(e);
-    return null;
+    return {
+      errors: ['Internal error']
+    };
   }
 };
 
@@ -88,7 +92,9 @@ FeedService.comment = async function (user, objectId, parentId, text) {
     };
   } catch (e) {
     console.log(e);
-    return null;
+    return {
+      errors: ['Internal error']
+    };
   }
 };
 
@@ -109,7 +115,9 @@ FeedService.post = async function (user, objectId, text, items) {
     };
   } catch (e) {
     console.log(e);
-    return null;
+    return {
+      errors: ['Internal error']
+    };
   }
 };
 
