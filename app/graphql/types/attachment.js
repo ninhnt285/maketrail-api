@@ -1,15 +1,11 @@
 import {
   GraphQLString,
-  GraphQLObjectType,
+  GraphQLInterfaceType,
   GraphQLNonNull,
-  GraphQLID,
-  GraphQLEnumType
+  GraphQLID
 } from 'graphql';
 
-import { nodeInterface } from '../utils/nodeDefinitions';
-const DEFAULT_IMAGE = '/noImage/noImage_150_square.png';
-const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
-const AttachmentType = new GraphQLObjectType({
+const AttachmentType = new GraphQLInterfaceType({
   name: 'Attachment',
 
   fields: {
@@ -24,28 +20,24 @@ const AttachmentType = new GraphQLObjectType({
     },
     previewUrl: {
       type: GraphQLString,
-      resolve(obj) {
-        return obj.previewUrl ? prefix + obj.previewUrl : prefix + DEFAULT_IMAGE;
-      }
     },
     filePathUrl: {
       type: GraphQLString,
-      resolve(obj) {
-        return prefix + obj.url;
-      }
-    },
-    type: {
-      type: new GraphQLEnumType({
-        name: 'attachmentType',
-        values: {
-          PHOTO: { value: 0 },
-          VIDEO: { value: 1 }
-        }
-      })
     }
   },
 
-  interfaces: [nodeInterface]
+  resolveType: (data) => {
+    const type = data.type;
+    /*eslint-disable */
+    if (type === 0) {
+      return require('./photo').default;
+    }
+    if (type === 1) {
+      return require('./video').default;
+    }
+    /* eslint-enable */
+  },
+
 });
 
 export default AttachmentType;

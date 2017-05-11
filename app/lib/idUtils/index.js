@@ -19,7 +19,7 @@ export const Type = {
   VENUE: 'VenueType',
   LOCALITY_VENUE: 'LocalityVenueType',
   FEED: 'FeedType',
-  ITEM: 'AttachmentType'
+  ATTACHMENT: 'AttachmentType'
 };
 
 function random() {

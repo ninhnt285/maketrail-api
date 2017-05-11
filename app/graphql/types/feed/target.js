@@ -3,16 +3,12 @@ import {
 } from 'graphql';
 import { Type, getType } from '../../../lib/idUtils';
 
-const AttachmentType = require('./../attachment').default;
 const FeedPreviewType = require('./preview').default;
 const TripPreviewType = require('./trip').default;
 const UserPreviewType = require('./user').default;
 
 const resolveType = (data) => {
   const type = getType(data.id);
-  if (type === Type.ITEM) {
-    return AttachmentType;
-  }
 
   if (type === Type.FEED) {
     return FeedPreviewType;
@@ -29,7 +25,7 @@ const resolveType = (data) => {
 
 const FeedTargetType = new GraphQLUnionType({
   name: 'FeedTargetType',
-  types: [AttachmentType, FeedPreviewType, UserPreviewType, TripPreviewType],
+  types: [FeedPreviewType, UserPreviewType, TripPreviewType],
   resolveType
 });
 
