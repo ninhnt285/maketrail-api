@@ -7,7 +7,7 @@ const TYPES = [
   'VenueType',
   'LocalityVenueType',
   'FeedType',
-  'ItemType'
+  'AttachmentType'
 ];
 
 export const Type = {
@@ -19,7 +19,7 @@ export const Type = {
   VENUE: 'VenueType',
   LOCALITY_VENUE: 'LocalityVenueType',
   FEED: 'FeedType',
-  ITEM: 'ItemType'
+  ITEM: 'AttachmentType'
 };
 
 function random() {

@@ -16,7 +16,7 @@ import { FeedEdge } from '../../connections/feed';
 import { edgeFromNode } from '../../../lib/connection';
 
 const PostMutation = mutationWithClientMutationId({
-  name: 'Post',
+  name: 'AddPost',
 
   inputFields: {
     objectId: {

@@ -14,7 +14,7 @@ import Locality from './Locality';
 import TripLocality from './TripLocality';
 import Weather from './Weather';
 import Feed from './Feed';
-import Item from './Item';
+import Item from './Attachment';
 import { feedConnection } from '../../connections/feed';
 import { localityConnection } from '../../connections/locality';
 import { categoryConnection } from '../../connections/category';

@@ -35,5 +35,5 @@ export default {
   addShare: shareMutation,
   addFeed: postMutation,
   addComment: commentMutation,
-  addItem: uploadMutation
+  addAttachment: uploadMutation
 };

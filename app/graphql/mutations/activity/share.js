@@ -16,7 +16,7 @@ import { FeedEdge } from '../../connections/feed';
 import { edgeFromNode } from '../../../lib/connection';
 
 const ShareMutation = mutationWithClientMutationId({
-  name: 'Share',
+  name: 'AddShare',
 
   inputFields: {
     objectId: {

@@ -136,7 +136,8 @@ const makeDir = function () {
   const date = new Date();
   const dir = path.join(__dirname, `../../../../static/locality/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
   const dir2 = path.join(__dirname, `../../../../static/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
-  const dir3 = path.join(__dirname, `../../../../static/item/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
+  const dir3 = path.join(__dirname, `../../../../static/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
+  const dir4 = path.join(__dirname, `../../../../static/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}`);
   mkdirp(dir, (err) => {
     if (err) console.log(err);
   });
@@ -144,6 +145,9 @@ const makeDir = function () {
     if (err) console.log(err);
   });
   mkdirp(dir3, (err) => {
+    if (err) console.log(err);
+  });
+  mkdirp(dir4, (err) => {
     if (err) console.log(err);
   });
 };

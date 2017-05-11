@@ -10,7 +10,7 @@ const feedSchema = new Schema(
     objectId: Types.ObjectId,
     content: {
       text: String,
-      items: [Types.ObjectId]
+      attachments: [Types.ObjectId]
     },
     privacy: Number,
     type: Number

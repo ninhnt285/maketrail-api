@@ -16,7 +16,7 @@ import { FeedEdge } from '../../connections/feed';
 import { edgeFromNode } from '../../../lib/connection';
 
 const LikeMutation = mutationWithClientMutationId({
-  name: 'Like',
+  name: 'AddLike',
 
   inputFields: {
     objectId: {

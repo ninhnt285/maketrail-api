@@ -9,13 +9,13 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import ItemType from '../../types/item';
-import ItemService from '../../../database/helpers/item';
-import { ItemEdge } from '../../connections/item';
+import AttachmentType from '../../types/attachment';
+import AttachmentService from '../../../database/helpers/attachment';
+import { AttachmentEdge } from '../../connections/attachment';
 import { edgeFromNode } from '../../../lib/connection';
 
 const UploadMutation = mutationWithClientMutationId({
-  name: 'Upload',
+  name: 'AddAttachment',
 
   inputFields: {
     caption: {
@@ -32,12 +32,12 @@ const UploadMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    item: {
-      type: ItemType,
+    attachment: {
+      type: AttachmentType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: ItemEdge,
+      type: AttachmentEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
@@ -55,7 +55,7 @@ const UploadMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await ItemService.upload(user, file, caption);
+    const res = await AttachmentService.upload(user, file, caption);
     if (res.errors) {
       return {
         success: false,

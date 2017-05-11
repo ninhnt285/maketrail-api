@@ -13,7 +13,7 @@ import UserService from '../../../database/helpers/user';
 import FeedService from '../../../database/helpers/feed';
 import FeedTargetType from './target';
 import { getNodeFromId } from '../../../database/helpers/node';
-import { itemConnection } from '../../connections/item';
+import { attachmentConnection } from '../../connections/attachment';
 
 const FeedType = new GraphQLObjectType({
   name: 'Feed',
@@ -62,7 +62,7 @@ const FeedType = new GraphQLObjectType({
           text: {
             type: GraphQLString
           },
-          items: itemConnection
+          attachments: attachmentConnection
         }
       })
     },

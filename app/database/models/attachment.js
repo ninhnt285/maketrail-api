@@ -3,14 +3,17 @@ import preSave from '../preSave';
 
 const { Types } = mongoose.Schema;
 
-const itemSchema = new Schema(
+const attachmentSchema = new Schema(
   {
     _id: Types.ObjectId,
     userId: Types.ObjectId,
     caption: String,
+    name: String,
     url: String,
+    previewUrl: String,
     privacy: Number,
-    parentId: Types.ObjectId
+    parentId: Types.ObjectId,
+    type: Number
   }, {
     timestamps: true,
     toJSON: {
@@ -22,8 +25,8 @@ const itemSchema = new Schema(
   }
 );
 
-itemSchema.pre('save', preSave('ItemType'));
+attachmentSchema.pre('save', preSave('AttachmentType'));
 
-const ItemModel = mongoose.model('Item', itemSchema);
+const AttachmentModel = mongoose.model('Attachment', attachmentSchema);
 
-export default ItemModel;
+export default AttachmentModel;
