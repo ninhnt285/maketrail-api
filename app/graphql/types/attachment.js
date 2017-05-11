@@ -2,7 +2,8 @@ import {
   GraphQLString,
   GraphQLObjectType,
   GraphQLNonNull,
-  GraphQLID
+  GraphQLID,
+  GraphQLEnumType
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
@@ -33,6 +34,15 @@ const AttachmentType = new GraphQLObjectType({
         return prefix + obj.url;
       }
     },
+    type: {
+      type: new GraphQLEnumType({
+        name: 'attachmentType',
+        values: {
+          PHOTO: { value: 0 },
+          VIDEO: { value: 1 }
+        }
+      })
+    }
   },
 
   interfaces: [nodeInterface]

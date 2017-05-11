@@ -46,6 +46,7 @@ AttachmentService.upload = async function (user, file, caption) {
     // const item = await AttachmentModel.create({
     //   name: 'test.jpg',
     //   url: imageName,
+    //   type: 1,
     //   // previewUrl: imageName.replace('%s', '_150_square'),
     //   userId: user.id,
     //   caption,
