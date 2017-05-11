@@ -16,7 +16,7 @@ import { FeedEdge } from '../../connections/feed';
 import { edgeFromNode } from '../../../lib/connection';
 
 const PostMutation = mutationWithClientMutationId({
-  name: 'AddPost',
+  name: 'AddFeed',
 
   inputFields: {
     objectId: {
@@ -24,6 +24,9 @@ const PostMutation = mutationWithClientMutationId({
     },
     text: {
       type: GraphQLString
+    },
+    attachmentIds: {
+      type: new GraphQLList(GraphQLID)
     }
   },
 
@@ -46,7 +49,7 @@ const PostMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ objectId, text }, { user }) => {
+  mutateAndGetPayload: async ({ objectId, text, attachmentIds }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -59,7 +62,7 @@ const PostMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await FeedService.post(user, objectId, text, []);
+    const res = await FeedService.post(user, objectId, text, attachmentIds);
     if (res.errors) {
       return {
         success: false,
