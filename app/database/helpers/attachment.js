@@ -42,21 +42,21 @@ AttachmentService.getById = async function (user, id) {
 
 AttachmentService.upload = async function (user, file, caption) {
   if (!file) {
-    const imageName = '/photo/test%s.jpg';
-    const item = await AttachmentModel.create({
-      name: 'test.jpg',
-      url: imageName,
-      // previewUrl: imageName.replace('%s', '_150_square'),
-      userId: user.id,
-      caption,
-      privacy: 0
-    });
-    return {
-      item
-    };
+    // const imageName = '/photo/test%s.jpg';
+    // const item = await AttachmentModel.create({
+    //   name: 'test.jpg',
+    //   url: imageName,
+    //   // previewUrl: imageName.replace('%s', '_150_square'),
+    //   userId: user.id,
+    //   caption,
+    //   privacy: 0
+    // });
     // return {
-    //   errors: ['Invalid file']
+    //   item
     // };
+    return {
+      errors: ['Invalid file']
+    };
   }
   const mimeType = file.originalname.substring(file.originalname.lastIndexOf('.'));
   let imageName;
@@ -77,6 +77,7 @@ AttachmentService.upload = async function (user, file, caption) {
     const item = await AttachmentModel.create({
       name: file.originalname,
       url: imageName,
+      type: isV ? 1 : 0,
       previewUrl,
       userId: user.id,
       caption,
