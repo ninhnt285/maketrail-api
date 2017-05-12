@@ -1,43 +1,27 @@
 import {
-  GraphQLString,
-  GraphQLInterfaceType,
-  GraphQLNonNull,
-  GraphQLID
+  GraphQLUnionType
 } from 'graphql';
+import { Type, getType } from '../../lib/idUtils';
 
-const AttachmentType = new GraphQLInterfaceType({
+const PhotoType = require('./photo').default;
+const VideoType = require('./video').default;
+
+const resolveType = (data) => {
+  const type = getType(data.id);
+
+  if (type === Type.PHOTO) {
+    return PhotoType;
+  }
+
+  if (type === Type.VIDEO) {
+    return VideoType;
+  }
+};
+
+const AttachmentType = new GraphQLUnionType({
   name: 'Attachment',
-
-  fields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLID)
-    },
-    name: {
-      type: GraphQLString
-    },
-    caption: {
-      type: GraphQLString
-    },
-    previewUrl: {
-      type: GraphQLString,
-    },
-    filePathUrl: {
-      type: GraphQLString,
-    }
-  },
-
-  resolveType: (data) => {
-    const type = data.type;
-    /*eslint-disable */
-    if (type === 0) {
-      return require('./photo').default;
-    }
-    if (type === 1) {
-      return require('./video').default;
-    }
-    /* eslint-enable */
-  },
-
+  types: [PhotoType, VideoType],
+  resolveType
 });
 
 export default AttachmentType;

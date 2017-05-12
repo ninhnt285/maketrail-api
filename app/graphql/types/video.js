@@ -5,7 +5,6 @@ import {
   GraphQLID,
   GraphQLFloat
 } from 'graphql';
-import AttachmentType from './attachment';
 import { nodeInterface } from '../utils/nodeDefinitions';
 
 const DEFAULT_IMAGE = '/noImage/noImage_150_square.png';
@@ -41,7 +40,7 @@ const VideoType = new GraphQLObjectType({
     }
   },
 
-  interfaces: [AttachmentType, nodeInterface]
+  interfaces: [nodeInterface]
 });
 
 export default VideoType;

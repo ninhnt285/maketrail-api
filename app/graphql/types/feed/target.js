@@ -3,29 +3,24 @@ import {
 } from 'graphql';
 import { Type, getType } from '../../../lib/idUtils';
 
-const FeedPreviewType = require('./preview').default;
-const TripPreviewType = require('./trip').default;
-const UserPreviewType = require('./user').default;
+const TripType = require('../trip').default;
+const UserType = require('../user').default;
 
 const resolveType = (data) => {
   const type = getType(data.id);
 
-  if (type === Type.FEED) {
-    return FeedPreviewType;
-  }
-
   if (type === Type.USER) {
-    return UserPreviewType;
+    return TripType;
   }
 
   if (type === Type.TRIP) {
-    return TripPreviewType;
+    return UserType;
   }
 };
 
 const FeedTargetType = new GraphQLUnionType({
   name: 'FeedTargetType',
-  types: [FeedPreviewType, UserPreviewType, TripPreviewType],
+  types: [TripType, UserType],
   resolveType
 });
 

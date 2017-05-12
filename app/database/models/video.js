@@ -3,7 +3,7 @@ import preSave from '../preSave';
 
 const { Types } = mongoose.Schema;
 
-const attachmentSchema = new Schema(
+const videoSchema = new Schema(
   {
     _id: Types.ObjectId,
     userId: Types.ObjectId,
@@ -12,8 +12,7 @@ const attachmentSchema = new Schema(
     url: String,
     previewUrl: String,
     privacy: Number,
-    parentId: Types.ObjectId,
-    type: Number
+    parentId: Types.ObjectId
   }, {
     timestamps: true,
     toJSON: {
@@ -25,8 +24,8 @@ const attachmentSchema = new Schema(
   }
 );
 
-attachmentSchema.pre('save', preSave('AttachmentType'));
+videoSchema.pre('save', preSave('VideoType'));
 
-const AttachmentModel = mongoose.model('Attachment', attachmentSchema);
+const VideoModel = mongoose.model('Video', videoSchema);
 
-export default AttachmentModel;
+export default VideoModel;

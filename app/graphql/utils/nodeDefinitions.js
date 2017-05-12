@@ -3,9 +3,10 @@ import { getType, Type } from '../../lib/idUtils';
 import UserModel from '../../database/models/user';
 import TripModel from '../../database/models/trip';
 import VenueModel from '../../database/models/venue';
+import PhotoModel from '../../database/models/photo';
+import VideoModel from '../../database/models/video';
 import CategoryModel from '../../database/models/category';
 import LocalityModel from '../../database/models/locality';
-import AttachmentModel from '../../database/models/attachment';
 import FeedModel from '../../database/models/feed';
 import LocalityService from '../../database/helpers/locality';
 import VenueService from '../../database/helpers/venue';
@@ -26,7 +27,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.CATEGORY: return CategoryModel.findById(globalId);
       case Type.VENUE: return VenueModel.findById(globalId);
       case Type.LOCALITY_VENUE: return VenueService.findLocalityVenueById(globalId);
-      case Type.ATTACHMENT: return AttachmentModel.findById(globalId);
+      case Type.PHOTO: return PhotoModel.findById(globalId);
+      case Type.VIDEO: return VideoModel.findById(globalId);
       case Type.FEED: return FeedModel.findById(globalId);
       default: return {
         id: 'viewer-fixed'
@@ -49,14 +51,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.VENUE: return require('../types/venue').default;
       case Type.LOCALITY_VENUE: return require('../types/localityVenue').default;
       case Type.FEED: return require('../types/feed').default;
-      case Type.ATTACHMENT: {
-        if (obj.type === 0) {
-          return require('../types/photo').default;
-        }
-        if (obj.type === 1) {
-          return require('../types/video').default;
-        }
-      }
+      case Type.PHOTO: return require('../types/photo').default;
+      case Type.VIDEO: return require('../types/video').default;
       default: return require('../types/viewer').default;
       /* eslint-enable */
     }

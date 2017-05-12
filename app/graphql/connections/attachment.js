@@ -8,7 +8,7 @@ import {
 } from 'graphql-relay';
 
 import AttachmentType from '../types/attachment';
-import AttachmentModel from '../../database/models/attachment';
+import AttachmentService from '../../database/helpers/attachment';
 import { connectionFromArray } from '../../lib/connection';
 
 const {
@@ -30,7 +30,7 @@ const attachmentConnection = {
     if (!user) {
       return connectionFromArray([], args);
     }
-    const tmps = await Promise.all(attachments.map(attachment => AttachmentModel.findById(attachment)));
+    const tmps = await Promise.all(attachments.map(attachment => AttachmentService.findById(attachment)));
     return connectionFromArray(tmps, args);
   }
 };

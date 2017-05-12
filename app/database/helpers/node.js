@@ -1,7 +1,6 @@
 import UserModel from '../models/user';
 import TripModel from '../models/trip';
 import FeedModel from '../models/feed';
-import ItemModel from '../models/attachment';
 import { getType, Type } from '../../lib/idUtils';
 
 function getModelFromType(type) {
@@ -12,8 +11,6 @@ function getModelFromType(type) {
       return TripModel;
     case Type.FEED:
       return FeedModel;
-    case Type.ITEM:
-      return ItemModel;
     default:
       return null;
   }
