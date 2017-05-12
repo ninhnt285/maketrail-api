@@ -5,10 +5,10 @@ import crypto from 'crypto';
 import AttachmentModel from '../models/attachment';
 import { resize } from '../../lib/google/place/photo';
 
-const videoMimes = ['mkv', 'flv', 'vob', 'avi', 'mov', 'wmv', 'rm', 'rmvb', 'amv', 'mp4', 'mpg', 'mpeg', 'm4v', '3gp'];
+const videoMimes = ['.mkv', '.flv', '.vob', '.avi', '.mov', '.wmv', '.rm', '.rmvb', '.amv', '.mp4', '.mpg', '.mpeg', '.m4v', '.3gp'];
 
 function isVideo(mimeType) {
-  if (videoMimes.indexOf(mimeType) >= 0) return true;
+  if (videoMimes.indexOf(mimeType.toLowerCase()) >= 0) return true;
   return false;
 }
 
@@ -42,22 +42,22 @@ AttachmentService.getById = async function (user, id) {
 
 AttachmentService.upload = async function (user, file, caption) {
   if (!file) {
-    // const imageName = '/photo/test%s.jpg';
-    // const item = await AttachmentModel.create({
-    //   name: 'test.jpg',
-    //   url: imageName,
-    //   type: 1,
-    //   // previewUrl: imageName.replace('%s', '_150_square'),
-    //   userId: user.id,
-    //   caption,
-    //   privacy: 0
-    // });
-    // return {
-    //   item
-    // };
+    const imageName = '/photo/test%s.jpg';
+    const item = await AttachmentModel.create({
+      name: 'test.jpg',
+      url: imageName,
+      type: 1,
+      // previewUrl: imageName.replace('%s', '_150_square'),
+      userId: user.id,
+      caption,
+      privacy: 0
+    });
     return {
-      errors: ['Invalid file']
+      item
     };
+    // return {
+    //   errors: ['Invalid file']
+    // };
   }
   const mimeType = file.originalname.substring(file.originalname.lastIndexOf('.'));
   let imageName;
@@ -65,9 +65,9 @@ AttachmentService.upload = async function (user, file, caption) {
   const date = new Date();
   const isV = isVideo(mimeType);
   if (isV) {
-    imageName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}.${mimeType}`;
+    imageName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}${mimeType}`;
   } else {
-    imageName = `/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s.${mimeType}`;
+    imageName = `/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s${mimeType}`;
     previewUrl = imageName.replace('%s', '_150_square');
   }
   const uri = imageName.replace('%s', '');

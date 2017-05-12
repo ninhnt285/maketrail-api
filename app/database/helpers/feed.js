@@ -98,7 +98,7 @@ FeedService.comment = async function (user, objectId, parentId, text) {
   }
 };
 
-FeedService.post = async function (user, objectId, text, items) {
+FeedService.post = async function (user, objectId, text, attachments) {
   try {
     const item = await FeedModel.create({
       userId: user.id,
@@ -107,7 +107,7 @@ FeedService.post = async function (user, objectId, text, items) {
       privacy: 0,
       content: {
         text,
-        items
+        attachments
       }
     });
     return {
