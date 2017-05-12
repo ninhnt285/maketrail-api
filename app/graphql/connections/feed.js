@@ -51,7 +51,29 @@ const feedConnection = {
   }
 };
 
+const feedTripConnection = {
+  type: new GraphQLNonNull(FeedConnection),
+
+  args: {
+    ...connectionArgs,
+  },
+
+  resolve: async ({ id }, { ...args }, { user }) => {
+    if (!user) {
+      return connectionFromArray([], args);
+    }
+    let feeds = [];
+    const type = getType(id);
+    if (type === Type.TRIP) {
+      feeds = await FeedModel.find({ objectId: id }).exec();
+    }
+
+    return connectionFromArray(feeds, args);
+  }
+};
+
 export {
   FeedEdge,
-  feedConnection
+  feedConnection,
+  feedTripConnection
 };

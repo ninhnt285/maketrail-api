@@ -55,17 +55,11 @@ const FeedType = new GraphQLObjectType({
       resolve: parentValue => getNodeFromId(parentValue.objectId)
     },
 
-    content: {
-      type: new GraphQLObjectType({
-        name: 'feedContent',
-        fields: {
-          text: {
-            type: GraphQLString
-          },
-          attachments: attachmentConnection
-        }
-      })
+    text: {
+      type: GraphQLString
     },
+
+    attachments: attachmentConnection,
 
     statistics: {
       type: new GraphQLObjectType({

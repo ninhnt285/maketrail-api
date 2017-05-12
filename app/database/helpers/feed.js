@@ -105,10 +105,8 @@ FeedService.post = async function (user, objectId, text, attachments) {
       objectId: objectId || user.id,
       type: Activity.POST,
       privacy: 0,
-      content: {
-        text,
-        attachments
-      }
+      text,
+      attachments
     });
     return {
       item

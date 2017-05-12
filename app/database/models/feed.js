@@ -8,10 +8,8 @@ const feedSchema = new Schema(
     _id: Types.ObjectId,
     userId: Types.ObjectId,
     objectId: Types.ObjectId,
-    content: {
-      text: String,
-      attachments: [Types.ObjectId]
-    },
+    text: String,
+    attachments: [Types.ObjectId],
     privacy: Number,
     type: Number
   }, {
