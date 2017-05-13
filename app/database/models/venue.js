@@ -14,6 +14,9 @@ const venueSchema = new Schema(
       lng: Number
     },
     phone: String,
+    rating: Number,
+    openHours: String,
+    price: Number,
     previewPhotoUrl: String
   }, {
     timestamps: true,

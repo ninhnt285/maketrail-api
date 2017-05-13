@@ -26,25 +26,20 @@ const feedConnection = {
 
   args: {
     ...connectionArgs,
-    parentId: {
+    objectId: {
       type: GraphQLID
     }
   },
 
-  resolve: async ({ id }, { ...args, parentId }, { user }) => {
+  resolve: async ({ id }, { ...args, objectId }, { user }) => {
     if (!user) {
       return connectionFromArray([], args);
     }
     let feeds = [];
-    if (!parentId) {
+    if (!objectId) {
       feeds = await FeedModel.find({}).exec();
     } else {
-      const type = getType(parentId);
-      if (type === Type.USER) {
-        feeds = await FeedModel.find({ $or: [{ objectId: parentId }, { userId: parentId, type: 2 }] }).exec();
-      } else if (type === Type.TRIP) {
-        feeds = await FeedModel.find({ objectId: parentId }).exec();
-      }
+      feeds = await FeedModel.find({ objectId }).exec();
     }
 
     return connectionFromArray(feeds, args);

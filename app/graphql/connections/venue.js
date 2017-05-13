@@ -50,7 +50,26 @@ const venueConnection = {
   }
 };
 
+const recommendVenueConnection = {
+  type: new GraphQLNonNull(VenueConnection),
+
+  args: {
+    ...connectionArgs,
+  },
+
+  resolve: async ({ originLocality }, { ...args, }, { user }) => {
+    if (!user) {
+      return connectionFromArray([], args);
+    }
+    const venues = await VenueService.exploreVenue(originLocality.id);
+    if (venues) return connectionFromArray(venues, args);
+
+    return connectionFromArray([], []);
+  }
+};
+
 export {
   VenueEdge,
   venueConnection,
+  recommendVenueConnection
 };

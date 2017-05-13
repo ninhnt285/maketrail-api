@@ -23,6 +23,7 @@ VenueService.findOneOrCreate = async function (condition, doc) {
       // eslint-disable-next-line no-param-reassign
       delete doc.previewPhotoUrl;
     }
+
     venue = await VenueModel.create(doc);
     resize(photoUri);
   }
@@ -128,6 +129,47 @@ VenueService.seachVenue = async function (localityId, query, categories) {
           lng: venue.location.lng
         } : undefined,
         phone: venue.contact ? venue.contact.phone : undefined,
+        price: venue.price ? venue.price.tier : undefined,
+        previewPhotoUrl: `/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${venue.id}%s.jpg`
+      };
+      return await this.findOneOrCreate({ foursquareId: venue.id }, tmp);
+    }));
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
+VenueService.exploreVenue = async function (localityId) {
+  try {
+    const locality = await LocalityModel.findById(localityId);
+    const options = {
+      method: 'GET',
+      uri: 'https://api.foursquare.com/v2/venues/explore',
+      qs: {
+        oauth_token: FOURSQUARE_TOKEN,
+        v: '20170428',
+        limit: 10,
+        ll: `${locality.location.lat},${locality.location.lng}`
+      },
+      encoding: 'utf8'
+    };
+    const res = JSON.parse(await request(options)
+      .then(ggRes => ggRes));
+    const venues = res.response.groups[0].items;
+    const date = new Date();
+    return await Promise.all(venues.map(async ({ venue }) => {
+      const tmp = {
+        foursquareId: venue.id,
+        name: venue.name,
+        address: venue.location ? venue.location.address : undefined,
+        location: venue.location ? {
+          lat: venue.location.lat,
+          lng: venue.location.lng
+        } : undefined,
+        phone: venue.contact ? venue.contact.phone : undefined,
+        price: venue.price ? venue.price.tier : undefined,
+        rating: venue.rating ? venue.rating : undefined,
         previewPhotoUrl: `/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${venue.id}%s.jpg`
       };
       return await this.findOneOrCreate({ foursquareId: venue.id }, tmp);
