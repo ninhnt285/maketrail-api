@@ -80,7 +80,7 @@ AttachmentService.upload = async function (user, file, caption) {
       imageName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}${mimeType}`;
       uri = imageName.replace('%s', '');
       fileName = path.join(__dirname, '../../../static/', uri);
-      await fs.writeFile(fileName, file.buffer);
+      fs.writeFileSync(fileName, file.buffer);
       item = await PhotoModel.create({
         name: file.originalname,
         url: imageName,
@@ -93,7 +93,7 @@ AttachmentService.upload = async function (user, file, caption) {
       previewUrl = imageName.replace('%s', '_150_square');
       uri = imageName.replace('%s', '');
       fileName = path.join(__dirname, '../../../static/', uri);
-      await fs.writeFile(fileName, file.buffer);
+      fs.writeFileSync(fileName, file.buffer);
       item = await PhotoModel.create({
         name: file.originalname,
         url: imageName,

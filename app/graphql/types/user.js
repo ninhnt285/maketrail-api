@@ -28,30 +28,8 @@ const UserType = new GraphQLObjectType({
 
     profilePicUrl: {
       type: GraphQLString,
-    },
-
-    facebook: {
-      type: new GraphQLObjectType({
-        name: 'facebook',
-        fields: {
-          id: {
-            type: GraphQLString,
-          },
-
-          name: {
-            type: GraphQLString,
-          },
-
-          email: {
-            type: GraphQLString,
-          },
-
-          token: {
-            type: GraphQLString,
-          },
-        }
-      })
     }
+
   },
   interfaces: [nodeInterface]
 });

@@ -109,16 +109,16 @@ UserService.loginViaSocialNetwork = async function (provider, token, tokenSecret
     if (provider === 'facebook') {
       socialInfo = await SocialUtils.FACEBOOK.getInfo(token);
       socialInfo.token = token;
-      user = await this.findOneOrCreate({ 'facebook.id': socialInfo.id }, { facebook: socialInfo });
+      user = await this.findOneOrCreate({ 'facebook.id': socialInfo.id }, { facebook: socialInfo, fullName: socialInfo.name, email: socialInfo.email });
     } else if (provider === 'google') {
       socialInfo = await SocialUtils.GOOGLE.getInfo(token);
       socialInfo.token = token;
-      user = await this.findOneOrCreate({ 'google.id': socialInfo.id }, { google: socialInfo });
+      user = await this.findOneOrCreate({ 'google.id': socialInfo.id }, { google: socialInfo, fullName: socialInfo.name, email: socialInfo.email });
     } else if (provider === 'twitter') {
       socialInfo = await SocialUtils.TWITTER.getInfo(token, tokenSecret);
       socialInfo.token = token;
       socialInfo.tokenSecret = tokenSecret;
-      user = await this.findOneOrCreate({ 'twitter.id': socialInfo.id }, { twitter: socialInfo });
+      user = await this.findOneOrCreate({ 'twitter.id': socialInfo.id }, { twitter: socialInfo, fullName: socialInfo.name, email: socialInfo.email });
     }
     const accessToken = generateToken(user);
     return {

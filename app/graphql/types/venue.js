@@ -3,7 +3,8 @@ import {
   GraphQLString,
   GraphQLObjectType,
   GraphQLFloat,
-  GraphQLID
+  GraphQLID,
+  GraphQLEnumType
 } from 'graphql';
 
 const DEFAULT_IMAGE = '/noImage/noImage%s.png';
@@ -39,6 +40,20 @@ const VenueType = new GraphQLObjectType({
     },
     phone: {
       type: GraphQLString
+    },
+    price: {
+      type: new GraphQLEnumType({
+        name: 'venuePrice',
+        values: {
+          VERY_CHEAP: { value: 1 },
+          CHEAP: { value: 2 },
+          AFFORDABLE: { value: 3 },
+          EXPENSIVE: { value: 4 }
+        }
+      })
+    },
+    rating: {
+      type: GraphQLFloat
     },
     previewPhotoUrl: {
       type: GraphQLString,
