@@ -9,6 +9,7 @@
     "update-schema": "NODE_PATH=./app babel-node app/graphql/updateSchema.js",
     "start": "babel-node app/server.js",
     "download-file": "babel-node app/scripts/downloadFile",
+    "create-table-country": "babel-node app/scripts/createCountryDB",
     "add-size": "babel-node app/scripts/addSize",
     "crawl": "babel-node app/scripts/crawl"
   },
