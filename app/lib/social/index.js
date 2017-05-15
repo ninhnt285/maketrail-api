@@ -37,7 +37,8 @@ const Service = {
         return {
           id: jsonObj.id,
           name: jsonObj.displayName,
-          email: jsonObj.emails[0].value
+          email: jsonObj.emails[0].value,
+          username: jsonObj.emails[0].value.split('@')[0]
         };
       });
     }
@@ -54,7 +55,8 @@ const Service = {
       return await T.get('account/verify_credentials', { include_email: true }).then(res => ({
         email: res.data.email,
         id: res.data.id,
-        name: res.data.name
+        name: res.data.name,
+        username: res.data.screen_name
       }));
     }
   },

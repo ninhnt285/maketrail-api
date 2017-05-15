@@ -14,7 +14,8 @@ import Locality from './Locality';
 import TripLocality from './TripLocality';
 import Weather from './Weather';
 import Feed from './Feed';
-import Item from './Attachment';
+import Attachment from './Attachment';
+import Venue from './Venue';
 import { feedConnection } from '../../connections/feed';
 import { localityConnection } from '../../connections/locality';
 import { categoryConnection } from '../../connections/category';
@@ -44,7 +45,8 @@ const ViewerType = new GraphQLObjectType({
     TripLocality,
     Weather,
     Feed,
-    Item,
+    Attachment,
+    Venue,
     allFeeds: feedConnection,
     searchUser: userConnection,
     searchLocality: localityConnection,

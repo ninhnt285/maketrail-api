@@ -24,6 +24,9 @@ const UpdateTripMutation = mutationWithClientMutationId({
     },
     name: {
       type: GraphQLString
+    },
+    exportedVideo: {
+      type: GraphQLBoolean
     }
   },
 

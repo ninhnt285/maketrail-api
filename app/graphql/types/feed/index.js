@@ -59,6 +59,11 @@ const FeedType = new GraphQLObjectType({
       type: GraphQLString
     },
 
+    timestamp: {
+      type: GraphQLInt,
+      resolve: parentValue => parentValue.createdAt.getTime() / 1000
+    },
+
     attachments: attachmentConnection,
 
     statistics: {

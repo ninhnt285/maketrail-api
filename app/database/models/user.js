@@ -15,20 +15,23 @@ const userSchema = new Schema(
       id: String,
       token: String,
       email: String,
-      name: String
+      name: String,
+      username: String
     },
     google: {
       id: String,
       token: String,
       email: String,
-      name: String
+      name: String,
+      username: String
     },
     twitter: {
       id: String,
       token: String,
       tokenSecret: String,
       email: String,
-      name: String
+      name: String,
+      username: String
     }
   }, {
     timestamps: true,

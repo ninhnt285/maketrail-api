@@ -2,7 +2,8 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLString,
-  GraphQLObjectType
+  GraphQLObjectType,
+  GraphQLBoolean
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
@@ -18,6 +19,9 @@ const TripType = new GraphQLObjectType({
     },
     name: {
       type: GraphQLString
+    },
+    exportedVideo: {
+      type: GraphQLBoolean
     },
     localities: localityConnection,
     members: memberConnection

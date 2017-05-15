@@ -11,7 +11,8 @@
     "download-file": "babel-node app/scripts/downloadFile",
     "create-table-country": "babel-node app/scripts/createCountryDB",
     "add-size": "babel-node app/scripts/addSize",
-    "crawl": "babel-node app/scripts/crawl"
+    "crawl": "babel-node app/scripts/crawl",
+    "remove-invalid-user": "babel-node app/scripts/removeInvalidUser"
   },
   "repository": {
     "type": "git",
