@@ -2,54 +2,48 @@
 /**
  * Created by hoangtran on 5/15/2017.
  */
-import mongoose, { Schema } from 'mongoose';
+import fs from 'fs';
+import parser from 'xml2json';
 import connectDb from '../database/connectDb';
+import CountryModel from '../database/models/country';
 
-const { Types } = mongoose.Schema;
-
-const countrySchema = new Schema(
-  {
-    name: String,
-    alpha2: String,
-    alpha3: String,
-    description: String
-  }, {
-    toJSON: {
-      virtuals: true
-    },
-    toObject: {
-      virtuals: true
-    }
-  }
-);
-
-const CountryModel = mongoose.model('Country', countrySchema);
-
-function construct(array){
-  return {
-    name: array[0],
-    alpha2: array[1],
-    alpha3: array[2]
-  };
+function camelize(str) {
+  return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => index === 0 ? letter.toLowerCase() : letter.toUpperCase()).replace(/\s+/g, '');
 }
 
 async function onConnected() {
-  const docs = [];
-  var lineReader = require('readline').createInterface({
-    input: require('fs').createReadStream('./countries.txt')
-  });
-
-  lineReader.on('line', async function (line) {
-    docs.push(construct(line.split('\t')));
-  });
-
-  lineReader.on('close', function () {
-    console.log(docs.length);
-    CountryModel.remove({}, function (err){
-      console.log(err);
-    });
-    CountryModel.insertMany(docs, function (err){
-      console.log(err);
+  await CountryModel.remove({});
+  fs.readFile('./static/maps/svg/worldHigh.svg', (err, data) => {
+    const json = parser.toJson(data);
+    const items = JSON.parse(json).svg.g.path;
+    let itemsProcessed = items.length;
+    items.forEach(async (item) => {
+      let svgFileName = camelize(item.title);
+      if (svgFileName === 'unitedStates') {
+        svgFileName = 'usa';
+      }
+      svgFileName += 'High.svg';
+      const tmp = await CountryModel.create({ name: item.title, svgId: item.id, svgFileName });
+      console.log(tmp.svgFileName);
+      fs.readFile(`./static/maps/svg/${tmp.svgFileName}`, (err2, data2) => {
+        if (!err2) {
+          const json2 = parser.toJson(data2);
+          const items2 = JSON.parse(json2).svg.g.path;
+          if (Array.isArray(items2)) {
+            items2.forEach(async (item2) => {
+              await CountryModel.create({ name: item2.title, svgId: item2.id, parentId: tmp.svgId });
+            });
+          } else {
+            CountryModel.create({ name: items2.title, svgId: items2.id, parentId: tmp.id }, (err, data) => {
+            });
+          }
+        }
+      });
+      console.log(`done : ${tmp.svgFileName}`);
+      itemsProcessed -= 1;
+      if (itemsProcessed === 0) {
+        console.log('all done');
+      }
     });
   });
 }

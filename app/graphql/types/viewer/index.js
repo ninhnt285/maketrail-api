@@ -1,7 +1,8 @@
 import {
   GraphQLNonNull,
   GraphQLID,
-  GraphQLObjectType
+  GraphQLObjectType,
+  GraphQLList
 } from 'graphql';
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
@@ -9,7 +10,10 @@ import { tripConnection } from '../../connections/trip';
 import { userConnection } from '../../connections/user';
 // import { commentConnection } from '../../connections/comment';
 import UserService from '../../../database/helpers/user';
+import CountryModel from '../../../database/models/country';
+import TraceModel from '../../../database/models/trace';
 import UserType from '../user';
+import CountryType from '../country';
 import Trip from './Trip';
 import Locality from './Locality';
 import TripLocality from './TripLocality';
@@ -39,6 +43,42 @@ const ViewerType = new GraphQLObjectType({
         }
 
         return null;
+      }
+    },
+
+    mapAreas: {
+      type: new GraphQLList(CountryType),
+      args: {
+        id: {
+          type: GraphQLID
+        },
+        userId: {
+          type: GraphQLID
+        }
+      },
+      resolve: async (parentValue, { id, userId }, { user }) => {
+        if (!userId) {
+          // eslint-disable-next-line no-param-reassign
+          userId = user.id;
+        }
+        const items = await CountryModel.find({ parentId: id });
+        const visiteds = await TraceModel.find({ parentId: id, userId });
+        return items.map((item) => {
+          for (let i=0; i < visiteds.length; i++) {
+            if (item.id === visiteds[i].countryId){
+              return {
+                code: item.svgId,
+                name: item.name,
+                status: visiteds[i].status ? 2 : 1
+              };
+            }
+          }
+          return {
+            code: item.svgId,
+            name: item.name,
+            status: 0
+          };
+        });
       }
     },
 
