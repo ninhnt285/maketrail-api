@@ -7,6 +7,7 @@ import {
 import { nodeInterface } from '../../utils/nodeDefinitions';
 import { tripConnection } from '../../connections/trip';
 import { userConnection } from '../../connections/user';
+// import { commentConnection } from '../../connections/comment';
 import UserService from '../../../database/helpers/user';
 import UserType from '../user';
 import Trip from './Trip';
@@ -16,6 +17,7 @@ import Weather from './Weather';
 import Feed from './Feed';
 import Attachment from './Attachment';
 import Venue from './Venue';
+import User from './User';
 import { feedConnection } from '../../connections/feed';
 import { localityConnection } from '../../connections/locality';
 import { categoryConnection } from '../../connections/category';
@@ -47,7 +49,9 @@ const ViewerType = new GraphQLObjectType({
     Feed,
     Attachment,
     Venue,
+    User,
     allFeeds: feedConnection,
+    // allComments: commentConnection,
     searchUser: userConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,

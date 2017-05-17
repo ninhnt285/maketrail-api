@@ -7,6 +7,8 @@ import {
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 
+const DEFAULT_IMAGE = '/noImage/noImage%s.png';
+const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: {
@@ -28,6 +30,9 @@ const UserType = new GraphQLObjectType({
 
     profilePicUrl: {
       type: GraphQLString,
+      resolve(obj) {
+        return obj.profilePicUrl ? prefix + obj.profilePicUrl : prefix + DEFAULT_IMAGE;
+      }
     }
 
   },
