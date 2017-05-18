@@ -19,8 +19,14 @@ const ShareMutation = mutationWithClientMutationId({
   name: 'AddShare',
 
   inputFields: {
-    objectId: {
+    toId: {
+      type: GraphQLID
+    },
+    parentId: {
       type: new GraphQLNonNull(GraphQLID)
+    },
+    text: {
+      type: GraphQLString
     }
   },
 
@@ -43,7 +49,7 @@ const ShareMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ objectId }, { user }) => {
+  mutateAndGetPayload: async ({ toId, parentId, text }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -56,7 +62,7 @@ const ShareMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await FeedService.share(user, objectId);
+    const res = await FeedService.share(user, toId, parentId, text);
     if (res.errors) {
       return {
         success: false,

@@ -1,11 +1,13 @@
 import FeedModel from '../models/feed';
 import CommentModel from '../models/comment';
+import LikeModel from '../models/like';
+import { getType, Type } from '../../lib/idUtils';
 
 const Activity = {
   POST: 0,
-  LIKE: 1,
-  SHARE: 2,
-  COMMENT: 3
+  SHARE: 1,
+  PHOTO: 2,
+  VIDEO: 3
 };
 
 const FeedService = {};
@@ -36,13 +38,11 @@ FeedService.getById = async function (user, id) {
   return null;
 };
 
-FeedService.like = async function (user, objectId) {
+FeedService.like = async function (user, parentId) {
   try {
-    const item = await FeedModel.create({
-      userId: user.id,
-      objectId,
-      type: Activity.LIKE,
-      privacy: 0,
+    const item = await LikeModel.create({
+      fromId: user.id,
+      parentId
     });
     return {
       item
@@ -55,37 +55,33 @@ FeedService.like = async function (user, objectId) {
   }
 };
 
-FeedService.share = async function (user, objectId) {
+FeedService.share = async function (user, toId, parentId, text) {
   try {
     const item = await FeedModel.create({
-      userId: user.id,
-      objectId,
+      fromId: user.id,
+      toId: toId || user.id,
+      parentId,
+      privacy: 0,
       type: Activity.SHARE,
-      privacy: 0,
-    });
-    return {
-      item
-    };
-  } catch (e) {
-    console.log(e);
-    return {
-      errors: ['Internal error']
-    };
-  }
-};
-
-FeedService.comment = async function (user, objectId, parentId, text) {
-  try {
-    await CommentModel.create({
-      userId: user.id,
-      parentId: parentId || objectId,
       text
     });
-    const item = await FeedModel.create({
-      userId: user.id,
-      objectId,
-      type: Activity.COMMENT,
-      privacy: 0,
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+FeedService.comment = async function (user, parentId, text) {
+  try {
+    const item = await CommentModel.create({
+      fromId: user.id,
+      parentId,
+      text
     });
     return {
       item
@@ -98,14 +94,25 @@ FeedService.comment = async function (user, objectId, parentId, text) {
   }
 };
 
-FeedService.post = async function (user, objectId, text, attachments) {
+FeedService.post = async function (user, toId, text, attachments) {
   try {
+    let type = Activity.POST;
+    let tmp = '';
+    for (let i = 0; i < attachments.length; i++) {
+      tmp = getType(attachments[i]);
+      if (tmp === Type.PHOTO){
+        type = Activity.PHOTO;
+        break;
+      } else if (tmp === Type.VIDEO){
+        type = Activity.VIDEO;
+      }
+    }
     const item = await FeedModel.create({
-      userId: user.id,
-      objectId: objectId || user.id,
-      type: Activity.POST,
+      fromId: user.id,
+      toId: toId || user.id,
       privacy: 0,
       text,
+      type,
       attachments
     });
     return {
@@ -119,18 +126,22 @@ FeedService.post = async function (user, objectId, text, attachments) {
   }
 };
 
-FeedService.getStatistics = async function (objectId){
+FeedService.getStatistics = async function (id){
   try {
-    const res = await Promise.all([FeedModel.count({objectId, type: Activity.LIKE}), FeedModel.count({ objectId, type: Activity.SHARE}), CommentModel.count({parentId: objectId})]);
+    const res = await Promise.all([FeedModel.count({parentId: id, type: Activity.SHARE}), LikeModel.count({ parentId: id }), CommentModel.count({parentId: id})]);
     return {
-      likeCount: res[0],
-      shareCount: res[1],
+      shareCount: res[0],
+      likeCount: res[1],
       commentCount: res[2]
     };
   } catch (e) {
     console.log(e);
     return null;
   }
+};
+
+FeedService.getLikeCount = async function (id){
+  return await LikeModel.count({ parentId: id });
 };
 
 export default FeedService;

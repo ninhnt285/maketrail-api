@@ -8,7 +8,7 @@ import {
 import { nodeInterface } from '../../utils/nodeDefinitions';
 import { tripConnection } from '../../connections/trip';
 import { userConnection } from '../../connections/user';
-// import { commentConnection } from '../../connections/comment';
+import { commentConnection } from '../../connections/comment';
 import UserService from '../../../database/helpers/user';
 import CountryModel from '../../../database/models/country';
 import TraceModel from '../../../database/models/trace';
@@ -91,7 +91,7 @@ const ViewerType = new GraphQLObjectType({
     Venue,
     User,
     allFeeds: feedConnection,
-    // allComments: commentConnection,
+    allComments: commentConnection,
     searchUser: userConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,

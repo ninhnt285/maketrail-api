@@ -8,7 +8,9 @@ const TYPES = [
   'LocalityVenueType',
   'FeedType',
   'PhotoType',
-  'VideoType'
+  'VideoType',
+  'LikeType',
+  'CommentType'
 ];
 
 export const Type = {
@@ -21,7 +23,9 @@ export const Type = {
   LOCALITY_VENUE: 'LocalityVenueType',
   FEED: 'FeedType',
   PHOTO: 'PhotoType',
-  VIDEO: 'VideoType'
+  VIDEO: 'VideoType',
+  LIKE: 'LikeType',
+  COMMENT: 'CommentType'
 };
 
 function random() {

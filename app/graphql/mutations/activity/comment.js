@@ -10,20 +10,17 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import FeedType from '../../types/feed';
+import CommentType from '../../types/comment';
 import FeedService from '../../../database/helpers/feed';
-import { FeedEdge } from '../../connections/feed';
+import { CommentEdge } from '../../connections/comment';
 import { edgeFromNode } from '../../../lib/connection';
 
 const CommentMutation = mutationWithClientMutationId({
   name: 'AddComment',
 
   inputFields: {
-    objectId: {
-      type: new GraphQLNonNull(GraphQLID)
-    },
     parentId: {
-      type: GraphQLID
+      type: new GraphQLNonNull(GraphQLID)
     },
     text: {
       type: GraphQLString
@@ -39,17 +36,17 @@ const CommentMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    feed: {
-      type: FeedType,
+    comment: {
+      type: CommentType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: FeedEdge,
+      type: CommentEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ objectId, parentId, text }, { user }) => {
+  mutateAndGetPayload: async ({ parentId, text }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -62,7 +59,7 @@ const CommentMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await FeedService.comment(user, objectId, parentId, text);
+    const res = await FeedService.comment(user, parentId, text);
     if (res.errors) {
       return {
         success: false,

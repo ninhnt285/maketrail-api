@@ -6,7 +6,7 @@ const { Types } = mongoose.Schema;
 const commentSchema = new Schema(
   {
     _id: Types.ObjectId,
-    userId: Types.ObjectId,
+    fromId: Types.ObjectId,
     parentId: Types.ObjectId,
     text: String
   }, {

@@ -6,7 +6,7 @@ const { Types } = mongoose.Schema;
 const videoSchema = new Schema(
   {
     _id: Types.ObjectId,
-    userId: Types.ObjectId,
+    fromId: Types.ObjectId,
     caption: String,
     name: String,
     url: String,

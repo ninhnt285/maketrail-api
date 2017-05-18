@@ -8,23 +8,22 @@ import {
 } from 'graphql';
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
-import UserType from '../user';
-import UserService from '../../../database/helpers/user';
 import FeedService from '../../../database/helpers/feed';
 import FeedTargetType from './target';
 import { getNodeFromId } from '../../../database/helpers/node';
 import { attachmentConnection } from '../../connections/attachment';
+import { commentConnection } from '../../connections/comment';
 
 const FeedType = new GraphQLObjectType({
   name: 'Feed',
 
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
-    user: {
-      type: UserType,
-      resolve: parentValue => UserService.findById(parentValue.userId)
+    from: {
+      type: FeedTargetType,
+      resolve: parentValue => getNodeFromId(parentValue.fromId)
     },
 
     type: {
@@ -32,9 +31,9 @@ const FeedType = new GraphQLObjectType({
         name: 'feedType',
         values: {
           POST: { value: 0 },
-          LIKE: { value: 1 },
-          SHARE: { value: 2 },
-          COMMENT: { value: 3 }
+          SHARE: { value: 1 },
+          PHOTO: { value: 2 },
+          VIDEO: { value: 3 },
         }
       })
     },
@@ -50,20 +49,25 @@ const FeedType = new GraphQLObjectType({
       })
     },
 
-    object: {
+    to: {
       type: FeedTargetType,
-      resolve: parentValue => getNodeFromId(parentValue.objectId)
+      resolve: parentValue => getNodeFromId(parentValue.toId)
+    },
+
+    parent: {
+      type: FeedType,
+      resolve: parentValue => getNodeFromId(parentValue.parentId)
     },
 
     text: {
       type: GraphQLString
     },
 
-    timestamp: {
+    createdAt: {
       type: GraphQLInt,
       resolve: parentValue => parentValue.createdAt.getTime() / 1000
     },
-
+    comments: commentConnection,
     attachments: attachmentConnection,
 
     statistics: {
@@ -83,7 +87,7 @@ const FeedType = new GraphQLObjectType({
       }),
       resolve: parentValue => FeedService.getStatistics(parentValue.id)
     }
-  },
+  }),
 
   interfaces: [nodeInterface]
 });

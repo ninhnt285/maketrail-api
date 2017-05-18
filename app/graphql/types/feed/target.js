@@ -10,11 +10,11 @@ const resolveType = (data) => {
   const type = getType(data.id);
 
   if (type === Type.USER) {
-    return TripType;
+    return UserType;
   }
 
   if (type === Type.TRIP) {
-    return UserType;
+    return TripType;
   }
 };
 

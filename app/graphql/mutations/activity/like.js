@@ -10,16 +10,16 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import FeedType from '../../types/feed';
+import LikeType from '../../types/like';
 import FeedService from '../../../database/helpers/feed';
-import { FeedEdge } from '../../connections/feed';
+import { LikeEdge } from '../../connections/like';
 import { edgeFromNode } from '../../../lib/connection';
 
 const LikeMutation = mutationWithClientMutationId({
   name: 'AddLike',
 
   inputFields: {
-    objectId: {
+    parentId: {
       type: new GraphQLNonNull(GraphQLID)
     }
   },
@@ -33,17 +33,17 @@ const LikeMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    feed: {
-      type: FeedType,
+    like: {
+      type: LikeType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: FeedEdge,
+      type: LikeEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ objectId }, { user }) => {
+  mutateAndGetPayload: async ({ parentId }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -56,7 +56,7 @@ const LikeMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await FeedService.like(user, objectId);
+    const res = await FeedService.like(user, parentId);
     if (res.errors) {
       return {
         success: false,

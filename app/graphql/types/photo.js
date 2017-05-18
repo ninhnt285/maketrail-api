@@ -2,7 +2,8 @@ import {
   GraphQLString,
   GraphQLObjectType,
   GraphQLNonNull,
-  GraphQLID
+  GraphQLID,
+  GraphQLInt
 } from 'graphql';
 import { nodeInterface } from '../utils/nodeDefinitions';
 
@@ -33,7 +34,11 @@ const PhotoType = new GraphQLObjectType({
       resolve(obj) {
         return prefix + obj.url;
       }
-    }
+    },
+    createdAt: {
+      type: GraphQLInt,
+      resolve: parentValue => parentValue.createdAt.getTime() / 1000
+    },
   },
 
   interfaces: [nodeInterface]

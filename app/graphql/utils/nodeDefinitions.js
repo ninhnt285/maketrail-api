@@ -5,6 +5,8 @@ import TripModel from '../../database/models/trip';
 import VenueModel from '../../database/models/venue';
 import PhotoModel from '../../database/models/photo';
 import VideoModel from '../../database/models/video';
+import LikeModel from '../../database/models/like';
+import CommentModel from '../../database/models/comment';
 import CategoryModel from '../../database/models/category';
 import LocalityModel from '../../database/models/locality';
 import FeedModel from '../../database/models/feed';
@@ -30,6 +32,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.PHOTO: return PhotoModel.findById(globalId);
       case Type.VIDEO: return VideoModel.findById(globalId);
       case Type.FEED: return FeedModel.findById(globalId);
+      case Type.LIKE: return LikeModel.findById(globalId);
+      case Type.COMMENT: return CommentModel.findById(globalId);
       default: return {
         id: 'viewer-fixed'
       };
@@ -53,6 +57,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       case Type.FEED: return require('../types/feed').default;
       case Type.PHOTO: return require('../types/photo').default;
       case Type.VIDEO: return require('../types/video').default;
+      case Type.LIKE: return require('../types/like').default;
+      case Type.COMMENT: return require('../types/comment').default;
       default: return require('../types/viewer').default;
       /* eslint-enable */
     }

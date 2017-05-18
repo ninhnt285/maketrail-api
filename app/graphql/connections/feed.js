@@ -11,7 +11,6 @@ import {
 import FeedType from '../types/feed';
 import FeedModel from '../../database/models/feed';
 import { connectionFromArray } from '../../lib/connection';
-import { Type, getType } from '../../lib/idUtils';
 
 const {
   connectionType: FeedConnection,
@@ -26,41 +25,20 @@ const feedConnection = {
 
   args: {
     ...connectionArgs,
-    objectId: {
+    toId: {
       type: GraphQLID
     }
   },
 
-  resolve: async ({ id }, { ...args, objectId }, { user }) => {
+  resolve: async ({ id }, { ...args, toId }, { user }) => {
     if (!user) {
       return connectionFromArray([], args);
     }
     let feeds = [];
-    if (!objectId) {
-      feeds = await FeedModel.find({}).exec();
+    if (!toId) {
+      feeds = await FeedModel.find({ toId: id }).exec();
     } else {
-      feeds = await FeedModel.find({ objectId }).exec();
-    }
-
-    return connectionFromArray(feeds, args);
-  }
-};
-
-const feedTripConnection = {
-  type: new GraphQLNonNull(FeedConnection),
-
-  args: {
-    ...connectionArgs,
-  },
-
-  resolve: async ({ id }, { ...args }, { user }) => {
-    if (!user) {
-      return connectionFromArray([], args);
-    }
-    let feeds = [];
-    const type = getType(id);
-    if (type === Type.TRIP) {
-      feeds = await FeedModel.find({ objectId: id }).exec();
+      feeds = await FeedModel.find({ toId }).exec();
     }
 
     return connectionFromArray(feeds, args);
@@ -69,6 +47,5 @@ const feedTripConnection = {
 
 export {
   FeedEdge,
-  feedConnection,
-  feedTripConnection
+  feedConnection
 };

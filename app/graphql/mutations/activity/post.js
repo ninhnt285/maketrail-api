@@ -19,7 +19,7 @@ const PostMutation = mutationWithClientMutationId({
   name: 'AddFeed',
 
   inputFields: {
-    objectId: {
+    toId: {
       type: GraphQLID
     },
     text: {
@@ -49,7 +49,7 @@ const PostMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ objectId, text, attachmentIds }, { user }) => {
+  mutateAndGetPayload: async ({ toId, text, attachmentIds }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -62,7 +62,7 @@ const PostMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await FeedService.post(user, objectId, text, attachmentIds);
+    const res = await FeedService.post(user, toId, text, attachmentIds);
     if (res.errors) {
       return {
         success: false,

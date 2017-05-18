@@ -3,15 +3,10 @@ import preSave from '../preSave';
 
 const { Types } = mongoose.Schema;
 
-const photoSchema = new Schema(
+const likeSchema = new Schema(
   {
     _id: Types.ObjectId,
     fromId: Types.ObjectId,
-    caption: String,
-    name: String,
-    url: String,
-    previewUrl: String,
-    privacy: Number,
     parentId: Types.ObjectId
   }, {
     timestamps: true,
@@ -24,8 +19,8 @@ const photoSchema = new Schema(
   }
 );
 
-photoSchema.pre('save', preSave('PhotoType'));
+likeSchema.pre('save', preSave('LikeType'));
 
-const PhotoModel = mongoose.model('Photo', photoSchema);
+const LikeModel = mongoose.model('Like', likeSchema);
 
-export default PhotoModel;
+export default LikeModel;

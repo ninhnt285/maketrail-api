@@ -3,7 +3,8 @@ import {
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLID,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLInt
 } from 'graphql';
 import { nodeInterface } from '../utils/nodeDefinitions';
 
@@ -37,7 +38,11 @@ const VideoType = new GraphQLObjectType({
     },
     length: {
       type: GraphQLFloat
-    }
+    },
+    createdAt: {
+      type: GraphQLInt,
+      resolve: parentValue => parentValue.createdAt.getTime() / 1000
+    },
   },
 
   interfaces: [nodeInterface]

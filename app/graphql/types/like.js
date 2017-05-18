@@ -1,38 +1,32 @@
 import {
-  GraphQLNonNull,
-  GraphQLID,
   GraphQLString,
   GraphQLObjectType,
-  GraphQLBoolean,
+  GraphQLNonNull,
+  GraphQLID,
   GraphQLInt
 } from 'graphql';
-
 import { nodeInterface } from '../utils/nodeDefinitions';
-import { localityConnection } from '../connections/tripLocality';
-import { memberConnection } from '../connections/user';
 
-const TripType = new GraphQLObjectType({
-  name: 'Trip',
+const LikeType = new GraphQLObjectType({
+  name: 'Like',
 
   fields: {
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
-    name: {
+    fromId: {
       type: GraphQLString
     },
-    exportedVideo: {
-      type: GraphQLBoolean
+    parentId: {
+      type: GraphQLID
     },
     createdAt: {
       type: GraphQLInt,
       resolve: parentValue => parentValue.createdAt.getTime() / 1000
     },
-    localities: localityConnection,
-    members: memberConnection
   },
 
   interfaces: [nodeInterface]
 });
 
-export default TripType;
+export default LikeType;
