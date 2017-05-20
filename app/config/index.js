@@ -19,3 +19,7 @@ export const TWITTER_CONSUMER_SECRET = 'KvFL1PFxhYwjs3QuarNwzviVaHCnQNaqfvgn5OZL
 
 export const FOURSQUARE_TOKEN = 'LUAYPC4BD2FR3WSOZ4QQ0RZ34BKWISMYUSXEZKNWBKU0OAEH';
 
+export const AIRBNB_CLIENT_ID = '3092nxybyb0otqw18e8nh5nty';
+
+export const PREFIX = process.env.NODE_ENV === 'production' ? 'http://static.maketrail.com' : 'http://localhost:4001/resources';
+

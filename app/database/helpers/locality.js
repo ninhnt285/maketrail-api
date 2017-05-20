@@ -1,7 +1,10 @@
+/* eslint-disable camelcase */
 import request from 'request-promise';
 import LocalityModel from '../models/locality';
+import VenueModel from '../models/venue';
+import LocalityVenueRelationModel  from '../models/localityVenueRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
-import { GOOGLE_API_KEY } from '../../config';
+import { GOOGLE_API_KEY, AIRBNB_CLIENT_ID } from '../../config';
 import { getPhotoFromReference, resize } from '../../lib/google/place/photo';
 
 const LocalityService = {};
@@ -154,6 +157,44 @@ LocalityService.seachLocality = async function (query) {
       if (locality.photos && locality.photos.length > 0) tmp.photo_reference = locality.photos[0].photo_reference;
       return await this.findOneOrCreate({ googlePlaceId: locality.place_id }, tmp);
     }));
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
+LocalityService.searchGuesthouse = async function (tripLocalityId) {
+  try {
+    let locality = await TripLocalityRelationModel.findById(tripLocalityId);
+    locality = await LocalityModel.findById(locality.localityId);
+    const tmps = await LocalityVenueRelationModel.find({ tripLocalityId });
+    const venues = await Promise.all(tmps.map(async (tmp) => {
+      return await VenueModel.findById(tmp.venueId);
+    }));
+    let user_lat = 0;
+    let user_lng = 0;
+    venues.forEach((venue) => {
+      user_lat += venue.location.lat;
+      user_lng += venue.location.lng;
+    });
+    user_lat /= venues.length;
+    user_lng /= venues.length;
+    const options = {
+      method: 'GET',
+      uri: 'https://api.airbnb.com/v2/search_results',
+      qs: {
+        client_id: AIRBNB_CLIENT_ID,
+        _format: 'for_search_results_with_minimal_pricing',
+        _limit: 10,
+        ib: false,
+        user_lat,
+        user_lng,
+        location: locality.description
+      }
+    };
+    const res = JSON.parse(await request(options)
+      .then(ggRes => ggRes));
+    return res.search_results;
   } catch (e) {
     console.log(e);
     return [];

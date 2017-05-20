@@ -7,9 +7,9 @@ import {
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
+import { PREFIX } from '../../config';
 
 const DEFAULT_IMAGE = '/noImage/noImage%s.png';
-const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
 const LocalityType = new GraphQLObjectType({
   name: 'Locality',
 
@@ -42,7 +42,7 @@ const LocalityType = new GraphQLObjectType({
     previewPhotoUrl: {
       type: GraphQLString,
       resolve(obj) {
-        return obj.previewPhotoUrl ? prefix + obj.previewPhotoUrl : prefix + DEFAULT_IMAGE;
+        return obj.previewPhotoUrl ? PREFIX + obj.previewPhotoUrl : PREFIX + DEFAULT_IMAGE;
       }
     }
   },

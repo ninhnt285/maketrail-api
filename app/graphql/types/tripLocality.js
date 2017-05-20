@@ -2,13 +2,16 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLObjectType,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLList
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 import LocalityType from './locality';
+import GuestHouseType from './guestHouse';
 import { localityVenueConnection } from '../connections/localityVenue';
 import { recommendVenueConnection } from '../connections/venue';
+import LocalityService from '../../database/helpers/locality';
 
 const TripLocalityType = new GraphQLObjectType({
   name: 'TripLocality',
@@ -24,7 +27,11 @@ const TripLocalityType = new GraphQLObjectType({
       type: GraphQLInt
     },
     localityVenues: localityVenueConnection,
-    recommendVenues: recommendVenueConnection
+    recommendVenues: recommendVenueConnection,
+    recommendGuesthouses: {
+      type: new GraphQLList(GuestHouseType),
+      resolve: async obj => await LocalityService.searchGuesthouse(obj.id)
+    }
   },
 
   interfaces: [nodeInterface]

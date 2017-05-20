@@ -7,9 +7,9 @@ import {
   GraphQLInt
 } from 'graphql';
 import { nodeInterface } from '../utils/nodeDefinitions';
+import { PREFIX } from '../../config';
 
 const DEFAULT_IMAGE = '/noImage/noImage_150_square.png';
-const prefix = process.env.NODE_ENV === 'production' ? 'http://api.maketrail.com/resources' : 'http://localhost:4001/resources';
 
 const VideoType = new GraphQLObjectType({
   name: 'Video',
@@ -27,13 +27,13 @@ const VideoType = new GraphQLObjectType({
     previewUrl: {
       type: GraphQLString,
       resolve(obj) {
-        return obj.previewUrl ? prefix + obj.previewUrl : prefix + DEFAULT_IMAGE;
+        return obj.previewUrl ? PREFIX + obj.previewUrl : PREFIX + DEFAULT_IMAGE;
       }
     },
     filePathUrl: {
       type: GraphQLString,
       resolve(obj) {
-        return prefix + obj.url;
+        return PREFIX + obj.url;
       }
     },
     length: {
