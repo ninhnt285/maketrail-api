@@ -20,6 +20,6 @@ router.use(authRoutes);
 
 
 // GraphQL Server
-router.use('/graphql', graphQLRoutes);
+router.use('/graphql', cors(), graphQLRoutes);
 
 export default router;
