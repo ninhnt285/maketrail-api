@@ -2,7 +2,7 @@
 import request from 'request-promise';
 import LocalityModel from '../models/locality';
 import VenueModel from '../models/venue';
-import LocalityVenueRelationModel  from '../models/localityVenueRelation';
+import LocalityVenueRelationModel from '../models/localityVenueRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 import { GOOGLE_API_KEY, AIRBNB_CLIENT_ID } from '../../config';
 import { getPhotoFromReference, resize } from '../../lib/google/place/photo';
@@ -11,7 +11,7 @@ const LocalityService = {};
 
 LocalityService.canAddLocality = async function (user, tripId) {
   return (user && tripId);
-}
+};
 
 LocalityService.canUpdateLocality = async function (user, tripId) {
   return (user && tripId);
@@ -38,10 +38,17 @@ LocalityService.findOneOrCreate = async function (condition, doc) {
 LocalityService.add = async function (user, tripId, localityId) {
   try {
     if (await this.canAddLocality(user, tripId)) {
-      const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId })]);
+      let arrivalTime;
+      const tmp = await TripLocalityRelationModel.findOne({ tripId })
+        .sort('-arrivalTime')
+        .exec();
+      arrivalTime = tmp.arrivalTime || Math.floor((new Date().getTime() / 1000));
+      arrivalTime += 1440;
+      const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId, arrivalTime })]);
       return {
         item: {
           id: res[1].id,
+          arrivalTime,
           originLocality: res[0]
         }
       };
@@ -65,6 +72,7 @@ LocalityService.remove = async function (user, tripId, tripLocalityId) {
       return {
         item: {
           id: tripLocalityId,
+          arrivalTime: tmp.arrivalTime,
           originLocality: locality
         }
       };
@@ -108,7 +116,7 @@ LocalityService.findTripLocalityById = async function (id) {
 LocalityService.updateTripLocality = async function (user, tripId, tripLocalityId, args) {
   try {
     if (await this.canUpdateLocality(user, tripId)) {
-      const item = await TripLocalityRelationModel.findByIdAndUpdate(tripLocalityId, { $set: args }, { new: true })
+      const item = await TripLocalityRelationModel.findByIdAndUpdate(tripLocalityId, { $set: args }, { new: true });
       const originLocality = await LocalityModel.findById(item.localityId);
       return {
         item: {
@@ -168,9 +176,7 @@ LocalityService.searchGuesthouse = async function (tripLocalityId) {
     let locality = await TripLocalityRelationModel.findById(tripLocalityId);
     locality = await LocalityModel.findById(locality.localityId);
     const tmps = await LocalityVenueRelationModel.find({ tripLocalityId });
-    const venues = await Promise.all(tmps.map(async (tmp) => {
-      return await VenueModel.findById(tmp.venueId);
-    }));
+    const venues = await Promise.all(tmps.map(async tmp => await VenueModel.findById(tmp.venueId)));
     let user_lat = 0;
     let user_lng = 0;
     venues.forEach((venue) => {
