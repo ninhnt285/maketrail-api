@@ -1,4 +1,5 @@
 import UserModel from '../models/user';
+import FriendshipModel from '../models/friendship';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
@@ -123,6 +124,36 @@ UserService.loginViaSocialNetwork = async function (provider, token, tokenSecret
     const accessToken = generateToken(user);
     return {
       accessToken
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal Error']
+    };
+  }
+};
+
+UserService.isFriend = async function (user1, user2) {
+  try {
+    const tmp = await FriendshipModel.findOne({ user1, user2 });
+    if (tmp) {
+      const tmp2 = await FriendshipModel.findOne({user1: user2, user2: user1});
+      if (tmp2) {
+        return true;
+      }
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
+};
+
+UserService.addFriend = async function (user1, user2) {
+  try {
+    const item = await UserModel.findById(user2);
+    await FriendshipModel.create({ user1, user2 });
+    return {
+      item
     };
   } catch (e) {
     console.log(e);

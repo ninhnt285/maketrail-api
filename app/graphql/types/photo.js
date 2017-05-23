@@ -3,8 +3,11 @@ import {
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLID,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLBoolean
 } from 'graphql';
+
+import FeedService from '../../database/helpers/feed';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -22,6 +25,15 @@ const PhotoType = new GraphQLObjectType({
     },
     caption: {
       type: GraphQLString
+    },
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
     previewUrl: {
       type: GraphQLString,

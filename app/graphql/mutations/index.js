@@ -14,6 +14,7 @@ import shareMutation from './activity/share';
 import postMutation from './activity/post';
 import commentMutation from './activity/comment';
 import uploadMutation from './activity/upload';
+import addFriendMutation from './activity/addFriend';
 
 export default {
   login: loginMutation,
@@ -35,5 +36,6 @@ export default {
   addShare: shareMutation,
   addFeed: postMutation,
   addComment: commentMutation,
-  addAttachment: uploadMutation
+  addAttachment: uploadMutation,
+  addFriend: addFriendMutation
 };

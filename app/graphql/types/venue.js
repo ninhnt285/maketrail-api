@@ -4,8 +4,11 @@ import {
   GraphQLObjectType,
   GraphQLFloat,
   GraphQLID,
-  GraphQLEnumType
+  GraphQLEnumType,
+  GraphQLBoolean
 } from 'graphql';
+
+import FeedService from '../../database/helpers/feed';
 import { PREFIX } from '../../config';
 
 const DEFAULT_IMAGE = '/noImage/noImage%s.png';
@@ -24,6 +27,15 @@ const VenueType = new GraphQLObjectType({
     },
     address: {
       type: GraphQLString
+    },
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
     location: {
       type: new GraphQLObjectType({

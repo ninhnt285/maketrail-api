@@ -3,7 +3,8 @@ import {
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLID,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLBoolean
 } from 'graphql';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import FeedService from '../../database/helpers/feed';
@@ -28,6 +29,15 @@ const CommentType = new GraphQLObjectType({
     },
     parentId: {
       type: GraphQLID
+    },
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
     createdAt: {
       type: GraphQLInt,

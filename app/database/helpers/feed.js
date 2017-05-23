@@ -144,4 +144,13 @@ FeedService.getLikeCount = async function (id){
   return await LikeModel.count({ parentId: id });
 };
 
+FeedService.isLiked = async function (fromId, parentId){
+  try {
+    const tmp = await LikeModel.findOne({ fromId, parentId });
+    return !!tmp;
+  } catch (e) {
+    return false;
+  }
+};
+
 export default FeedService;

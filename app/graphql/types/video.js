@@ -4,8 +4,11 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLFloat,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLBoolean
 } from 'graphql';
+
+import FeedService from '../../database/helpers/feed';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -28,6 +31,15 @@ const VideoType = new GraphQLObjectType({
       type: GraphQLString,
       resolve(obj) {
         return obj.previewUrl ? PREFIX + obj.previewUrl : PREFIX + DEFAULT_IMAGE;
+      }
+    },
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
       }
     },
     filePathUrl: {

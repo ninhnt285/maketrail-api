@@ -3,9 +3,11 @@ import {
   GraphQLID,
   GraphQLString,
   GraphQLObjectType,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLBoolean
 } from 'graphql';
 
+import FeedService from '../../database/helpers/feed';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -25,6 +27,15 @@ const LocalityType = new GraphQLObjectType({
     },
     description: {
       type: GraphQLString
+    },
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
     location: {
       type: new GraphQLObjectType({

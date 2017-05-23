@@ -4,7 +4,8 @@ import {
   GraphQLEnumType,
   GraphQLObjectType,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLBoolean
 } from 'graphql';
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
@@ -57,6 +58,16 @@ const FeedType = new GraphQLObjectType({
     parent: {
       type: FeedType,
       resolve: parentValue => getNodeFromId(parentValue.parentId)
+    },
+
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
 
     text: {

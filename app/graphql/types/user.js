@@ -2,9 +2,11 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLID,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLBoolean
 } from 'graphql';
 
+import UserService from '../../database/helpers/user';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -26,6 +28,16 @@ const UserType = new GraphQLObjectType({
 
     fullName: {
       type: GraphQLString,
+    },
+
+    isFriend: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return UserService.isFriend(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
 
     profilePicUrl: {

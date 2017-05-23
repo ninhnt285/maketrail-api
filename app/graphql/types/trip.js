@@ -7,6 +7,7 @@ import {
   GraphQLInt
 } from 'graphql';
 
+import FeedService from '../../database/helpers/feed';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { localityConnection } from '../connections/tripLocality';
 import { memberConnection } from '../connections/user';
@@ -23,6 +24,15 @@ const TripType = new GraphQLObjectType({
     },
     exportedVideo: {
       type: GraphQLBoolean
+    },
+    isLiked: {
+      type: GraphQLBoolean,
+      resolve: (parentValue, params, { user }) => {
+        if (user) {
+          return FeedService.isLiked(user.id, parentValue.id);
+        }
+        return false;
+      }
     },
     createdAt: {
       type: GraphQLInt,
