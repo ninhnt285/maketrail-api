@@ -15,8 +15,8 @@ import UserService from '../../../database/helpers/user';
 import { UserEdge } from '../../connections/user';
 import { edgeFromNode } from '../../../lib/connection';
 
-const AddFriendMutation = mutationWithClientMutationId({
-  name: 'AddFriend',
+const FollowMutation = mutationWithClientMutationId({
+  name: 'Follow',
 
   inputFields: {
     userId: {
@@ -48,7 +48,7 @@ const AddFriendMutation = mutationWithClientMutationId({
 
     if (!user) {
       errors = [
-        'Please login to add new friend.'
+        'Please login to follow friend.'
       ];
       return {
         success: false,
@@ -56,7 +56,7 @@ const AddFriendMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await UserService.addFriend(user.id, userId);
+    const res = await UserService.follow(user.id, userId);
     if (res.errors) {
       return {
         success: false,
@@ -70,4 +70,4 @@ const AddFriendMutation = mutationWithClientMutationId({
   }
 });
 
-export default AddFriendMutation;
+export default FollowMutation;

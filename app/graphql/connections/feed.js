@@ -10,7 +10,9 @@ import {
 
 import FeedType from '../types/feed';
 import FeedModel from '../../database/models/feed';
+import NotificationModel from '../../database/models/notification';
 import { connectionFromArray } from '../../lib/connection';
+import { connectionFromModel } from '../../database/helpers/connection';
 
 const {
   connectionType: FeedConnection,
@@ -34,14 +36,29 @@ const feedConnection = {
     if (!user) {
       return connectionFromArray([], args);
     }
-    let feeds = [];
+    let feedEdges = [];
     if (!toId) {
-      feeds = await FeedModel.find({ toId: id }).exec();
+      const notifications = (await NotificationModel.find({ fromId: user.id })).map(r => r.toId);
+      feedEdges = await connectionFromModel(FeedModel,
+        {
+          user,
+          ...args,
+          filter: { toId: { $in: notifications } }
+        },
+        null
+      );
     } else {
-      feeds = await FeedModel.find({ toId }).exec();
+      feedEdges = await connectionFromModel(FeedModel,
+        {
+          user,
+          ...args,
+          filter: { toId }
+        },
+        null
+      );
     }
 
-    return connectionFromArray(feeds, args);
+    return feedEdges;
   }
 };
 

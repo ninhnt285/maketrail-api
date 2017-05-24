@@ -30,11 +30,11 @@ const UserType = new GraphQLObjectType({
       type: GraphQLString,
     },
 
-    isFriend: {
+    isFollowed: {
       type: GraphQLBoolean,
       resolve: (parentValue, params, { user }) => {
         if (user) {
-          return UserService.isFriend(user.id, parentValue.id);
+          return UserService.isFollowed(user.id, parentValue.id);
         }
         return false;
       }

@@ -39,14 +39,28 @@ const userConnection = {
     }
 
     try {
-      let users = [];
+      let userEdges = [];
       if (query) {
         const q = new RegExp(`${query}`, 'i');
-        users = await UserModel.find({ $or: [{ username: q }, { email: q }] }).exec();
+        userEdges = await connectionFromModel(UserModel,
+          {
+            user,
+            ...args,
+            filter: { $or: [{ username: q }, { email: q }, { fullName: q }] }
+          },
+          null
+        );
       } else {
-        users = await UserModel.find();
+        userEdges = await connectionFromModel(UserModel,
+          {
+            user,
+            ...args,
+            filter: { }
+          },
+          null
+        );
       }
-      return connectionFromArray(users, args);
+      return userEdges;
     } catch (e) {
       console.log(e);
       return connectionFromArray([], args);

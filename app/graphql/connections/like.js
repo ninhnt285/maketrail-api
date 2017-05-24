@@ -11,7 +11,7 @@ import {
 import LikeType from '../types/like';
 import LikeModel from '../../database/models/like';
 import { connectionFromArray } from '../../lib/connection';
-import { Type, getType } from '../../lib/idUtils';
+import { connectionFromModel } from '../../database/helpers/connection';
 
 const {
   connectionType: LikeConnection,
@@ -35,14 +35,28 @@ const likeConnection = {
     if (!user) {
       return connectionFromArray([], args);
     }
-    let likes = [];
+    let likeEdges = [];
     if (!parentId) {
-      likes = await LikeModel.find({}).exec();
+      likeEdges = await connectionFromModel(LikeModel,
+        {
+          user,
+          ...args,
+          filter: { }
+        },
+        null
+      );
     } else {
-      likes = await LikeModel.find({ parentId }).exec();
+      likeEdges = await connectionFromModel(LikeModel,
+        {
+          user,
+          ...args,
+          filter: { parentId }
+        },
+        null
+      );
     }
 
-    return connectionFromArray(likes, args);
+    return likeEdges;
   }
 };
 

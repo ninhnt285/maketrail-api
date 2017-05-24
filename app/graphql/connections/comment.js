@@ -11,6 +11,7 @@ import {
 import CommentType from '../types/comment';
 import CommentModel from '../../database/models/comment';
 import { connectionFromArray } from '../../lib/connection';
+import { connectionFromModel } from '../../database/helpers/connection';
 
 const {
   connectionType: CommentConnection,
@@ -34,14 +35,28 @@ const commentConnection = {
     if (!user) {
       return connectionFromArray([], args);
     }
-    let comments = [];
+    let commentEdges = [];
     if (!parentId) {
-      comments = await CommentModel.find({ parentId: id }).exec();
+      commentEdges = await connectionFromModel(CommentModel,
+        {
+          user,
+          ...args,
+          filter: { parentId: id }
+        },
+        null
+      );
     } else {
-      comments = await CommentModel.find({ parentId }).exec();
+      commentEdges = await connectionFromModel(CommentModel,
+        {
+          user,
+          ...args,
+          filter: { parentId }
+        },
+        null
+      );
     }
 
-    return connectionFromArray(comments, args);
+    return commentEdges;
   }
 };
 

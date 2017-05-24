@@ -1,5 +1,6 @@
 import UserModel from '../models/user';
 import FriendshipModel from '../models/friendship';
+import NotificationModel from '../models/notification';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
@@ -133,27 +134,26 @@ UserService.loginViaSocialNetwork = async function (provider, token, tokenSecret
   }
 };
 
-UserService.isFriend = async function (user1, user2) {
+UserService.isFollowed = async function (user1, user2) {
   try {
     const tmp = await FriendshipModel.findOne({ user1, user2 });
-    if (tmp) {
-      const tmp2 = await FriendshipModel.findOne({user1: user2, user2: user1});
-      if (tmp2) {
-        return true;
-      }
-    }
+    return !!tmp;
   } catch (e) {
     return false;
   }
-  return false;
 };
 
-UserService.addFriend = async function (user1, user2) {
+UserService.follow = async function (user1, user2) {
   try {
-    const item = await UserModel.findById(user2);
-    await FriendshipModel.create({ user1, user2 });
+    const bool = await this.isFollowed(user1, user2);
+    if (bool) {
+      return {
+        errors: ['You have followed this one.']
+      };
+    }
+    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.create({ user1, user2 }), NotificationModel.create({ fromId: user1, toId: user2 })]);
     return {
-      item
+      item: res[0]
     };
   } catch (e) {
     console.log(e);

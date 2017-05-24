@@ -1,5 +1,6 @@
 import FeedModel from '../models/feed';
 import CommentModel from '../models/comment';
+import NotificationModel from '../models/notification';
 import LikeModel from '../models/like';
 import { getType, Type } from '../../lib/idUtils';
 
@@ -44,6 +45,9 @@ FeedService.like = async function (user, parentId) {
       fromId: user.id,
       parentId
     });
+    if (getType(parentId) === Type.TRIP) {
+      await NotificationModel.create({ fromId: user.id, toId: parentId });
+    }
     return {
       item
     };
