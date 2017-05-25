@@ -7,7 +7,10 @@ const tripSchema = new Schema(
   {
     _id: Types.ObjectId,
     name: String,
-    exportedVideo: Boolean
+    exportedVideo: Boolean,
+    privacy: Number,
+    userId: Types.ObjectId,
+    previewPhotoUrl: String
   }, {
     timestamps: true,
     toJSON: {

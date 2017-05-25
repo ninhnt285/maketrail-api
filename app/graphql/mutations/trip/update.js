@@ -3,7 +3,8 @@ import {
   GraphQLID,
   GraphQLBoolean,
   GraphQLString,
-  GraphQLList
+  GraphQLList,
+  GraphQLEnumType
 } from 'graphql';
 
 import {
@@ -27,7 +28,16 @@ const UpdateTripMutation = mutationWithClientMutationId({
     },
     exportedVideo: {
       type: GraphQLBoolean
-    }
+    },
+    privacy: {
+      type: new GraphQLEnumType({
+        name: 'tripPrivacyInput',
+        values: {
+          PUBLIC: { value: 0 },
+          PRIVATE: { value: 1 }
+        }
+      })
+    },
   },
 
   outputFields: {

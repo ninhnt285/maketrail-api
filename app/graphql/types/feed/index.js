@@ -43,9 +43,8 @@ const FeedType = new GraphQLObjectType({
         name: 'feedPrivacy',
         values: {
           PUBLIC: { value: 0 },
-          FRIEND: { value: 1 },
-          FRIEND_OF_FRIEND: { value: 2 },
-          ONLY_ME: { value: 3 }
+          FOLLOWED: { value: 1 },
+          ONLY_ME: { value: 2 }
         }
       })
     },

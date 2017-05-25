@@ -1,13 +1,24 @@
-import { base64 } from '../../lib/connection/utils';
-import TripModel from '../models/trip'
+import TripModel from '../models/trip';
 import UserModel from '../models/user';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 
+function genPhotoUrl() {
+  return `/noImage/trip/${(new Date().getTime() % 10) + 1}%.jpg`;
+}
+
 const TripService = {};
 
+const Privacy = {
+  PUBLIC: 0,
+  PRIVATE: 1
+};
+
 TripService.canGetTrip = async function (user, tripId) {
-  return (user && tripId);
+  const tmp = await TripModel.findById(tripId);
+  const privacy = tmp.privacy || Privacy.PUBLIC;
+  if (privacy === Privacy.PUBLIC) return true;
+  return await this.isMember(user.id, tripId);
 };
 
 TripService.canDeleteTrip = async function (user, tripId) {
@@ -27,16 +38,16 @@ TripService.canInviteMember = async function (user) {
 };
 
 TripService.isMember = async function (userId, tripId) {
+  if (!userId) return false;
   const tmp = await UserTripRelationModel.findOne({ userId, tripId });
-  if (tmp) return true;
-  return false;
+  return !!tmp;
 };
 
 TripService.add = async function (user, trip) {
   let item = null;
   try {
     if (await this.canAddTrip(user)) {
-      item = await TripModel.create(trip);
+      item = await TripModel.create({ ...trip, privacy: Privacy.PUBLIC, previewPhotoUrl: genPhotoUrl() });
       await UserTripRelationModel.create({ userId: user.id, tripId: item.id, roleId: 0 });
       return {
         item

@@ -4,13 +4,16 @@ import {
   GraphQLString,
   GraphQLObjectType,
   GraphQLBoolean,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLEnumType
 } from 'graphql';
 
 import FeedService from '../../database/helpers/feed';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { localityConnection } from '../connections/tripLocality';
 import { memberConnection } from '../connections/user';
+import { PREFIX } from '../../config';
+const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 
 const TripType = new GraphQLObjectType({
   name: 'Trip',
@@ -34,9 +37,24 @@ const TripType = new GraphQLObjectType({
         return false;
       }
     },
+    privacy: {
+      type: new GraphQLEnumType({
+        name: 'tripPrivacy',
+        values: {
+          PUBLIC: { value: 0 },
+          PRIVATE: { value: 1 }
+        }
+      })
+    },
     createdAt: {
       type: GraphQLInt,
       resolve: parentValue => parentValue.createdAt.getTime() / 1000
+    },
+    previewPhotoUrl: {
+      type: GraphQLString,
+      resolve(obj) {
+        return obj.previewPhotoUrl ? PREFIX + obj.previewPhotoUrl : PREFIX + DEFAULT_IMAGE;
+      }
     },
     localities: localityConnection,
     members: memberConnection
