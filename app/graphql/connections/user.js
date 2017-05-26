@@ -10,6 +10,7 @@ import {
 
 import UserType from '../types/user';
 import UserModel from '../../database/models/user';
+import UserService from '../../database/helpers/user';
 import UserTripRelation from '../../database/models/userTripRelation';
 import { connectionFromModel } from '../../database/helpers/connection';
 import { connectionFromArray } from '../../lib/connection';
@@ -104,8 +105,52 @@ const memberConnection = {
   }
 };
 
+const suggestUserConnection = {
+  type: new GraphQLNonNull(UserConnection),
+
+  args: {
+    ...connectionArgs,
+  },
+
+  resolve: async ({ id }, { ...args }, { user }) => {
+    if (!user) {
+      return connectionFromArray([], args);
+    }
+
+    try {
+      const followeds = await UserService.getFolloweds(user.id);
+      const friends = await UserService.getFacebookFriends(user.id);
+      const suggesteds = [];
+      for (let j = 0; j < friends.length; j++) {
+        const friend = friends[j];
+        if (!(friend.id in followeds)){
+          const tmp = await UserModel.findOne({ 'facebook.id': friend.id });
+          if (tmp) {
+            suggesteds.push(tmp);
+            if (suggesteds.length === 15) break;
+          }
+        }
+      }
+      if (suggesteds.length < 15) {
+        const hotTravellers = await UserService.getHotUsers();
+        for (let i = 0; i < hotTravellers.length; i++) {
+          if (!(hotTravellers[i] in followeds)){
+            suggesteds.push(await UserModel.findById(hotTravellers[i]));
+          }
+        }
+      }
+      return connectionFromArray(suggesteds, args);
+    } catch (e) {
+      console.log(e);
+      return connectionFromArray([], args);
+    }
+    return connectionFromArray([], args);
+  }
+};
+
 export {
   UserEdge,
   userConnection,
-  memberConnection
+  memberConnection,
+  suggestUserConnection
 };

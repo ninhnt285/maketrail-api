@@ -3,10 +3,25 @@
  */
 import request from 'request-promise';
 import Twit from 'twit';
-import { TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET } from '../../config';
+import { TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET } from '../../config';
 
 const Service = {
   FACEBOOK: {
+    async getLongLivedToken(token) {
+      const options = {
+        method: 'GET',
+        uri: 'https://graph.facebook.com/v2.9/oauth/access_token',
+        qs: {
+          fb_exchange_token: token,
+          grant_type: 'fb_exchange_token',
+          client_id: FACEBOOK_CLIENT_ID,
+          client_secret: FACEBOOK_CLIENT_SECRET,
+        },
+        encoding: 'utf8'
+      };
+      return JSON.parse(await request(options)
+        .then(res => res)).access_token;
+    },
     async getInfo(token) {
       const options = {
         method: 'GET',
@@ -19,6 +34,19 @@ const Service = {
       };
       return JSON.parse(await request(options)
         .then(res => res));
+    },
+    async getFriends(token) {
+      const options = {
+        method: 'GET',
+        uri: 'https://graph.facebook.com/v2.9/me/friends',
+        qs: {
+          access_token: token,
+          limit: 500
+        },
+        encoding: 'utf8'
+      };
+      return JSON.parse(await request(options)
+        .then(res => res)).data;
     }
   },
 

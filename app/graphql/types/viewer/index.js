@@ -7,7 +7,7 @@ import {
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
 import { tripConnection } from '../../connections/trip';
-import { userConnection } from '../../connections/user';
+import { userConnection, suggestUserConnection } from '../../connections/user';
 import { commentConnection } from '../../connections/comment';
 import UserService from '../../../database/helpers/user';
 import CountryModel from '../../../database/models/country';
@@ -95,6 +95,7 @@ const ViewerType = new GraphQLObjectType({
     searchUser: userConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,
+    suggestFollows: suggestUserConnection,
     allTrips: tripConnection,
     categories: categoryConnection
   },

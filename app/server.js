@@ -2,6 +2,7 @@ import express from 'express';
 import { PORT } from './config';
 import connectDb from './database/connectDb';
 import { prepareDir } from './lib/google/place/photo';
+import { statisticalJob } from './lib/jobs';
 
 const app = express();
 
@@ -16,4 +17,5 @@ function onConnected() {
 
 connectDb(onConnected);
 prepareDir();
+statisticalJob();
 

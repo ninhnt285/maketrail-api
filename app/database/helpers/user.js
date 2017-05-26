@@ -1,5 +1,6 @@
 import UserModel from '../models/user';
 import FriendshipModel from '../models/friendship';
+import StatisticModel from '../models/statistic';
 import NotificationModel from '../models/notification';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
@@ -109,8 +110,9 @@ UserService.loginViaSocialNetwork = async function (provider, token, tokenSecret
     let socialInfo = null;
     let user = null;
     if (provider === 'facebook') {
-      socialInfo = await SocialUtils.FACEBOOK.getInfo(token);
-      socialInfo.token = token;
+      const longLivedToken = await SocialUtils.FACEBOOK.getLongLivedToken(token);
+      socialInfo = await SocialUtils.FACEBOOK.getInfo(longLivedToken);
+      socialInfo.token = longLivedToken;
       user = await this.findOneOrCreate({ 'facebook.id': socialInfo.id }, { facebook: socialInfo, fullName: socialInfo.name, email: socialInfo.email, username: socialInfo.id });
     } else if (provider === 'google') {
       socialInfo = await SocialUtils.GOOGLE.getInfo(token);
@@ -161,6 +163,38 @@ UserService.follow = async function (user1, user2) {
       errors: ['Internal Error']
     };
   }
+};
+
+UserService.getFolloweds = async function (user1) {
+  try {
+    return (await FriendshipModel.find({ user1 })).map(r => r.user2);
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
+UserService.getHotUsers = async function () {
+  try {
+    const tmp = await StatisticModel.findOne({});
+    return tmp.hotUsers;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
+UserService.getFacebookFriends = async function (userId) {
+  try {
+    const obj = await UserModel.findById(userId);
+    if (obj.facebook && obj.facebook.token) {
+      const friends = await SocialUtils.FACEBOOK.getFriends(obj.facebook.token);
+      return friends;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return [];
 };
 
 
