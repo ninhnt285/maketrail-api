@@ -2,6 +2,7 @@
 import request from 'request-promise';
 import LocalityModel from '../models/locality';
 import VenueModel from '../models/venue';
+import NotificationService from '../helpers/notification';
 import LocalityVenueRelationModel from '../models/localityVenueRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 import { GOOGLE_API_KEY, AIRBNB_CLIENT_ID } from '../../config';
@@ -45,12 +46,14 @@ LocalityService.add = async function (user, tripId, localityId) {
       arrivalTime = tmp.arrivalTime || Math.floor((new Date().getTime() / 1000));
       arrivalTime += 1440;
       const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId, arrivalTime })]);
+      const item = {
+        id: res[1].id,
+        arrivalTime,
+        originLocality: res[0]
+      };
+      await NotificationService.notify(user.id, tripId, item.id, NotificationService.Type.ADD_LOCALITY);
       return {
-        item: {
-          id: res[1].id,
-          arrivalTime,
-          originLocality: res[0]
-        }
+        item
       };
     }
     return {

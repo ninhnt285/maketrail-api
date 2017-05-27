@@ -10,7 +10,7 @@ import {
 
 import FeedType from '../types/feed';
 import FeedModel from '../../database/models/feed';
-import NotificationModel from '../../database/models/notification';
+import UserService from '../../database/helpers/user';
 import { connectionFromArray } from '../../lib/connection';
 import { connectionFromModel } from '../../database/helpers/connection';
 
@@ -38,12 +38,12 @@ const feedConnection = {
     }
     let feedEdges = [];
     if (!toId) {
-      const notifications = (await NotificationModel.find({ fromId: user.id })).map(r => r.toId);
+      const subjects = await UserService.getFolloweds(user.id);
       feedEdges = await connectionFromModel(FeedModel,
         {
           user,
           ...args,
-          filter: { toId: { $in: notifications } }
+          filter: { fromId: { $in: subjects } }
         },
         null
       );

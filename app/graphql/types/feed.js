@@ -8,12 +8,12 @@ import {
   GraphQLBoolean
 } from 'graphql';
 
-import { nodeInterface } from '../../utils/nodeDefinitions';
-import FeedService from '../../../database/helpers/feed';
-import FeedTargetType from './target';
-import { getNodeFromId } from '../../../database/helpers/node';
-import { attachmentConnection } from '../../connections/attachment';
-import { commentConnection } from '../../connections/comment';
+import { nodeInterface } from '../utils/nodeDefinitions';
+import FeedService from '../../database/helpers/feed';
+import SubjectType from './subject';
+import { getNodeFromId } from '../../database/helpers/node';
+import { attachmentConnection } from '../connections/attachment';
+import { commentConnection } from '../connections/comment';
 
 const FeedType = new GraphQLObjectType({
   name: 'Feed',
@@ -23,7 +23,7 @@ const FeedType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLID)
     },
     from: {
-      type: FeedTargetType,
+      type: SubjectType,
       resolve: parentValue => getNodeFromId(parentValue.fromId)
     },
 
@@ -50,7 +50,7 @@ const FeedType = new GraphQLObjectType({
     },
 
     to: {
-      type: FeedTargetType,
+      type: SubjectType,
       resolve: parentValue => getNodeFromId(parentValue.toId)
     },
 

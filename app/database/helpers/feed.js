@@ -1,6 +1,7 @@
 import FeedModel from '../models/feed';
 import CommentModel from '../models/comment';
-import NotificationModel from '../models/notification';
+import NotificationService from '../helpers/notification';
+import { getNode, getNodeFromId } from '../helpers/node';
 import LikeModel from '../models/like';
 import { getType, Type } from '../../lib/idUtils';
 
@@ -45,8 +46,9 @@ FeedService.like = async function (user, parentId) {
       fromId: user.id,
       parentId
     });
-    if (getType(parentId) === Type.TRIP) {
-      await NotificationModel.create({ fromId: user.id, toId: parentId });
+    const type = getType(parentId);
+    if (type !== Type.TRIP) {
+      await NotificationService.notify(user.id, parentId, item.id, NotificationService.Type.LIKE);
     }
     return {
       item
@@ -69,6 +71,7 @@ FeedService.share = async function (user, toId, parentId, text) {
       type: Activity.SHARE,
       text
     });
+    await NotificationService.interest(user.id, item.id, 2);
     return {
       item
     };
@@ -87,6 +90,11 @@ FeedService.comment = async function (user, parentId, text) {
       parentId,
       text
     });
+    if (getType(parentId) === Type.COMMENT) {
+      await NotificationService.interest(user.id, parentId, 1);
+    }
+    await NotificationService.interest(user.id, item.id, 2);
+    await NotificationService.notify(user.id, parentId, item.id, NotificationService.Type.COMMENT);
     return {
       item
     };
@@ -119,6 +127,8 @@ FeedService.post = async function (user, toId, text, attachments) {
       type,
       attachments
     });
+    await NotificationService.interest(user.id, item.id, 2);
+    await NotificationService.notify(user.id, toId, item.id, NotificationService.Type.POST);
     return {
       item
     };

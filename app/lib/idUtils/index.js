@@ -10,7 +10,8 @@ const TYPES = [
   'PhotoType',
   'VideoType',
   'LikeType',
-  'CommentType'
+  'CommentType',
+  'NotificationType'
 ];
 
 export const Type = {
@@ -25,7 +26,8 @@ export const Type = {
   PHOTO: 'PhotoType',
   VIDEO: 'VideoType',
   LIKE: 'LikeType',
-  COMMENT: 'CommentType'
+  COMMENT: 'CommentType',
+  NOTIFICATION: 'NotificationType'
 };
 
 function random() {

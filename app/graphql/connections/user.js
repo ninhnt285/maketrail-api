@@ -123,19 +123,18 @@ const suggestUserConnection = {
       const suggesteds = [];
       for (let j = 0; j < friends.length; j++) {
         const friend = friends[j];
-        if (!(friend.id in followeds)){
-          const tmp = await UserModel.findOne({ 'facebook.id': friend.id });
-          if (tmp) {
-            suggesteds.push(tmp);
-            if (suggesteds.length === 15) break;
-          }
+        const tmp = await UserModel.findOne({ 'facebook.id': friend.id });
+        if (tmp && !followeds.includes(tmp._id)) {
+          suggesteds.push(tmp);
+          if (suggesteds.length === 15) break;
         }
       }
       if (suggesteds.length < 15) {
         const hotTravellers = await UserService.getHotUsers();
         for (let i = 0; i < hotTravellers.length; i++) {
-          if (!(hotTravellers[i] in followeds)){
+          if (!(followeds.includes(hotTravellers[i]))) {
             suggesteds.push(await UserModel.findById(hotTravellers[i]));
+            if (suggesteds.length === 15) break;
           }
         }
       }

@@ -1,10 +1,10 @@
 import {
   GraphQLUnionType
 } from 'graphql';
-import { Type, getType } from '../../../lib/idUtils';
+import { Type, getType } from '../../lib/idUtils';
 
-const TripType = require('../trip').default;
-const UserType = require('../user').default;
+const TripType = require('./trip').default;
+const UserType = require('./user').default;
 
 const resolveType = (data) => {
   const type = getType(data.id);
@@ -18,10 +18,10 @@ const resolveType = (data) => {
   }
 };
 
-const FeedTargetType = new GraphQLUnionType({
-  name: 'FeedTargetType',
+const SubjectType = new GraphQLUnionType({
+  name: 'SubjectType',
   types: [TripType, UserType],
   resolveType
 });
 
-export default FeedTargetType;
+export default SubjectType;

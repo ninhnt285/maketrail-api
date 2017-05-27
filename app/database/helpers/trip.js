@@ -1,5 +1,6 @@
 import TripModel from '../models/trip';
 import UserModel from '../models/user';
+import NotificationService from '../helpers/notification';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 
@@ -49,6 +50,7 @@ TripService.add = async function (user, trip) {
     if (await this.canAddTrip(user)) {
       item = await TripModel.create({ ...trip, privacy: Privacy.PUBLIC, previewPhotoUrl: genPhotoUrl() });
       await UserTripRelationModel.create({ userId: user.id, tripId: item.id, roleId: 0 });
+      await NotificationService.interest(user.id, item.id, 2);
       return {
         item
       };

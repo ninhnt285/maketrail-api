@@ -1,7 +1,7 @@
 import UserModel from '../models/user';
 import FriendshipModel from '../models/friendship';
 import StatisticModel from '../models/statistic';
-import NotificationModel from '../models/notification';
+import NotificationService from '../helpers/notification';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
@@ -153,7 +153,28 @@ UserService.follow = async function (user1, user2) {
         errors: ['You have followed this one.']
       };
     }
-    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.create({ user1, user2 }), NotificationModel.create({ fromId: user1, toId: user2 })]);
+    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.create({ user1, user2 }), NotificationService.interest(user1, user2, 1)]);
+    await NotificationService.notify(user1, user2, null, NotificationService.Type.FOLLOW);
+    return {
+      item: res[0]
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal Error']
+    };
+  }
+};
+
+UserService.unfollow = async function (user1, user2) {
+  try {
+    const bool = await this.isFollowed(user1, user2);
+    if (!bool) {
+      return {
+        errors: ['You have not followed this one yet.']
+      };
+    }
+    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.remove({ user1, user2 }), NotificationService.disinterest(user1, user2)]);
     return {
       item: res[0]
     };
