@@ -4,8 +4,8 @@ const { Types } = mongoose.Schema;
 
 const friendshipSchema = new Schema(
   {
-    user1: Types.ObjectId,
-    user2: Types.ObjectId,
+    user1: String,
+    user2: String,
   }, {
     timestamps: true,
     toJSON: {

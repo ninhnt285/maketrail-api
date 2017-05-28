@@ -124,7 +124,7 @@ const suggestUserConnection = {
       for (let j = 0; j < friends.length; j++) {
         const friend = friends[j];
         const tmp = await UserModel.findOne({ 'facebook.id': friend.id });
-        if (tmp && !followeds.includes(tmp._id)) {
+        if (tmp && !followeds.includes(tmp.id)) {
           suggesteds.push(tmp);
           if (suggesteds.length === 15) break;
         }

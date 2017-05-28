@@ -4,8 +4,8 @@ const { Types } = mongoose.Schema;
 
 const interestSchema = new Schema(
   {
-    fromId: Types.ObjectId,
-    toId: Types.ObjectId,
+    fromId: String,
+    toId: String,
     level: Number
   }, {
     timestamps: true,

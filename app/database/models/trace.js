@@ -5,7 +5,7 @@ const { Types } = mongoose.Schema;
 const relationSchema = new Schema(
   {
     userId: Types.ObjectId,
-    countryId: Types.ObjectId,
+    countryId: String,
     parentId: String,
     status: Boolean
   }, {

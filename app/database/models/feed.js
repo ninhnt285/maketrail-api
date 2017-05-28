@@ -6,11 +6,11 @@ const { Types } = mongoose.Schema;
 const feedSchema = new Schema(
   {
     _id: Types.ObjectId,
-    fromId: Types.ObjectId,
-    toId: Types.ObjectId,
+    fromId: String,
+    toId: String,
     text: String,
-    parentId: Types.ObjectId,
-    attachments: [Types.ObjectId],
+    parentId: String,
+    attachments: [String],
     privacy: Number,
     type: Number
   }, {

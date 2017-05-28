@@ -4,8 +4,8 @@ const { Types } = mongoose.Schema;
 
 const relationSchema = new Schema(
   {
-    tripId: Types.ObjectId,
-    userId: Types.ObjectId,
+    tripId: String,
+    userId: String,
     roleId: Number
   }, {
     timestamps: true,

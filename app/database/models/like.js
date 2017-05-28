@@ -6,8 +6,8 @@ const { Types } = mongoose.Schema;
 const likeSchema = new Schema(
   {
     _id: Types.ObjectId,
-    fromId: Types.ObjectId,
-    parentId: Types.ObjectId
+    fromId: String,
+    parentId: String
   }, {
     timestamps: true,
     toJSON: {

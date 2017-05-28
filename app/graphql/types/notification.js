@@ -24,7 +24,8 @@ const NotificationType = new GraphQLObjectType({
     },
 
     type: {
-      type: GraphQLString
+      type: GraphQLString,
+      description: 'like, comment, follow, addLocality'
     },
 
     to: {

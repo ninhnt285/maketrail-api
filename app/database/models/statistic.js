@@ -4,7 +4,7 @@ const { Types } = mongoose.Schema;
 
 const statisticSchema = new Schema(
   {
-    hotUsers: [Types.ObjectId]
+    hotUsers: [String]
   }, {
     timestamps: true,
     toJSON: {

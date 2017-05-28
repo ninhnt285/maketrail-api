@@ -6,13 +6,13 @@ const { Types } = mongoose.Schema;
 const photoSchema = new Schema(
   {
     _id: Types.ObjectId,
-    fromId: Types.ObjectId,
+    fromId: String,
     caption: String,
     name: String,
     url: String,
     previewUrl: String,
     privacy: Number,
-    parentId: Types.ObjectId
+    parentId: String
   }, {
     timestamps: true,
     toJSON: {

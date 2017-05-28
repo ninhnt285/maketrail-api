@@ -6,8 +6,8 @@ const { Types } = mongoose.Schema;
 const relationSchema = new Schema(
   {
     _id: Types.ObjectId,
-    tripLocalityId: Types.ObjectId,
-    venueId: Types.ObjectId,
+    tripLocalityId: String,
+    venueId: String,
   }, {
     timestamps: true,
     toJSON: {
