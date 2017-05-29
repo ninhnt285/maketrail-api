@@ -5,7 +5,7 @@ import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 
 function genPhotoUrl() {
-  return `/noImage/trip/${(new Date().getTime() % 10) + 1}%.jpg`;
+  return `/noImage/trip/${(new Date().getTime() % 10) + 1}%s.jpg`;
 }
 
 const TripService = {};
@@ -90,6 +90,7 @@ TripService.inviteMember = async function (user, tripId, userId, email) {
           }
         }
         await UserTripRelationModel.create({ userId: userTmp.id, tripId: item.id, roleId: 0 });
+        await NotificationService.interest(userTmp.id, item.id, 2);
         return {
           item: userTmp
         };

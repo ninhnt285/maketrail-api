@@ -85,14 +85,18 @@ FeedService.share = async function (user, toId, parentId, text) {
 
 FeedService.comment = async function (user, parentId, text) {
   try {
+    let rootId = parentId;
+    if (getType(parentId) === Type.COMMENT) {
+      const parentComment = await CommentModel.findById(parentId);
+      rootId = parentComment.rootId;
+      await NotificationService.interest(user.id, parentId, 1);
+    }
     const item = await CommentModel.create({
       fromId: user.id,
       parentId,
+      rootId,
       text
     });
-    if (getType(parentId) === Type.COMMENT) {
-      await NotificationService.interest(user.id, parentId, 1);
-    }
     await NotificationService.interest(user.id, item.id, 2);
     await NotificationService.notify(user.id, parentId, item.id, NotificationService.Type.COMMENT);
     return {

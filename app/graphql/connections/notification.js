@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   GraphQLNonNull,
   GraphQLID
@@ -35,19 +36,21 @@ const notificationConnection = {
     if (!user && !userId) {
       return connectionFromArray([], args);
     }
-    if (!userId){
-      // eslint-disable-next-line no-param-reassign
+    if (!userId) {
       userId = user.id;
     }
+    args.sort = '-createdAt';
     const notificationEdges = await connectionFromModel(NotificationModel,
       {
         user,
         ...args,
         filter: { userId }
       },
-      null
+      async (r) => {
+        const notification = await NotificationModel.findByIdAndUpdate(r.id, { isRead: true }).exec();
+        return notification;
+      }
     );
-
     return notificationEdges;
   }
 };

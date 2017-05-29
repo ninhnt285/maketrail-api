@@ -2,7 +2,8 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLObjectType,
-  GraphQLList
+  GraphQLList,
+  GraphQLInt
 } from 'graphql';
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
@@ -11,8 +12,7 @@ import { userConnection, suggestUserConnection } from '../../connections/user';
 import { commentConnection } from '../../connections/comment';
 import { notificationConnection } from '../../connections/notification';
 import UserService from '../../../database/helpers/user';
-import CountryModel from '../../../database/models/country';
-import TraceModel from '../../../database/models/trace';
+import NotificationService from '../../../database/helpers/notification';
 import UserType from '../user';
 import CountryType from '../country';
 import Trip from './Trip';
@@ -62,24 +62,7 @@ const ViewerType = new GraphQLObjectType({
           // eslint-disable-next-line no-param-reassign
           userId = user.id;
         }
-        const items = await CountryModel.find({ parentId: id });
-        const visiteds = await TraceModel.find({ parentId: id, userId });
-        return items.map((item) => {
-          for (let i=0; i < visiteds.length; i++) {
-            if (item.id === visiteds[i].countryId){
-              return {
-                code: item.svgId,
-                name: item.name,
-                status: visiteds[i].status ? 2 : 1
-              };
-            }
-          }
-          return {
-            code: item.svgId,
-            name: item.name,
-            status: 0
-          };
-        });
+        return await UserService.getMap(userId, id);
       }
     },
 
@@ -93,7 +76,23 @@ const ViewerType = new GraphQLObjectType({
     User,
     allFeeds: feedConnection,
     allComments: commentConnection,
-    allNotifications: notificationConnection,
+    allNotifications: {
+      type: new GraphQLObjectType({
+        name: 'AllNotification',
+
+        fields: () => ({
+          unread: {
+            type: GraphQLInt
+          },
+          data: notificationConnection,
+        }),
+      }),
+      resolve: async (parentValue, params, { user }) => {
+        return {
+          unread: await NotificationService.countNotification(user.id)
+        };
+      }
+    },
     searchUser: userConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,

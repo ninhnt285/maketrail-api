@@ -1,6 +1,8 @@
 import UserModel from '../models/user';
 import FriendshipModel from '../models/friendship';
 import StatisticModel from '../models/statistic';
+import CountryModel from '../models/country';
+import TraceModel from '../models/trace';
 import NotificationService from '../helpers/notification';
 import { generateToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
@@ -218,5 +220,30 @@ UserService.getFacebookFriends = async function (userId) {
   return [];
 };
 
+UserService.getMap = async function (userId, parentId) {
+  try {
+    const items = await CountryModel.find({ parentId });
+    const visiteds = await TraceModel.find({ parentId, userId });
+    return items.map((item) => {
+      for (let i = 0; i < visiteds.length; i++) {
+        if (item.id === visiteds[i].countryId){
+          return {
+            code: item.svgId,
+            name: item.name,
+            status: visiteds[i].status ? 2 : 1
+          };
+        }
+      }
+      return {
+        code: item.svgId,
+        name: item.name,
+        status: 0
+      };
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+};
 
 export default UserService;

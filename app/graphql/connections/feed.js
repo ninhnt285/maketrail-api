@@ -37,6 +37,8 @@ const feedConnection = {
       return connectionFromArray([], args);
     }
     let feedEdges = [];
+    // eslint-disable-next-line no-param-reassign
+    args.sort = '-createdAt';
     if (!toId) {
       const subjects = await UserService.getFolloweds(user.id);
       feedEdges = await connectionFromModel(FeedModel,
