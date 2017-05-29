@@ -43,7 +43,7 @@ LocalityService.add = async function (user, tripId, localityId) {
       const tmp = await TripLocalityRelationModel.findOne({ tripId })
         .sort('-arrivalTime')
         .exec();
-      arrivalTime = tmp.arrivalTime || Math.floor((new Date().getTime() / 1000));
+      arrivalTime = tmp ? tmp.arrivalTime : Math.floor((new Date().getTime() / 1000));
       arrivalTime += 1440;
       const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId, arrivalTime })]);
       const item = {
