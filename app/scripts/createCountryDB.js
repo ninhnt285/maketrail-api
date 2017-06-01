@@ -40,7 +40,7 @@ async function onConnected() {
                   await CountryModel.create({ name: item2.title, svgId: item2.id, parentId: tmp.svgId });
                 });
               } else {
-                CountryModel.create({ name: items2.title, svgId: items2.id, parentId: tmp.id }, (err, data) => {
+                CountryModel.create({ name: items2.title, svgId: items2.id, parentId: tmp.svgId }, (err, data) => {
                 });
               }
             });

@@ -1,5 +1,6 @@
 import FeedModel from '../models/feed';
 import CommentModel from '../models/comment';
+import TripModel from '../models/trip';
 import NotificationService from '../helpers/notification';
 import { getNode, getNodeFromId } from '../helpers/node';
 import LikeModel from '../models/like';
@@ -133,6 +134,28 @@ FeedService.post = async function (user, toId, text, attachments) {
     });
     await NotificationService.interest(user.id, item.id, 2);
     await NotificationService.notify(user.id, toId, item.id, NotificationService.Type.POST);
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+FeedService.publishTrip = async function (user, tripId) {
+  try {
+    await TripModel.findByIdAndUpdate(tripId, { isPublished: true });
+    const item = await FeedModel.create({
+      fromId: user.id,
+      toId: user.id,
+      privacy: 0,
+      parentId: tripId,
+      type: Activity.POST
+    });
+    await NotificationService.interest(user.id, item.id, 2);
     return {
       item
     };

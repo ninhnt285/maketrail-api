@@ -10,7 +10,8 @@ const tripSchema = new Schema(
     exportedVideo: Boolean,
     privacy: Number,
     userId: String,
-    previewPhotoUrl: String
+    previewPhotoUrl: String,
+    isPublished: Boolean
   }, {
     timestamps: true,
     toJSON: {

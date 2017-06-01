@@ -226,7 +226,7 @@ UserService.getMap = async function (userId, parentId) {
     const visiteds = await TraceModel.find({ parentId, userId });
     return items.map((item) => {
       for (let i = 0; i < visiteds.length; i++) {
-        if (item.id === visiteds[i].countryId){
+        if (item.id === visiteds[i].countryId) {
           return {
             code: item.svgId,
             name: item.name,
@@ -244,6 +244,42 @@ UserService.getMap = async function (userId, parentId) {
     console.log(e);
   }
   return null;
+};
+
+UserService.getVisitedNumber = async function (userId, parentId) {
+  try {
+    const visitedNumber = await TraceModel.count({ parentId, userId });
+    return visitedNumber;
+  } catch (e) {
+    console.log(e);
+    return 0;
+  }
+};
+
+UserService.getFavouriteCountry = async function (userId) {
+  try {
+    TraceModel.aggregate([
+      {
+        $match: {
+          userId
+        }
+      },
+      {
+        $group: {
+          _id: '$parentId',
+          count: { $sum: 1 }
+        }
+      }
+    ], (err, results) => {
+      if (!err) {
+        results.sort((a, b) => a.count < b.count);
+        return results.isEmpty() ? null : results[0]._id;
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };
 
 export default UserService;

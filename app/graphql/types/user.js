@@ -30,6 +30,21 @@ const UserType = new GraphQLObjectType({
       type: GraphQLString,
     },
 
+    visitedNumber: {
+      type: GraphQLString,
+      resolve: (parentValue) => {
+        const visitedNumber = UserService.getVisitedNumber(parentValue.id, undefined);
+        return `${visitedNumber}/256`;
+      }
+    },
+
+    favouriteCountry: {
+      type: GraphQLString,
+      resolve: (parentValue) => {
+        return UserService.getFavouriteCountry(parentValue.id);
+      }
+    },
+
     isFollowed: {
       type: GraphQLBoolean,
       resolve: (parentValue, params, { user }) => {

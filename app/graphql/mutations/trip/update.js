@@ -29,6 +29,9 @@ const UpdateTripMutation = mutationWithClientMutationId({
     exportedVideo: {
       type: GraphQLBoolean
     },
+    isPublished: {
+      type: GraphQLBoolean
+    },
     privacy: {
       type: new GraphQLEnumType({
         name: 'tripPrivacyInput',

@@ -1,5 +1,6 @@
 import TripModel from '../models/trip';
 import UserModel from '../models/user';
+import FeedService from '../helpers/feed';
 import NotificationService from '../helpers/notification';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
@@ -48,7 +49,7 @@ TripService.add = async function (user, trip) {
   let item = null;
   try {
     if (await this.canAddTrip(user)) {
-      item = await TripModel.create({ ...trip, privacy: Privacy.PUBLIC, previewPhotoUrl: genPhotoUrl() });
+      item = await TripModel.create({ ...trip, privacy: Privacy.PUBLIC, isPublished: false, previewPhotoUrl: genPhotoUrl() });
       await UserTripRelationModel.create({ userId: user.id, tripId: item.id, roleId: 0 });
       await NotificationService.interest(user.id, item.id, 2);
       return {
@@ -130,6 +131,9 @@ TripService.update = async function (user, tripId, args) {
   try {
     if (await this.canUpdateTrip(user, tripId)) {
       const item = await TripModel.findByIdAndUpdate(tripId, { $set: args }, { new: true });
+      if (args.isPublished && args.isPublished === true){
+        await FeedService.publishTrip(user, tripId);
+      }
       return {
         item
       };
