@@ -17,7 +17,8 @@ const venueSchema = new Schema(
     rating: Number,
     openHours: String,
     price: Number,
-    previewPhotoUrl: String
+    previewPhotoUrl: String,
+    categories: [String]
   }, {
     timestamps: true,
     toJSON: {

@@ -32,8 +32,8 @@ const UserType = new GraphQLObjectType({
 
     visitedNumber: {
       type: GraphQLString,
-      resolve: (parentValue) => {
-        const visitedNumber = UserService.getVisitedNumber(parentValue.id, undefined);
+      resolve: async (parentValue) => {
+        const visitedNumber = await UserService.getVisitedNumber(parentValue.id, undefined);
         return `${visitedNumber}/256`;
       }
     },

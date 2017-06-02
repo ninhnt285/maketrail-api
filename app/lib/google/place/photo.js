@@ -120,6 +120,10 @@ export async function getPhotoFromFoursquareId(foursquareId, filename) {
     };
     const res = JSON.parse(await request(options)
       .then(ggRes => ggRes));
+    if (res.response.photos.items.length === 0) {
+      console.log(`Cannot found image ${foursquareId}`);
+      return false;
+    }
     const prefix = res.response.photos.items[0].prefix;
     const suffix = res.response.photos.items[0].suffix;
     const apiUrl = `${prefix}original${suffix}`;
@@ -128,6 +132,7 @@ export async function getPhotoFromFoursquareId(foursquareId, filename) {
     return true;
   } catch (e) {
     console.log(e);
+    console.log(`Cannot found image ${foursquareId}`);
     return false;
   }
 }

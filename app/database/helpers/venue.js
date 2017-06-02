@@ -99,6 +99,16 @@ VenueService.findLocalityVenueById = async function (id) {
   }
 };
 
+VenueService.getCategories = async function (venueId) {
+  try {
+    const tmp = await VenueModel.findById(venueId);
+    if (tmp) return tmp.categories;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 VenueService.seachVenue = async function (localityId, query, categories) {
   try {
     const locality = await LocalityModel.findById(localityId);
@@ -130,6 +140,7 @@ VenueService.seachVenue = async function (localityId, query, categories) {
         } : undefined,
         phone: venue.contact ? venue.contact.phone : undefined,
         price: venue.price ? venue.price.tier : undefined,
+        categories: venue.categories ? venue.categories.map(r => r.name) : undefined,
         previewPhotoUrl: `/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${venue.id}%s.jpg`
       };
       return await this.findOneOrCreate({ foursquareId: venue.id }, tmp);
@@ -170,6 +181,7 @@ VenueService.exploreVenue = async function (localityId) {
         phone: venue.contact ? venue.contact.phone : undefined,
         price: venue.price ? venue.price.tier : undefined,
         rating: venue.rating ? venue.rating : undefined,
+        categories: venue.categories ? venue.categories.map(r => r.name) : undefined,
         previewPhotoUrl: `/venue/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${venue.id}%s.jpg`
       };
       return await this.findOneOrCreate({ foursquareId: venue.id }, tmp);

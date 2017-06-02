@@ -1,5 +1,6 @@
 import {
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLString
 } from 'graphql';
 
 import {
@@ -9,6 +10,8 @@ import {
 
 import TripType from '../types/trip';
 import TripModel from '../../database/models/trip';
+import TripService from '../../database/helpers/trip';
+import FeedService from '../../database/helpers/feed';
 import UserTripRelation from '../../database/models/userTripRelation';
 import { connectionFromModel } from '../../database/helpers/connection';
 import { connectionFromArray } from '../../lib/connection';
@@ -60,7 +63,57 @@ const tripConnection = {
   }
 };
 
+const tripExploreConnection = {
+  type: new GraphQLNonNull(TripConnection),
+
+  args: {
+    ...connectionArgs,
+    category: {
+      type: GraphQLString
+    },
+    localityId: {
+      type: GraphQLString
+    }
+  },
+
+  resolve: async ({ id }, { ...args, category, localityId }, { user }) => {
+    if (!user) {
+      return connectionFromArray([], args);
+    }
+
+    const userId = user.id;
+
+    const tmpTrips = await TripModel.find({ userId: { $ne: userId }, privacy: 0 }).exec();
+    const trips = [];
+    for (let i = 0; i < tmpTrips.length; i++) {
+      if (!(await TripService.isMember(userId, tmpTrips[i].id)) && !(await FeedService.isLiked(userId, tmpTrips[i].id))) {
+        if (localityId) {
+          if (await TripService.hasLocality(tmpTrips[i].id, localityId)) {
+            if (category) {
+              const categories = await TripService.getCategories(tmpTrips[i].id);
+              if (categories.includes(category)) {
+                trips.push(tmpTrips[i]);
+              }
+            } else {
+              trips.push(tmpTrips[i]);
+            }
+          }
+        } else if (category) {
+          const categories = await TripService.getCategories(tmpTrips[i].id);
+          if (categories.includes(category)) {
+            trips.push(tmpTrips[i]);
+          }
+        } else {
+          trips.push(tmpTrips[i]);
+        }
+      }
+    }
+    return connectionFromArray(trips, []);
+  }
+};
+
 export {
   TripEdge,
-  tripConnection
+  tripConnection,
+  tripExploreConnection
 };

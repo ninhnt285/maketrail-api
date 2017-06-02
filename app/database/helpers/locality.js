@@ -116,9 +116,20 @@ LocalityService.findTripLocalityById = async function (id) {
   }
 };
 
-LocalityService.updateTripLocality = async function (user, tripId, tripLocalityId, args) {
+LocalityService.getVenues = async function (tripLocalityId) {
   try {
-    if (await this.canUpdateLocality(user, tripId)) {
+    const venues = (await LocalityVenueRelationModel.find({ tripLocalityId })).map(r => r.venueId);
+    return venues;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
+LocalityService.updateTripLocality = async function (user, tripLocalityId, args) {
+  try {
+    const tmp = await TripLocalityRelationModel.findById(tripLocalityId);
+    if (await this.canUpdateLocality(user, tmp.tripId)) {
       const item = await TripLocalityRelationModel.findByIdAndUpdate(tripLocalityId, { $set: args }, { new: true });
       const originLocality = await LocalityModel.findById(item.localityId);
       return {

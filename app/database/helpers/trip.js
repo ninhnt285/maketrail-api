@@ -2,6 +2,8 @@ import TripModel from '../models/trip';
 import UserModel from '../models/user';
 import FeedService from '../helpers/feed';
 import NotificationService from '../helpers/notification';
+import LocalityService from '../helpers/locality';
+import VenueService from '../helpers/venue';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 
@@ -17,10 +19,16 @@ const Privacy = {
 };
 
 TripService.canGetTrip = async function (user, tripId) {
-  const tmp = await TripModel.findById(tripId);
-  const privacy = tmp.privacy || Privacy.PUBLIC;
-  if (privacy === Privacy.PUBLIC) return true;
-  return await this.isMember(user.id, tripId);
+  try {
+    const tmp = await TripModel.findById(tripId);
+    if (!tmp) return false;
+    const privacy = tmp.privacy || Privacy.PUBLIC;
+    if (privacy === Privacy.PUBLIC) return true;
+    return await this.isMember(user.id, tripId);
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 };
 
 TripService.canDeleteTrip = async function (user, tripId) {
@@ -42,6 +50,12 @@ TripService.canInviteMember = async function (user) {
 TripService.isMember = async function (userId, tripId) {
   if (!userId) return false;
   const tmp = await UserTripRelationModel.findOne({ userId, tripId });
+  return !!tmp;
+};
+
+TripService.hasLocality = async function (tripId, localityId) {
+  if (!tripId) return false;
+  const tmp = await TripLocalityRelationModel.findOne({ tripId, localityId });
   return !!tmp;
 };
 
@@ -131,7 +145,7 @@ TripService.update = async function (user, tripId, args) {
   try {
     if (await this.canUpdateTrip(user, tripId)) {
       const item = await TripModel.findByIdAndUpdate(tripId, { $set: args }, { new: true });
-      if (args.isPublished && args.isPublished === true){
+      if (args.isPublished && args.isPublished === true) {
         await FeedService.publishTrip(user, tripId);
       }
       return {
@@ -159,6 +173,26 @@ TripService.getById = async function (user, id) {
     console.log(e);
   }
   return item;
+};
+
+TripService.getCategories = async function (tripId) {
+  const items = new Set();
+  try {
+    const localities = (await TripLocalityRelationModel.find({ tripId }));
+    for (let i = 0; i < localities.length; i++){
+      const venues = await LocalityService.getVenues(localities[i].id);
+      for (let j = 0; j < venues.length; j++){
+        const categories = await VenueService.getCategories(venues[j]);
+        for (let k = 0; k < categories.length; k++) {
+          items.add(categories[k]);
+        }
+      }
+    }
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+  return [...items];
 };
 
 export default TripService;

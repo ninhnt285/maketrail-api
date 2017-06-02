@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 
 import { nodeInterface } from '../../utils/nodeDefinitions';
-import { tripConnection } from '../../connections/trip';
+import { tripConnection, tripExploreConnection } from '../../connections/trip';
 import { userConnection, suggestUserConnection } from '../../connections/user';
 import { commentConnection } from '../../connections/comment';
 import { notificationConnection } from '../../connections/notification';
@@ -94,6 +94,7 @@ const ViewerType = new GraphQLObjectType({
       }
     },
     searchUser: userConnection,
+    searchTrip: tripExploreConnection,
     searchLocality: localityConnection,
     searchVenue: venueConnection,
     suggestFollows: suggestUserConnection,
