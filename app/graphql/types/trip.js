@@ -28,6 +28,9 @@ const TripType = new GraphQLObjectType({
     exportedVideo: {
       type: GraphQLBoolean
     },
+    isPublished: {
+      type: GraphQLBoolean
+    },
     isLiked: {
       type: GraphQLBoolean,
       resolve: (parentValue, params, { user }) => {

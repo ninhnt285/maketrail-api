@@ -83,7 +83,7 @@ const tripExploreConnection = {
 
     const userId = user.id;
 
-    const tmpTrips = await TripModel.find({ userId: { $ne: userId }, privacy: 0 }).exec();
+    const tmpTrips = await TripModel.find({ userId: { $ne: userId }, privacy: 0, isPublished: true }).exec();
     const trips = [];
     for (let i = 0; i < tmpTrips.length; i++) {
       if (!(await TripService.isMember(userId, tmpTrips[i].id)) && !(await FeedService.isLiked(userId, tmpTrips[i].id))) {
