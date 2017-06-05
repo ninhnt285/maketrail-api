@@ -7,13 +7,14 @@ import {
 } from 'graphql';
 
 import UserService from '../../database/helpers/user';
+import { tripConnection } from '../connections/trip';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
 const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 const UserType = new GraphQLObjectType({
   name: 'User',
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID),
     },
@@ -60,9 +61,11 @@ const UserType = new GraphQLObjectType({
       resolve(obj) {
         return obj.profilePicUrl ? PREFIX + obj.profilePicUrl : PREFIX + DEFAULT_IMAGE;
       }
-    }
+    },
 
-  },
+    trips: tripConnection
+
+  }),
   interfaces: [nodeInterface]
 });
 

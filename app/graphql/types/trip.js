@@ -18,7 +18,7 @@ const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 const TripType = new GraphQLObjectType({
   name: 'Trip',
 
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
@@ -61,7 +61,7 @@ const TripType = new GraphQLObjectType({
     },
     localities: localityConnection,
     members: memberConnection
-  },
+  }),
 
   interfaces: [nodeInterface]
 });
