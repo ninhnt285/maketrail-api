@@ -10,11 +10,13 @@ import removeTripLocalityMutation from './tripLocality/remove';
 import addLocalityVenueMutation from './localityVenue/add';
 import removeLocalityVenueMutation from './localityVenue/remove';
 import likeMutation from './activity/like';
+import deleteLikeMutation from './activity/unlike';
 import shareMutation from './activity/share';
 import postMutation from './activity/post';
 import commentMutation from './activity/comment';
 import uploadMutation from './activity/upload';
 import followMutation from './activity/follow';
+import unfollowMutation from './activity/unfollow';
 
 export default {
   login: loginMutation,
@@ -33,9 +35,11 @@ export default {
   removeLocalityVenue: removeLocalityVenueMutation,
 
   addLike: likeMutation,
+  deleteLike: deleteLikeMutation,
   addShare: shareMutation,
   addFeed: postMutation,
   addComment: commentMutation,
   addAttachment: uploadMutation,
-  follow: followMutation
+  follow: followMutation,
+  unfollow: unfollowMutation
 };

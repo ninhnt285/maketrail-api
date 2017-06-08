@@ -62,6 +62,23 @@ FeedService.like = async function (user, parentId) {
   }
 };
 
+FeedService.unlike = async function (user, parentId) {
+  try {
+    const item = await LikeModel.findOneAndRemove({
+      fromId: user.id,
+      parentId
+    });
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
 FeedService.share = async function (user, toId, parentId, text) {
   try {
     const item = await FeedModel.create({
