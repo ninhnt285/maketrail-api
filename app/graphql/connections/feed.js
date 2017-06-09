@@ -45,7 +45,7 @@ const feedConnection = {
         {
           user,
           ...args,
-          filter: { fromId: { $in: subjects } }
+          filter: { $or: [{ fromId: { $in: subjects } }, { toId: user.id }] }
         },
         null
       );

@@ -132,13 +132,15 @@ FeedService.post = async function (user, toId, text, attachments) {
   try {
     let type = Activity.POST;
     let tmp = '';
-    for (let i = 0; i < attachments.length; i++) {
-      tmp = getType(attachments[i]);
-      if (tmp === Type.PHOTO){
-        type = Activity.PHOTO;
-        break;
-      } else if (tmp === Type.VIDEO){
-        type = Activity.VIDEO;
+    if (attachments) {
+      for (let i = 0; i < attachments.length; i++) {
+        tmp = getType(attachments[i]);
+        if (tmp === Type.PHOTO) {
+          type = Activity.PHOTO;
+          break;
+        } else if (tmp === Type.VIDEO) {
+          type = Activity.VIDEO;
+        }
       }
     }
     const item = await FeedModel.create({
