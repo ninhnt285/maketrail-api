@@ -12,7 +12,9 @@
     "create-table-country": "babel-node app/scripts/createCountryDB",
     "add-size": "babel-node app/scripts/addSize",
     "crawl": "babel-node app/scripts/crawl",
-    "remove-invalid-user": "babel-node app/scripts/removeInvalidUser"
+    "remove-invalid-user": "babel-node app/scripts/removeInvalidUser",
+    "update-map": "babel-node app/scripts/updateMap",
+    "test-map-finder": "babel-node app/scripts/testMapFinder"
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,7 @@
     "cron": "^1.2.1",
     "express": "^4.14.0",
     "express-graphql": "^0.6.2",
+    "get-pixels": "^3.3.0",
     "graphql": "^0.9.1",
     "graphql-date": "^1.0.3",
     "graphql-relay": "^0.5.1",
@@ -56,6 +59,7 @@
     "eslint-plugin-jest": "^19.0.1",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
+    "gm": "^1.23.0",
     "jest": "^19.0.2"
   }
 }

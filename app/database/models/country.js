@@ -11,7 +11,16 @@ const countrySchema = new Schema(
     parentId: String,
     svgId: String,
     svgFileName: String,
-    description: String
+    description: String,
+
+    markColor: String,
+    hasSvgFile: Boolean,
+    pngFileWidth: Number,
+    pngFileHeight: Number,
+    leftLongitude: Number,
+    topLatitude: Number,
+    rightLongitude: Number,
+    bottomLatitude: Number
   }, {
     timestamps: true,
     toJSON: {

@@ -16,12 +16,12 @@
 		<amcharts:ammap projection="mercator" leftLongitude="32.6725205" topLatitude="-9.3672274" rightLongitude="35.918573" bottomLatitude="-17.1295216"></amcharts:ammap>
 
 		<!-- All areas are listed in the line below. You can use this list in your script. -->
-		<!--{id:"MW-MW1"},{id:"MW-NA"},{id:"MW-PH"},{id:"MW-MJ"},{id:"MW-MW2"},{id:"MW-BL"},{id:"MW-ZO"},{id:"MW-NS"},{id:"MW-TH"},{id:"MW-CR"},{id:"MW-CK"},{id:"MW-BA"},{id:"MW-SA"},{id:"MW-NI"},{id:"MW-NU"},{id:"MW-MC"},{id:"MW-MG"},{id:"MW-LI"},{id:"MW-DO"},{id:"MW-DE"},{id:"MW-MA"},{id:"MW-RU"},{id:"MW-NK"},{id:"MW-NA"},{id:"MW-MZ"},{id:"MW-KS"},{id:"MW-CT1"},{id:"MW-CT2"}-->
+		<!--{id:"MW-MW1"},{id:"MW-LA"},{id:"MW-PH"},{id:"MW-MJ"},{id:"MW-MW2"},{id:"MW-BL"},{id:"MW-ZO"},{id:"MW-NS"},{id:"MW-TH"},{id:"MW-CR"},{id:"MW-CK"},{id:"MW-BA"},{id:"MW-SA"},{id:"MW-NI"},{id:"MW-NU"},{id:"MW-MC"},{id:"MW-MG"},{id:"MW-LI"},{id:"MW-DO"},{id:"MW-DE"},{id:"MW-MA"},{id:"MW-RU"},{id:"MW-NK"},{id:"MW-NA"},{id:"MW-MZ"},{id:"MW-KS"},{id:"MW-CT1"},{id:"MW-CT2"}-->
 
 	</defs>
 	<g>
 		<path id="MW-MW1" title="Neno" class="land" d="M537.02,1504.49L466.7,1475.34L432.05,1571.69L517.19,1580.77L578.62,1514.05L589.41,1507.27L537.02,1504.49z"/>
-		<path id="MW-NA" title="Likoma" class="land" d="M504.47,690.55L517.04,670.16L500.15,660.06L490.75,684.58L504.47,690.55zM484.69,673.25L483.64,656.74L462.42,658.59L484.69,673.25z"/>
+		<path id="MW-LA" title="Likoma" class="land" d="M504.47,690.55L517.04,670.16L500.15,660.06L490.75,684.58L504.47,690.55zM484.69,673.25L483.64,656.74L462.42,658.59L484.69,673.25z"/>
 		<path id="MW-PH" title="Phalombe" class="land" d="M773.13,1663.76L783.27,1541.84L739.54,1548.59L706.27,1579.75L698.89,1601.4L724.6,1664.35L773.13,1663.76z"/>
 		<path id="MW-MJ" title="Mulanje" class="land" d="M773.13,1663.76L724.6,1664.35L698.89,1601.4L706.27,1579.75L660.23,1599.48L652.75,1682.34L649.96,1734.76L673.3,1714.09L703.29,1725.12L748.61,1708.66L770.29,1691.85L773.13,1663.76z"/>
 		<path id="MW-MW2" title="Mwanza" class="land" d="M517.19,1580.77L432.05,1571.69L413.01,1611.54L513.93,1632.61L517.19,1580.77z"/>

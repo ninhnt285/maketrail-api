@@ -7,6 +7,28 @@ import xml2js from 'xml2js';
 import connectDb from '../database/connectDb';
 import CountryModel from '../database/models/country';
 
+const specialFiles = {
+  'antiguaAndBarbuda': 'antiguaBarbuda',
+  'bosniaAndHerzegovina': 'bosniaHerzegovinaCantons',
+  'cocos(Keeling)Islands': 'cocosIslands',
+  'democraticRepublicOfCongo': 'congoDR',
+  'republicOfCongo': 'congo',
+  'westernSahara': 'moroccoWesternSahara',
+  'fiji': 'fijiWest',
+  'federatedStatesOfMicronesia': 'micronesia',
+  'southGeorgiaAndSouthSandwichIslands': 'georgiaSouthOssetia',
+  'guinea-Bissau': 'guineaBissau',
+  'saintKittsAndNevis': 'stKittsNevis',
+  'saintLucia': 'stLucia',
+  'macau': 'macao',
+  'saintPierreAndMiquelon': 'saintPierreMiquelon',
+  'saintHelena': 'stHelena',
+  'svalbardAndJanMayen': 'svalbardJanMayen',
+  'unitedStates': 'usaMercator',
+  'saintVincentAndTheGrenadines': 'stVincent',
+  'wallisAndFutuna': 'wallisFutuna'
+};
+
 function camelize(str) {
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => index === 0 ? letter.toLowerCase() : letter.toUpperCase()).replace(/\s+/g, '');
 }
@@ -22,9 +44,10 @@ async function onConnected() {
       items.forEach(async (itemTemp) => {
         const item = itemTemp['$'];
         let svgFileName = camelize(item.title);
-        if (svgFileName === 'unitedStates') {
-          svgFileName = 'usa';
+        if (specialFiles[svgFileName]) {
+          svgFileName = specialFiles[svgFileName];
         }
+
         svgFileName += 'High.svg';
         const tmp = await CountryModel.create({ name: item.title, svgId: item.id, svgFileName });
         console.log(tmp.svgFileName);
