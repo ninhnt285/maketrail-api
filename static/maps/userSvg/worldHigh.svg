@@ -2,17 +2,6 @@
 <!-- (c) ammap.com | SVG map of World High -->
 <svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg" xmlns:amcharts="http://amcharts.com/ammap" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 	<defs>
-		<style type="text/css">
-			.land
-			{
-				fill: #CCCCCC;
-				fill-opacity: 1;
-				stroke:white;
-				stroke-opacity: 1;
-				stroke-width:0.5;
-			}
-		</style>
-
 		<amcharts:ammap projection="mercator" leftLongitude="-169.110266" topLatitude="83.63001" rightLongitude="190.480712" bottomLatitude="-58.488473"></amcharts:ammap>
 
 		<!-- All areas are listed in the line below. You can use this list in your script. -->
