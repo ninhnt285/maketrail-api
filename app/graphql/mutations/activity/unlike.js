@@ -14,6 +14,7 @@ import LikeType from '../../types/like';
 import FeedService from '../../../database/helpers/feed';
 import { LikeEdge } from '../../connections/like';
 import { edgeFromNode } from '../../../lib/connection';
+import viewer from '../../queries/viewer';
 
 const DeleteLikeMutation = mutationWithClientMutationId({
   name: 'DeleteLike',
@@ -40,7 +41,8 @@ const DeleteLikeMutation = mutationWithClientMutationId({
     edge: {
       type: LikeEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    }
+    },
+    viewer
   },
 
   mutateAndGetPayload: async ({ parentId }, { user }) => {
