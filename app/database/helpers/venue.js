@@ -111,7 +111,13 @@ VenueService.getCategories = async function (venueId) {
 
 VenueService.seachVenue = async function (localityId, query, categories) {
   try {
-    const locality = await LocalityModel.findById(localityId);
+    let ll = '38.685516,-101.073324';
+    if (localityId) {
+      const locality = await LocalityModel.findById(localityId);
+      if (locality) {
+        ll = `${locality.location.lat},${locality.location.lng}`;
+      }
+    }
     const options = {
       method: 'GET',
       uri: 'https://api.foursquare.com/v2/venues/search',
@@ -121,7 +127,7 @@ VenueService.seachVenue = async function (localityId, query, categories) {
         query,
         limit: 10,
         categoryId: categories ? categories.join() : undefined,
-        ll: `${locality.location.lat},${locality.location.lng}`
+        ll
       },
       encoding: 'utf8'
     };

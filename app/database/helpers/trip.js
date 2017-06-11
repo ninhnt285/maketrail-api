@@ -179,13 +179,32 @@ TripService.getCategories = async function (tripId) {
   const items = new Set();
   try {
     const localities = (await TripLocalityRelationModel.find({ tripId }));
-    for (let i = 0; i < localities.length; i++){
+    for (let i = 0; i < localities.length; i++) {
       const venues = await LocalityService.getVenues(localities[i].id);
-      for (let j = 0; j < venues.length; j++){
+      for (let j = 0; j < venues.length; j++) {
         const categories = await VenueService.getCategories(venues[j]);
         for (let k = 0; k < categories.length; k++) {
           items.add(categories[k]);
         }
+      }
+    }
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+  return [...items];
+};
+
+TripService.getAllPlaces = async function (tripId) {
+  const items = new Set();
+  try {
+    const localities = (await TripLocalityRelationModel.find({ tripId }));
+    for (let i = 0; i < localities.length; i++) {
+      items.add(await LocalityService.getById(localities[i].localityId));
+      const venueIds = await LocalityService.getVenues(localities[i].id);
+      const venues = await Promise.all(venueIds.map(async venueId => await VenueService.getById(venueId)));
+      for (let j = 0; j < venues.length; j++){
+        items.add(venues[j]);
       }
     }
   } catch (e) {
