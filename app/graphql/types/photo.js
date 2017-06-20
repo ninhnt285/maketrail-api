@@ -8,8 +8,7 @@ import {
 } from 'graphql';
 
 import FeedService from '../../database/helpers/feed';
-import AttachmentService from '../../database/helpers/attachment';
-import AttachmentStatisticType from './auxiliaryTypes/AttachmentStatistic';
+import StatisticType from './auxiliaryTypes/Statistic';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -54,8 +53,8 @@ const PhotoType = new GraphQLObjectType({
       resolve: parentValue => parentValue.createdAt.getTime() / 1000
     },
     statistics: {
-      type: AttachmentStatisticType,
-      resolve: parentValue => AttachmentService.getStatistics(parentValue.id)
+      type: StatisticType,
+      resolve: parentValue => FeedService.getStatistics(parentValue.id)
     }
   },
 

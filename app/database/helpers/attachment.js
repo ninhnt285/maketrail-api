@@ -53,19 +53,6 @@ AttachmentService.getById = async function (user, id) {
   return null;
 };
 
-AttachmentService.getStatistics = async function (id){
-  try {
-    const res = await Promise.all([LikeModel.count({ parentId: id }), CommentModel.count({parentId: id})]);
-    return {
-      likeCount: res[0],
-      commentCount: res[1]
-    };
-  } catch (e) {
-    console.log(e);
-    return null;
-  }
-};
-
 AttachmentService.upload = async function (user, file, caption) {
   if (!file) {
     // const item = await PhotoModel.create({

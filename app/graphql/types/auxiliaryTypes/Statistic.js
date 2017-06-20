@@ -3,8 +3,8 @@ import {
   GraphQLInt
 } from 'graphql';
 
-const FeedStatisticType = new GraphQLObjectType({
-  name: 'FeedStatistic',
+const StatisticType = new GraphQLObjectType({
+  name: 'Statistic',
   fields: {
     likeCount: {
       type: GraphQLInt
@@ -18,4 +18,4 @@ const FeedStatisticType = new GraphQLObjectType({
   }
 });
 
-export default FeedStatisticType;
+export default StatisticType;

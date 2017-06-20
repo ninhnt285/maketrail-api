@@ -11,7 +11,7 @@ import {
 import { nodeInterface } from '../utils/nodeDefinitions';
 import FeedService from '../../database/helpers/feed';
 import SubjectType from './subject';
-import FeedStatisticType from './auxiliaryTypes/FeedStatistic';
+import StatisticType from './auxiliaryTypes/Statistic';
 import { getNodeFromId } from '../../database/helpers/node';
 import { attachmentConnection } from '../connections/attachment';
 import { commentConnection } from '../connections/comment';
@@ -82,7 +82,7 @@ const FeedType = new GraphQLObjectType({
     attachments: attachmentConnection,
 
     statistics: {
-      type: FeedStatisticType,
+      type: StatisticType,
       resolve: parentValue => FeedService.getStatistics(parentValue.id)
     }
   }),
