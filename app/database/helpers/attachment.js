@@ -4,8 +4,6 @@ import uniqid from 'uniqid';
 import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
-import LikeModel from '../models/like';
-import CommentModel from '../models/comment';
 import { resize } from '../../lib/google/place/photo';
 import { Type, getType } from '../../lib/idUtils';
 
@@ -83,7 +81,7 @@ AttachmentService.upload = async function (user, file, caption) {
       uri = imageName.replace('%s', '');
       fileName = path.join(__dirname, '../../../static/', uri);
       fs.writeFileSync(fileName, file.buffer);
-      item = await PhotoModel.create({
+      item = await VideoModel.create({
         name: file.originalname,
         url: imageName,
         userId: user.id,
