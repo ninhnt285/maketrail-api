@@ -4,6 +4,8 @@ import uniqid from 'uniqid';
 import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
+import LikeModel from '../models/like';
+import CommentModel from '../models/comment';
 import { resize } from '../../lib/google/place/photo';
 import { Type, getType } from '../../lib/idUtils';
 
@@ -49,6 +51,19 @@ AttachmentService.getById = async function (user, id) {
     console.log(e);
   }
   return null;
+};
+
+AttachmentService.getStatistics = async function (id){
+  try {
+    const res = await Promise.all([LikeModel.count({ parentId: id }), CommentModel.count({parentId: id})]);
+    return {
+      likeCount: res[0],
+      commentCount: res[1]
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };
 
 AttachmentService.upload = async function (user, file, caption) {

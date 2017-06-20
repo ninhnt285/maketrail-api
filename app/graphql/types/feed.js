@@ -11,6 +11,7 @@ import {
 import { nodeInterface } from '../utils/nodeDefinitions';
 import FeedService from '../../database/helpers/feed';
 import SubjectType from './subject';
+import FeedStatisticType from './auxiliaryTypes/FeedStatistic';
 import { getNodeFromId } from '../../database/helpers/node';
 import { attachmentConnection } from '../connections/attachment';
 import { commentConnection } from '../connections/comment';
@@ -81,20 +82,7 @@ const FeedType = new GraphQLObjectType({
     attachments: attachmentConnection,
 
     statistics: {
-      type: new GraphQLObjectType({
-        name: 'feedStatistic',
-        fields: {
-          likeCount: {
-            type: GraphQLInt
-          },
-          shareCount: {
-            type: GraphQLInt
-          },
-          commentCount: {
-            type: GraphQLInt
-          }
-        }
-      }),
+      type: FeedStatisticType,
       resolve: parentValue => FeedService.getStatistics(parentValue.id)
     }
   }),
