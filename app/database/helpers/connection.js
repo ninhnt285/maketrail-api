@@ -22,6 +22,7 @@ export async function connectionFromModel(model, args, processFunc) {
 
   // Find arrays from args with Model and processFunc
   let sort = args.sort ? args.sort : 'createdAt';
+
   const sortNode = args.sortNode ? args.sortNode : sort;
 
   let skip = 0;
@@ -37,11 +38,11 @@ export async function connectionFromModel(model, args, processFunc) {
     filter[sort].$lt = beforeNode[sortNode];
   }
 
-  if ((sort === 'createdAt') && filter[sort]) {
+  if ((sort === 'createdAt' || sort === '-createdAt') && filter[sort]) {
     skip = 1;
   }
 
-  if (sort !== 'createdAt') {
+  if (sort !== 'createdAt' && sort !== '-createdAt') {
     sort += ' createdAt';
   }
 
