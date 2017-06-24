@@ -14,6 +14,7 @@ import TripService from '../../../database/helpers/trip';
 import TripType from '../../types/trip';
 import { TripEdge } from '../../connections/trip';
 import { edgeFromNode } from '../../../lib/connection';
+import viewer from '../../queries/viewer';
 
 const DeleteTripMutation = mutationWithClientMutationId({
   name: 'DeleteTrip',
@@ -40,7 +41,12 @@ const DeleteTripMutation = mutationWithClientMutationId({
     edge: {
       type: TripEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    }
+    },
+    deletedId: {
+      type: GraphQLID,
+      resolve: ({ deletedId }) => deletedId
+    },
+    viewer
   },
 
   mutateAndGetPayload: async ({ id }, { user }) => {
@@ -53,7 +59,8 @@ const DeleteTripMutation = mutationWithClientMutationId({
     }
     return {
       success: true,
-      item: res.item
+      item: res.item,
+      deletedId: id
     };
   }
 });
