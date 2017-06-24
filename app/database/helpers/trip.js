@@ -1,8 +1,11 @@
+const net = require('net');
 import TripModel from '../models/trip';
+import { PREFIX } from '../../config';
 import UserModel from '../models/user';
 import FeedService from '../helpers/feed';
 import NotificationService from '../helpers/notification';
 import LocalityService from '../helpers/locality';
+import AttachmentService from '../helpers/attachment';
 import VenueService from '../helpers/venue';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
@@ -125,7 +128,7 @@ TripService.inviteMember = async function (user, tripId, userId, email) {
 TripService.delete = async function (user, tripId) {
   try {
     if (await this.canDeleteTrip(user, tripId)) {
-      const res = await Promise.all([TripModel.findByIdAndRemove(tripId), UserTripRelationModel.remove(tripId), TripLocalityRelationModel.remove(tripId)]);
+      const res = await Promise.all([TripModel.findByIdAndRemove(tripId), UserTripRelationModel.remove({ tripId }), TripLocalityRelationModel.remove({ tripId })]);
       return {
         item: res[0]
       };
@@ -148,6 +151,9 @@ TripService.update = async function (user, tripId, args) {
       if (args.isPublished && args.isPublished === true) {
         await FeedService.publishTrip(user, tripId);
       }
+      if (args.exportedVideo && args.exportedVideo === true) {
+        this.exportVideo(user, item);
+      }
       return {
         item
       };
@@ -162,6 +168,48 @@ TripService.update = async function (user, tripId, args) {
     };
   }
 };
+
+TripService.exportVideo = async function (user, trip) {
+  try {
+    const obj = {};
+    obj.id = trip.id;
+    obj.name = trip.name;
+    obj.intro = PREFIX + trip.previewPhotoUrl.replace('%s', '');
+    obj.audio = 'music.mp3';
+    obj.locations = [];
+    const localities = await TripLocalityRelationModel.find({ tripId: trip.id });
+    obj.time = new Date(localities[0].arrivalTime * 1000).toDateString();
+    obj.direction = '';
+    for (let i = 0; i < localities.length; i++) {
+      const origin = await LocalityService.getById(localities[i].localityId);
+      const attachments = await AttachmentService.getByParentId(localities[i].id);
+      const tmp = {
+        name: origin.name,
+        temperature: '20°C',
+        height: '70 Miles'
+      };
+      if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '');
+      if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '');
+      if (attachments[2]) tmp.image3 = PREFIX + attachments[2].url.replace('%s', '');
+      if (attachments[3]) tmp.image4 = PREFIX + attachments[3].url.replace('%s', '');
+      if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '');
+      obj.locations.push(tmp);
+    }
+    obj.direction = `${obj.locations[0].name} - ${obj.locations[obj.locations.length - 1].name}`;
+    console.log(obj);
+    // const client = new net.Socket();
+    // client.connect(6969, '45.32.216.6', () => {
+    //   console.log('Connected');
+    //   client.write(JSON.stringify(obj));
+    // });
+    // client.on('data', (data) => {
+    //   client.destroy(); // kill client after server's response
+    // });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 
 TripService.getById = async function (user, id) {
   let item = null;
@@ -203,7 +251,7 @@ TripService.getAllPlaces = async function (tripId) {
       items.add(await LocalityService.getById(localities[i].localityId));
       const venueIds = await LocalityService.getVenues(localities[i].id);
       const venues = await Promise.all(venueIds.map(async venueId => await VenueService.getById(venueId)));
-      for (let j = 0; j < venues.length; j++){
+      for (let j = 0; j < venues.length; j++) {
         items.add(venues[j]);
       }
     }

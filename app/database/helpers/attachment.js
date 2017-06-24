@@ -51,6 +51,16 @@ AttachmentService.getById = async function (user, id) {
   return null;
 };
 
+AttachmentService.getByParentId = async function (parentId) {
+  try {
+    const photos = await PhotoModel.find({ parentId });
+    return photos;
+  } catch (e) {
+    console.log(e);
+  }
+  return [];
+};
+
 AttachmentService.upload = async function (user, file, caption) {
   if (!file) {
     // const item = await PhotoModel.create({
