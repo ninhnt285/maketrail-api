@@ -24,6 +24,13 @@ const PhotoType = new GraphQLObjectType({
     name: {
       type: GraphQLString
     },
+    placeId: {
+      type: GraphQLString
+    },
+
+    placeName: {
+      type: GraphQLString
+    },
     caption: {
       type: GraphQLString
     },

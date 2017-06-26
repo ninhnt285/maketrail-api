@@ -74,6 +74,14 @@ const FeedType = new GraphQLObjectType({
       type: GraphQLString
     },
 
+    placeId: {
+      type: GraphQLString
+    },
+
+    placeName: {
+      type: GraphQLString
+    },
+
     createdAt: {
       type: GraphQLInt,
       resolve: parentValue => parentValue.createdAt.getTime() / 1000

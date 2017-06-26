@@ -52,6 +52,13 @@ const VideoType = new GraphQLObjectType({
     length: {
       type: GraphQLFloat
     },
+    placeId: {
+      type: GraphQLString
+    },
+
+    placeName: {
+      type: GraphQLString
+    },
     createdAt: {
       type: GraphQLInt,
       resolve: parentValue => parentValue.createdAt.getTime() / 1000
