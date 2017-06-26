@@ -139,10 +139,10 @@ FeedService.post = async function (user, toId, text, attachments, placeId, place
         tmp = getType(attachments[i]);
         if (tmp === Type.PHOTO) {
           type = Activity.PHOTO;
-          await PhotoModel.findByIdAndUpdate(attachments[i], { placeId, placeName });
+          await PhotoModel.findByIdAndUpdate(attachments[i], { placeId, placeName, parentId: toId || user.id });
         } else if (tmp === Type.VIDEO && tmp === '') {
           type = Activity.VIDEO;
-          await VideoModel.findByIdAndUpdate(attachments[i], { placeId, placeName });
+          await VideoModel.findByIdAndUpdate(attachments[i], { placeId, placeName, parentId: toId || user.id });
         }
       }
     }

@@ -59,6 +59,17 @@ AttachmentService.getByPlaceId = async function (placeId) {
   return [];
 };
 
+AttachmentService.getByParentId = async function (parentId) {
+  try {
+    const photos = await PhotoModel.find({ parentId });
+    const videos = await VideoModel.find({ parentId });
+    return photos.concat(videos);
+  } catch (e) {
+    console.log(e);
+  }
+  return [];
+};
+
 AttachmentService.updatePlace = async function (id, placeId, placeName) {
   try {
     const tmp = getType(id);

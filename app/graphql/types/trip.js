@@ -15,6 +15,7 @@ import { nodeInterface } from '../utils/nodeDefinitions';
 import { localityConnection } from '../connections/tripLocality';
 import { memberConnection } from '../connections/user';
 import PlaceType from './place';
+import AttachmentType from './attachment';
 import { PREFIX } from '../../config';
 const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 
@@ -64,6 +65,13 @@ const TripType = new GraphQLObjectType({
         }
       },
       localities: localityConnection,
+      allAttachments: {
+        type: new GraphQLList(AttachmentType),
+        async resolve(obj) {
+          const attachments = await TripService.getAllAttachments(obj.id);
+          return attachments;
+        }
+      },
       allPlaces: {
         type: new GraphQLList(PlaceType),
         async resolve(obj) {
