@@ -90,7 +90,7 @@ AttachmentService.updatePlace = async function (id, placeId, placeName) {
   }
 };
 
-AttachmentService.upload = async function (user, file, caption) {
+AttachmentService.upload = async function (user, file, caption, parentId, placeId, placeName) {
   if (!file) {
     // const item = await PhotoModel.create({
     //   name: 'test.jpg',
@@ -125,6 +125,9 @@ AttachmentService.upload = async function (user, file, caption) {
         url: imageName,
         userId: user.id,
         caption,
+        parentId,
+        placeId,
+        placeName,
         privacy: 0
       });
     } else {
@@ -139,6 +142,9 @@ AttachmentService.upload = async function (user, file, caption) {
         previewUrl,
         userId: user.id,
         caption,
+        parentId,
+        placeId,
+        placeName,
         privacy: 0
       });
       resize(uri);

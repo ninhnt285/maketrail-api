@@ -178,7 +178,7 @@ TripService.exportVideo = async function (user, trip) {
     obj.audio = 'music.mp3';
     obj.locations = [];
     const localities = await TripLocalityRelationModel.find({ tripId: trip.id });
-    obj.time = new Date(localities[0].arrivalTime * 1000).toDateString();
+    // obj.time = new Date(localities[0].arrivalTime * 1000).toDateString();
     obj.direction = '';
     for (let i = 0; i < localities.length; i++) {
       const origin = await LocalityService.getById(localities[i].localityId);
@@ -195,8 +195,9 @@ TripService.exportVideo = async function (user, trip) {
       if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '');
       obj.locations.push(tmp);
     }
-    obj.direction = `${obj.locations[0].name} - ${obj.locations[obj.locations.length - 1].name}`;
+    // obj.direction = `${obj.locations[0].name} - ${obj.locations[obj.locations.length - 1].name}`;
     console.log(obj);
+    AttachmentService.loadRenderedVideo('1738472ace9325.mp4', 'http://ren1.maketrail.com/1738472ace9325.mp4');
     // const client = new net.Socket();
     // client.connect(6969, '45.32.216.6', () => {
     //   console.log('Connected');
@@ -260,6 +261,15 @@ TripService.getAllPlaces = async function (tripId) {
     return [];
   }
   return [...items];
+};
+
+TripService.getAllAttachments = async function (tripId) {
+  try {
+    return await AttachmentService.getByParentId(tripId);
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
 };
 
 export default TripService;

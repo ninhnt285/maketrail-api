@@ -2,7 +2,8 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLString,
+  GraphQLID
 } from 'graphql';
 
 import {
@@ -19,6 +20,15 @@ const UploadMutation = mutationWithClientMutationId({
 
   inputFields: {
     caption: {
+      type: GraphQLString
+    },
+    parentId: {
+      type: GraphQLID
+    },
+    placeId: {
+      type: GraphQLID
+    },
+    placeName: {
       type: GraphQLString
     }
   },
@@ -42,7 +52,7 @@ const UploadMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ caption }, { file, user }) => {
+  mutateAndGetPayload: async ({ caption, parentId, placeId, placeName }, { file, user }) => {
     let errors = [];
 
     if (!user) {
@@ -55,7 +65,7 @@ const UploadMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await AttachmentService.upload(user, file, caption);
+    const res = await AttachmentService.upload(user, file, caption, parentId, placeId, placeName);
     if (res.errors) {
       return {
         success: false,
