@@ -12,7 +12,9 @@ const feedSchema = new Schema(
     parentId: String,
     attachments: [String],
     privacy: Number,
-    type: Number
+    type: Number,
+    placeId: String,
+    placeName: String
   }, {
     timestamps: true,
     toJSON: {

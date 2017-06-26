@@ -1,5 +1,7 @@
 import FeedModel from '../models/feed';
 import CommentModel from '../models/comment';
+import PhotoModel from '../models/photo';
+import VideoModel from '../models/video';
 import TripModel from '../models/trip';
 import NotificationService from '../helpers/notification';
 import { getNode, getNodeFromId } from '../helpers/node';
@@ -128,7 +130,7 @@ FeedService.comment = async function (user, parentId, text) {
   }
 };
 
-FeedService.post = async function (user, toId, text, attachments) {
+FeedService.post = async function (user, toId, text, attachments, placeId, placeName) {
   try {
     let type = Activity.POST;
     let tmp = '';
@@ -137,9 +139,10 @@ FeedService.post = async function (user, toId, text, attachments) {
         tmp = getType(attachments[i]);
         if (tmp === Type.PHOTO) {
           type = Activity.PHOTO;
-          break;
-        } else if (tmp === Type.VIDEO) {
+          await PhotoModel.findByIdAndUpdate(attachments[i], { placeId, placeName });
+        } else if (tmp === Type.VIDEO && tmp === '') {
           type = Activity.VIDEO;
+          await VideoModel.findByIdAndUpdate(attachments[i], { placeId, placeName });
         }
       }
     }
@@ -149,6 +152,8 @@ FeedService.post = async function (user, toId, text, attachments) {
       privacy: 0,
       text,
       type,
+      placeId,
+      placeName,
       attachments
     });
     await NotificationService.interest(user.id, item.id, 2);

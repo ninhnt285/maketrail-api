@@ -12,7 +12,9 @@ const photoSchema = new Schema(
     url: String,
     previewUrl: String,
     privacy: Number,
-    parentId: String
+    parentId: String,
+    placeId: String,
+    placeName: String
   }, {
     timestamps: true,
     toJSON: {

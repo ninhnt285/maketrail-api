@@ -1,40 +1,32 @@
 import {
   GraphQLNonNull,
-  GraphQLID,
   GraphQLList,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLString,
+  GraphQLID
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import FeedType from '../../types/feed';
-import FeedService from '../../../database/helpers/feed';
-import { FeedEdge } from '../../connections/feed';
+import AttachmentType from '../../types/attachment';
+import AttachmentService from '../../../database/helpers/attachment';
+import { AttachmentEdge } from '../../connections/attachment';
 import { edgeFromNode } from '../../../lib/connection';
 
-const PostMutation = mutationWithClientMutationId({
-  name: 'AddFeed',
+const UpdateAttachmentMutation = mutationWithClientMutationId({
+  name: 'UpdateAttachment',
 
   inputFields: {
-    toId: {
-      type: GraphQLID
+    attachmentId: {
+      type: new GraphQLNonNull(GraphQLID)
     },
-    text: {
-      type: GraphQLString
-    },
-
     placeId: {
       type: GraphQLID
     },
     placeName: {
       type: GraphQLString
-    },
-
-    attachmentIds: {
-      type: new GraphQLList(GraphQLID)
     }
   },
 
@@ -47,17 +39,17 @@ const PostMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    feed: {
-      type: FeedType,
+    attachment: {
+      type: AttachmentType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: FeedEdge,
+      type: AttachmentEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ toId, text, attachmentIds, placeId, placeName }, { user }) => {
+  mutateAndGetPayload: async ({ attachmentId, placeId, placeName }, { user }) => {
     let errors = [];
 
     if (!user) {
@@ -70,7 +62,7 @@ const PostMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await FeedService.post(user, toId, text, attachmentIds, placeId, placeName);
+    const res = await AttachmentService.updatePlace(attachmentId, placeId, placeName);
     if (res.errors) {
       return {
         success: false,
@@ -84,4 +76,4 @@ const PostMutation = mutationWithClientMutationId({
   }
 });
 
-export default PostMutation;
+export default UpdateAttachmentMutation;

@@ -4,7 +4,7 @@ import uniqid from 'uniqid';
 import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
-import { resize } from '../../lib/google/place/photo';
+import { resize, downloadFileHttp } from '../../lib/google/place/photo';
 import { Type, getType } from '../../lib/idUtils';
 
 const videoMimes = ['.mkv', '.flv', '.vob', '.avi', '.mov', '.wmv', '.rm', '.rmvb', '.amv', '.mp4', '.mpg', '.mpeg', '.m4v', '.3gp'];
@@ -25,9 +25,8 @@ AttachmentService.findById = async function (id) {
     const type = getType(id);
     if (type === Type.VIDEO) {
       return await VideoModel.findById(id);
-    } else {
-      return await PhotoModel.findById(id);
     }
+    return await PhotoModel.findById(id);
   } catch (e) {
     console.log(e);
     return null;
@@ -41,9 +40,8 @@ AttachmentService.getById = async function (user, id) {
       const type = getType(id);
       if (type === Type.VIDEO) {
         return await VideoModel.findById(id);
-      } else {
-        return await PhotoModel.findById(id);
       }
+      return await PhotoModel.findById(id);
     }
   } catch (e) {
     console.log(e);
@@ -51,14 +49,34 @@ AttachmentService.getById = async function (user, id) {
   return null;
 };
 
-AttachmentService.getByParentId = async function (parentId) {
+AttachmentService.getByPlaceId = async function (placeId) {
   try {
-    const photos = await PhotoModel.find({ parentId });
+    const photos = await PhotoModel.find({ placeId });
     return photos;
   } catch (e) {
     console.log(e);
   }
   return [];
+};
+
+AttachmentService.updatePlace = async function (id, placeId, placeName) {
+  try {
+    const tmp = getType(id);
+    let item = null;
+    if (tmp === Type.PHOTO) {
+      item = await PhotoModel.findByIdAndUpdate(id, { placeId, placeName });
+    } else {
+      item = await VideoModel.findByIdAndUpdate(id, { placeId, placeName });
+    }
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
 };
 
 AttachmentService.upload = async function (user, file, caption) {
@@ -117,6 +135,29 @@ AttachmentService.upload = async function (user, file, caption) {
     return {
       item
     };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+AttachmentService.loadRenderedVideo = async function (file, url) {
+  try {
+    const mimeType = file.substring(file.lastIndexOf('.'));
+    const parentId = file.substring(0, file.lastIndexOf('.') - 1);
+    const date = new Date();
+    const videoName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file + uniqid()).digest('hex')}${mimeType}`;
+    const fileName = path.join(__dirname, '../../../static/', videoName);
+    downloadFileHttp(url, fileName).then(async (fileDest) => {
+      await VideoModel.create({
+        name: file,
+        parentId,
+        url: videoName,
+        privacy: 0
+      });
+    });
   } catch (e) {
     console.log(e);
     return {

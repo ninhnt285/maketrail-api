@@ -14,7 +14,8 @@ import deleteLikeMutation from './activity/unlike';
 import shareMutation from './activity/share';
 import postMutation from './activity/post';
 import commentMutation from './activity/comment';
-import uploadMutation from './activity/upload';
+import uploadMutation from './attachment/upload';
+import updateAttachmentMutation from './attachment/update';
 import followMutation from './activity/follow';
 import unfollowMutation from './activity/unfollow';
 
@@ -39,7 +40,9 @@ export default {
   addShare: shareMutation,
   addFeed: postMutation,
   addComment: commentMutation,
-  addAttachment: uploadMutation,
   follow: followMutation,
-  unfollow: unfollowMutation
+  unfollow: unfollowMutation,
+
+  addAttachment: uploadMutation,
+  updateAttachment: updateAttachmentMutation
 };

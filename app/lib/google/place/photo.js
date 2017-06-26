@@ -1,4 +1,5 @@
 import https from 'https';
+import http from 'http';
 import request from 'request-promise';
 import fs from 'fs';
 import path from 'path';
@@ -51,6 +52,34 @@ export function downloadFile(url, dest) {
   return new Promise((resolve, reject) => {
     let responseSent = false;
     https.get(url, (res) => {
+      if (res.headers.location) {
+        file.close();
+        downloadFile(res.headers.location, dest).then((result) => {
+          resolve(result);
+        });
+      } else {
+        res.pipe(file);
+        file.on('finish', () => {
+          file.close(() => {
+            if (responseSent) return;
+            responseSent = true;
+            resolve(dest);
+          });
+        });
+      }
+    }).on('error', (e) => {
+      if (responseSent) return;
+      responseSent = true;
+      reject(e);
+    });
+  });
+}
+
+export function downloadFileHttp(url, dest) {
+  const file = fs.createWriteStream(dest);
+  return new Promise((resolve, reject) => {
+    let responseSent = false;
+    http.get(url, (res) => {
       if (res.headers.location) {
         file.close();
         downloadFile(res.headers.location, dest).then((result) => {
