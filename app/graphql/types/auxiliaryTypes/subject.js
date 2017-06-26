@@ -1,10 +1,10 @@
 import {
   GraphQLUnionType
 } from 'graphql';
-import { Type, getType } from '../../lib/idUtils';
+import { Type, getType } from '../../../lib/idUtils';
 
-const TripType = require('./trip').default;
-const UserType = require('./user').default;
+const TripType = require('./../trip').default;
+const UserType = require('./../user').default;
 
 const resolveType = (data) => {
   const type = getType(data.id);

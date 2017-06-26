@@ -7,7 +7,7 @@ import {
   connectionDefinitions
 } from 'graphql-relay';
 
-import AttachmentType from '../types/attachment';
+import AttachmentType from '../types/auxiliaryTypes/attachment';
 import AttachmentService from '../../database/helpers/attachment';
 import { connectionFromArray } from '../../lib/connection';
 

@@ -10,7 +10,7 @@ import {
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 import FeedService from '../../database/helpers/feed';
-import SubjectType from './subject';
+import SubjectType from './auxiliaryTypes/subject';
 import StatisticType from './auxiliaryTypes/Statistic';
 import { getNodeFromId } from '../../database/helpers/node';
 import { attachmentConnection } from '../connections/attachment';

@@ -9,7 +9,7 @@ import {
 import { nodeInterface } from '../utils/nodeDefinitions';
 import FeedService from '../../database/helpers/feed';
 import { commentConnection } from '../connections/comment';
-import FeedTargetType from './subject';
+import FeedTargetType from './auxiliaryTypes/subject';
 import { getNodeFromId } from '../../database/helpers/node';
 
 const CommentType = new GraphQLObjectType({

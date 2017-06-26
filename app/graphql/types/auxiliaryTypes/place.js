@@ -1,10 +1,10 @@
 import {
   GraphQLUnionType
 } from 'graphql';
-import { Type, getType } from '../../lib/idUtils';
+import { Type, getType } from '../../../lib/idUtils';
 
-const VenueType = require('./venue').default;
-const LocalityType = require('./locality').default;
+const VenueType = require('./../venue').default;
+const LocalityType = require('./../locality').default;
 
 const resolveType = (data) => {
   const type = getType(data.id);

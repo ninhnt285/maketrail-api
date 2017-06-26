@@ -18,13 +18,15 @@ const DEFAULT_IMAGE = '/noImage/noImage_150_square.png';
 const VideoType = new GraphQLObjectType({
   name: 'Video',
 
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
+
     name: {
       type: GraphQLString
     },
+
     caption: {
       type: GraphQLString
     },
@@ -67,7 +69,7 @@ const VideoType = new GraphQLObjectType({
       type: StatisticType,
       resolve: parentValue => FeedService.getStatistics(parentValue.id)
     }
-  },
+  }),
 
   interfaces: [nodeInterface]
 });

@@ -14,8 +14,8 @@ import TripService from '../../database/helpers/trip';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { localityConnection } from '../connections/tripLocality';
 import { memberConnection } from '../connections/user';
-import PlaceType from './place';
-import AttachmentType from './attachment';
+import PlaceType from './auxiliaryTypes/place';
+import AttachmentType from './auxiliaryTypes/attachment';
 import { PREFIX } from '../../config';
 const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 

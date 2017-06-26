@@ -1,10 +1,10 @@
 import {
   GraphQLUnionType
 } from 'graphql';
-import { Type, getType } from '../../lib/idUtils';
+import { Type, getType } from '../../../lib/idUtils';
 
-const PhotoType = require('./photo').default;
-const VideoType = require('./video').default;
+const PhotoType = require('./../photo').default;
+const VideoType = require('./../video').default;
 
 const resolveType = (data) => {
   const type = getType(data.id);

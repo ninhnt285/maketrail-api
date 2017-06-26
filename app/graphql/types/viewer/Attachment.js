@@ -2,7 +2,7 @@ import {
   GraphQLNonNull,
   GraphQLID
 } from 'graphql';
-import AttachmentType from '../attachment';
+import AttachmentType from '../auxiliaryTypes/attachment';
 import AttachmentService from '../../../database/helpers/attachment';
 
 const AttachmentQuery = {

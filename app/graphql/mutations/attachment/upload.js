@@ -10,7 +10,7 @@ import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import AttachmentType from '../../types/attachment';
+import AttachmentType from '../../types/auxiliaryTypes/attachment';
 import AttachmentService from '../../../database/helpers/attachment';
 import { AttachmentEdge } from '../../connections/attachment';
 import { edgeFromNode } from '../../../lib/connection';

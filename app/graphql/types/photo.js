@@ -17,7 +17,7 @@ const DEFAULT_IMAGE = '/noImage/noImage_150_square.png';
 const PhotoType = new GraphQLObjectType({
   name: 'Photo',
 
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
@@ -63,7 +63,7 @@ const PhotoType = new GraphQLObjectType({
       type: StatisticType,
       resolve: parentValue => FeedService.getStatistics(parentValue.id)
     }
-  },
+  }),
 
   interfaces: [nodeInterface]
 });

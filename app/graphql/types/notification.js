@@ -7,8 +7,8 @@ import {
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
-import SubjectType from './subject';
-import ObjectType from './object';
+import SubjectType from './auxiliaryTypes/subject';
+import ObjectType from './auxiliaryTypes/object';
 import { getNodeFromId } from '../../database/helpers/node';
 
 const NotificationType = new GraphQLObjectType({
