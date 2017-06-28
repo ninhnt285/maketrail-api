@@ -36,6 +36,20 @@ UserService.getById = async function (user, id) {
   return null;
 };
 
+UserService.update = async function (user, args) {
+  try {
+    const item = await UserModel.findByIdAndUpdate(user.id, { $set: args }, { new: true });
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
 UserService.register = async function (username, email, password, fullName) {
   try {
     if (await UserModel.findOne({ $or: [{ username }, { email }] })) {
@@ -67,6 +81,28 @@ UserService.loginViaEmail = async function (email, password) {
       };
     }
     const accessToken = generateToken(user);
+    return {
+      accessToken
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal Error']
+    };
+  }
+};
+
+UserService.changePassword = async function (user, password, newPassword) {
+  try {
+    const passwordHash = await generateHash(password);
+    const passwordHashNew = await generateHash(newPassword);
+    const userTmp = await UserModel.findOneAndUpdate({ id: user.id, password: passwordHash }, { password: passwordHashNew });
+    if (!userTmp) {
+      return {
+        errors: ['Invalid password']
+      };
+    }
+    const accessToken = generateToken(userTmp);
     return {
       accessToken
     };

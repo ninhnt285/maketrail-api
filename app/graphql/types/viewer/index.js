@@ -31,7 +31,7 @@ import { venueConnection } from '../../connections/venue';
 const ViewerType = new GraphQLObjectType({
   name: 'Viewer',
 
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
@@ -100,7 +100,7 @@ const ViewerType = new GraphQLObjectType({
     suggestFollows: suggestUserConnection,
     allTrips: tripConnection,
     categories: categoryConnection
-  },
+  }),
 
   interfaces: [nodeInterface]
 });

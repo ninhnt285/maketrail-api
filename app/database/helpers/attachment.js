@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
 import { resize, downloadFileHttp } from '../../lib/google/place/photo';
+import { processVideo } from '../../lib/video';
 import { Type, getType } from '../../lib/idUtils';
 
 const videoMimes = ['.mkv', '.flv', '.vob', '.avi', '.mov', '.wmv', '.rm', '.rmvb', '.amv', '.mp4', '.mpg', '.mpeg', '.m4v', '.3gp'];
@@ -92,16 +93,6 @@ AttachmentService.updatePlace = async function (id, placeId, placeName) {
 
 AttachmentService.upload = async function (user, file, caption, parentId, placeId, placeName) {
   if (!file) {
-    // const item = await PhotoModel.create({
-    //   name: 'test.jpg',
-    //   url: 'test.jpg',
-    //   userId: user.id,
-    //   caption,
-    //   privacy: 0
-    // });
-    // return {
-    //   item
-    // };
     return {
       errors: ['Invalid file']
     };
@@ -109,6 +100,7 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
   try {
     const mimeType = file.originalname.substring(file.originalname.lastIndexOf('.'));
     let imageName;
+    let videoName;
     let previewUrl;
     let uri;
     let fileName;
@@ -116,20 +108,25 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
     const isV = isVideo(mimeType);
     let item = null;
     if (isV) {
-      imageName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}${mimeType}`;
+      videoName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}.mp4`;
+      imageName = `/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s.jpg`;
+      previewUrl = imageName.replace('%s', '_150_square');
       uri = imageName.replace('%s', '');
-      fileName = path.join(__dirname, '../../../static/', uri);
+      fileName = path.join(__dirname, '../../../static/', videoName);
       fs.writeFileSync(fileName, file.buffer);
       item = await VideoModel.create({
         name: file.originalname,
-        url: imageName,
+        url: videoName,
         userId: user.id,
         caption,
         parentId,
         placeId,
         placeName,
+        previewUrl,
+        isProcessing: false,
         privacy: 0
       });
+      processVideo(item.id, videoName, uri);
     } else {
       imageName = `/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s${mimeType}`;
       previewUrl = imageName.replace('%s', '_150_square');
@@ -158,6 +155,10 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
       errors: ['Internal error']
     };
   }
+};
+
+AttachmentService.publishVideo = async function(id) {
+  await VideoModel.findByIdAndUpdate(id, { isProcessing: true });
 };
 
 AttachmentService.loadRenderedVideo = async function (file, url) {

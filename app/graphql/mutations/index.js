@@ -1,5 +1,6 @@
 import loginMutation from './authentications/login';
 import registerMutation from './authentications/register';
+import changePasswordMutation from './authentications/changePassword';
 import addTripMutation from './trip/add';
 import updateTripMutation from './trip/update';
 import deleteTripMutation from './trip/delete';
@@ -14,6 +15,7 @@ import deleteLikeMutation from './activity/unlike';
 import shareMutation from './activity/share';
 import postMutation from './activity/post';
 import commentMutation from './activity/comment';
+import updateInfoMutation from './activity/updateInfo';
 import uploadMutation from './attachment/upload';
 import updateAttachmentMutation from './attachment/update';
 import followMutation from './activity/follow';
@@ -22,6 +24,8 @@ import unfollowMutation from './activity/unfollow';
 export default {
   login: loginMutation,
   register: registerMutation,
+  changePassword: changePasswordMutation,
+
 
   addTrip: addTripMutation,
   updateTrip: updateTripMutation,
@@ -42,6 +46,7 @@ export default {
   addComment: commentMutation,
   follow: followMutation,
   unfollow: unfollowMutation,
+  updateInfo: updateInfoMutation,
 
   addAttachment: uploadMutation,
   updateAttachment: updateAttachmentMutation

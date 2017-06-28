@@ -14,7 +14,8 @@ const videoSchema = new Schema(
     privacy: Number,
     parentId: String,
     placeId: String,
-    placeName: String
+    placeName: String,
+    isProcessing: Boolean
   }, {
     timestamps: true,
     toJSON: {
