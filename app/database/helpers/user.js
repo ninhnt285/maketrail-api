@@ -114,6 +114,45 @@ UserService.changePassword = async function (user, password, newPassword) {
   }
 };
 
+UserService.changePasswordNoUser = async function (email, hash, newPassword) {
+  try {
+    const passwordHashNew = await generateHash(newPassword);
+    const userTmp = await UserModel.findOneAndUpdate({ email, password: hash }, { password: passwordHashNew });
+    if (!userTmp) {
+      return {
+        errors: ['Invalid password']
+      };
+    }
+    const accessToken = generateToken(userTmp);
+    return {
+      accessToken
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal Error']
+    };
+  }
+};
+
+UserService.forgotPassword = async function (email) {
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return {
+        errors: ['Invalid email']
+      };
+    }
+    // TODO: send email reset password
+    return '';
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal Error']
+    };
+  }
+};
+
 UserService.loginViaUsername = async function (username, password) {
   try {
     const passwordHash = await generateHash(password);

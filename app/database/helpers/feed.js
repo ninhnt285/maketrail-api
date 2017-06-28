@@ -169,6 +169,63 @@ FeedService.post = async function (user, toId, text, attachments, placeId, place
   }
 };
 
+FeedService.update = async function (user, feedId, args) {
+  try {
+    let tmp = '';
+    let attachments = [];
+    if (args.placeId && args.placeName) {
+      if (args.attachments){
+        attachments = args.attachments;
+      } else {
+        const tmpItem = await FeedModel.findById(feedId);
+        attachments = tmpItem.attachments;
+      }
+      for (let i = 0; i < attachments.length; i++) {
+        tmp = getType(attachments[i]);
+        if (tmp === Type.PHOTO) {
+          await PhotoModel.findByIdAndUpdate(attachments[i], { placeIdL: args.placeId, placeName: args.placeName });
+        } else if (tmp === Type.VIDEO) {
+          await VideoModel.findByIdAndUpdate(attachments[i], { placeId: args.placeId, placeName: args.placeName });
+        }
+      }
+    }
+    const item = await FeedModel.findByIdAndUpdate(feedId, { $set: args }, { new: true });
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+FeedService.delete = async function (user, feedId) {
+  try {
+    const item = await FeedModel.findByIdAndRemove(feedId);
+    let tmp = '';
+    if (item.attachments) {
+      for (let i = 0; i < item.attachments.length; i++) {
+        tmp = getType(item.attachments[i]);
+        if (tmp === Type.PHOTO) {
+          await PhotoModel.findByIdAndRemove(item.attachments[i]);
+        } else if (tmp === Type.VIDEO) {
+          await VideoModel.findByIdAndRemove(item.attachments[i]);
+        }
+      }
+    }
+    return {
+      item
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
 FeedService.publishTrip = async function (user, tripId) {
   try {
     await TripModel.findByIdAndUpdate(tripId, { isPublished: true });
