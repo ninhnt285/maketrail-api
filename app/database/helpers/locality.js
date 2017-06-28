@@ -7,6 +7,7 @@ import LocalityVenueRelationModel from '../models/localityVenueRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 import { GOOGLE_API_KEY, AIRBNB_CLIENT_ID } from '../../config';
 import { getPhotoFromReference, resize } from '../../lib/google/place/photo';
+import { getForecastOne } from '../../lib/weather';
 
 const LocalityService = {};
 
@@ -45,11 +46,14 @@ LocalityService.add = async function (user, tripId, localityId) {
         .exec();
       arrivalTime = tmp ? tmp.arrivalTime : Math.floor((new Date().getTime() / 1000));
       arrivalTime += 1440;
-      const res = await Promise.all([LocalityModel.findById(localityId), TripLocalityRelationModel.create({ tripId, localityId, arrivalTime })]);
+      const originLocality = await LocalityModel.findById(localityId);
+      const weather = await getForecastOne(originLocality.location.lat, originLocality.location.lng, arrivalTime);
+      const res = await TripLocalityRelationModel.create({ tripId, localityId, arrivalTime, weather });
       const item = {
-        id: res[1].id,
+        id: res.id,
         arrivalTime,
-        originLocality: res[0]
+        weatherIcon: res.weather.icon,
+        originLocality
       };
       await NotificationService.notify(user.id, tripId, item.id, NotificationService.Type.ADD_LOCALITY);
       return {
@@ -76,6 +80,7 @@ LocalityService.remove = async function (user, tripId, tripLocalityId) {
         item: {
           id: tripLocalityId,
           arrivalTime: tmp.arrivalTime,
+          weatherIcon: tmp.weather.icon,
           originLocality: locality
         }
       };
@@ -108,6 +113,7 @@ LocalityService.findTripLocalityById = async function (id) {
     return {
       id: tmp.id,
       arrivalTime: tmp.arrivalTime,
+      weatherIcon: tmp.weather.icon,
       originLocality
     };
   } catch (e) {
@@ -130,12 +136,17 @@ LocalityService.updateTripLocality = async function (user, tripLocalityId, args)
   try {
     const tmp = await TripLocalityRelationModel.findById(tripLocalityId);
     if (await this.canUpdateLocality(user, tmp.tripId)) {
+      const itemTmp = await TripLocalityRelationModel.findById(tripLocalityId);
+      const originLocality = await LocalityModel.findById(itemTmp.localityId);
+      if (args.arrivalTime){
+        args.weather = await getForecastOne(originLocality.location.lat, originLocality.location.lng, args.arrivalTime);
+      }
       const item = await TripLocalityRelationModel.findByIdAndUpdate(tripLocalityId, { $set: args }, { new: true });
-      const originLocality = await LocalityModel.findById(item.localityId);
       return {
         item: {
           id: item.id,
           arrivalTime: item.arrivalTime,
+          weatherIcon: item.weather.icon,
           originLocality
         }
       };

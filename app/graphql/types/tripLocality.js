@@ -3,6 +3,7 @@ import {
   GraphQLID,
   GraphQLObjectType,
   GraphQLInt,
+  GraphQLString,
   GraphQLList
 } from 'graphql';
 
@@ -25,6 +26,9 @@ const TripLocalityType = new GraphQLObjectType({
     },
     arrivalTime: {
       type: GraphQLInt
+    },
+    weatherIcon: {
+      type: GraphQLString
     },
     localityVenues: localityVenueConnection,
     recommendVenues: recommendVenueConnection,

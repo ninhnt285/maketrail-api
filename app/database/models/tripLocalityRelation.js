@@ -8,7 +8,10 @@ const relationSchema = new Schema(
     _id: Types.ObjectId,
     tripId: String,
     localityId: String,
-    arrivalTime: Number
+    arrivalTime: Number,
+    weather: {
+      icon: String
+    }
   }, {
     timestamps: true,
     toJSON: {

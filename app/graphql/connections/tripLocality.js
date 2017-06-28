@@ -45,6 +45,7 @@ const localityConnection = {
           return {
             id: r.id,
             arrivalTime: r.arrivalTime,
+            weatherIcon: r.weather.icon,
             originLocality: locality
           };
         }
