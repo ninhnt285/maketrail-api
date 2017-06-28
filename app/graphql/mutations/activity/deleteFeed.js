@@ -14,6 +14,7 @@ import FeedType from '../../types/feed';
 import FeedService from '../../../database/helpers/feed';
 import { FeedEdge } from '../../connections/feed';
 import { edgeFromNode } from '../../../lib/connection';
+import viewer from '../../queries/viewer';
 
 const DeleteFeedMutation = mutationWithClientMutationId({
   name: 'DeleteFeed',
@@ -41,7 +42,12 @@ const DeleteFeedMutation = mutationWithClientMutationId({
     edge: {
       type: FeedEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    }
+    },
+    deletedId: {
+      type: GraphQLID,
+      resolve: ({ deletedId }) => deletedId
+    },
+    viewer
   },
 
   mutateAndGetPayload: async ({ feedId }, { user }) => {
@@ -66,7 +72,8 @@ const DeleteFeedMutation = mutationWithClientMutationId({
     }
     return {
       success: true,
-      item: res.item
+      item: res.item,
+      deletedId: feedId
     };
   }
 });
