@@ -34,7 +34,7 @@ const UpdateFeedMutation = mutationWithClientMutationId({
       type: GraphQLString
     },
 
-    attachmentIds: {
+    attachments: {
       type: new GraphQLList(GraphQLID)
     }
   },
