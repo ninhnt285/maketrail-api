@@ -1,6 +1,8 @@
 import loginMutation from './authentications/login';
 import registerMutation from './authentications/register';
 import changePasswordMutation from './authentications/changePassword';
+import resetPasswordMutation from './authentications/resetPassword';
+import forgotPasswordMutation from './authentications/forgotPassword';
 import addTripMutation from './trip/add';
 import updateTripMutation from './trip/update';
 import deleteTripMutation from './trip/delete';
@@ -27,7 +29,8 @@ export default {
   login: loginMutation,
   register: registerMutation,
   changePassword: changePasswordMutation,
-
+  forgotPassword: forgotPasswordMutation,
+  resetPassword: resetPasswordMutation,
 
   addTrip: addTripMutation,
   updateTrip: updateTripMutation,

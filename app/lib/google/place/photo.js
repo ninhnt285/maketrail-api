@@ -42,9 +42,32 @@ export async function resize(filename, force = false) {
   dimens.forEach((dimen) => {
     const fpath = `${f[0]}_${dimen.name}.${f[1]}`;
     if (force || !fs.existsSync(fpath)) {
-      sharp(photo).resize(dimen.size[0], dimen.size[1]).toFile(fpath, null);
+      sharp(photo).rotate().resize(dimen.size[0], dimen.size[1]).toFile(fpath, null);
     }
   });
+}
+
+function ConvertDMSToDD(degrees, minutes, seconds, direction) {
+  let dd = degrees + minutes / 60 + seconds / (60 * 60);
+  if (direction === 'S' || direction === 'W') {
+    dd *= -1;
+  }
+  return dd;
+}
+
+export function parseDMS(input) {
+  try {
+    if (!input.GPSLatitudeRef) return null;
+    const lat = ConvertDMSToDD(input.GPSLatitude[0], input.GPSLatitude[1], input.GPSLatitude[2], input.GPSLatitudeRef);
+    const lng = ConvertDMSToDD(input.GPSLongitude[0], input.GPSLongitude[1], input.GPSLongitude[2], input.GPSLongitudeRef);
+    return {
+      lat,
+      lng
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 }
 
 export function downloadFile(url, dest) {

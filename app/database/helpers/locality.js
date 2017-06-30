@@ -180,7 +180,7 @@ LocalityService.seachLocality = async function (query) {
       qs: {
         key: GOOGLE_API_KEY,
         query,
-        types: 'locality|political'
+        types: 'locality|sublocality|country|administrative_area_level_1|administrative_area_level_2|administrative_area_level_3'
       },
       encoding: 'utf8'
     };

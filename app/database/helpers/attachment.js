@@ -4,10 +4,11 @@ import uniqid from 'uniqid';
 import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
-import { resize, downloadFileHttp } from '../../lib/google/place/photo';
+import { resize, downloadFileHttp, parseDMS } from '../../lib/google/place/photo';
 import { processVideo, extractPreviewImage } from '../../lib/video';
 import { Type, getType } from '../../lib/idUtils';
 
+const ExifImage = require('exif').ExifImage;
 const videoMimes = ['.mkv', '.flv', '.vob', '.avi', '.mov', '.wmv', '.rm', '.rmvb', '.amv', '.mp4', '.mpg', '.mpeg', '.m4v', '.3gp'];
 
 function isVideo(mimeType) {
@@ -104,9 +105,11 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
     let previewUrl;
     let uri;
     let fileName;
+    let location;
     const date = new Date();
     const isV = isVideo(mimeType);
     let item = null;
+
     if (isV) {
       videoName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}.mp4`;
       imageName = `/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s.jpg`;
@@ -114,6 +117,13 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
       uri = imageName.replace('%s', '');
       fileName = path.join(__dirname, '../../../static/', videoName);
       fs.writeFileSync(fileName, file.buffer);
+      new ExifImage({ image: fileName }, (error, exifData) => {
+        if (error) {
+          console.log(`Error: ${error.message}`);
+        } else {
+          console.log(exifData);
+        }
+      });
       item = await VideoModel.create({
         name: file.originalname,
         url: videoName,
@@ -134,6 +144,12 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
       uri = imageName.replace('%s', '');
       fileName = path.join(__dirname, '../../../static/', uri);
       fs.writeFileSync(fileName, file.buffer);
+      new ExifImage({ image: fileName }, (error, exifData) => {
+        if (!error && exifData.gps) {
+          location = parseDMS(exifData.gps);
+          // console.log(location);
+        }
+      });
       item = await PhotoModel.create({
         name: file.originalname,
         url: imageName,
@@ -158,7 +174,7 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
   }
 };
 
-AttachmentService.publishVideo = async function(id) {
+AttachmentService.publishVideo = async function (id) {
   await VideoModel.findByIdAndUpdate(id, { isProcessing: true });
 };
 
