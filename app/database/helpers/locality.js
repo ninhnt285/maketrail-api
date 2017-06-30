@@ -132,6 +132,16 @@ LocalityService.getVenues = async function (tripLocalityId) {
   }
 };
 
+LocalityService.getLocalityVenues = async function (tripLocalityId) {
+  try {
+    const venues = (await LocalityVenueRelationModel.find({ tripLocalityId }));
+    return venues;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 LocalityService.updateTripLocality = async function (user, tripLocalityId, args) {
   try {
     const tmp = await TripLocalityRelationModel.findById(tripLocalityId);

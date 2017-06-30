@@ -1,4 +1,3 @@
-const net = require('net');
 import TripModel from '../models/trip';
 import { PREFIX } from '../../config';
 import UserModel from '../models/user';
@@ -9,6 +8,7 @@ import AttachmentService from '../helpers/attachment';
 import VenueService from '../helpers/venue';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
+import { write } from '../../lib/render';
 
 function genPhotoUrl() {
   return `/noImage/trip/${(new Date().getTime() % 10) + 1}%s.jpg`;
@@ -178,34 +178,45 @@ TripService.exportVideo = async function (user, trip) {
     obj.audio = 'music.mp3';
     obj.locations = [];
     const localities = await TripLocalityRelationModel.find({ tripId: trip.id });
-    // obj.time = new Date(localities[0].arrivalTime * 1000).toDateString();
+    obj.time = new Date(localities[0].arrivalTime * 1000).toDateString();
     obj.direction = '';
     for (let i = 0; i < localities.length; i++) {
       const origin = await LocalityService.getById(localities[i].localityId);
-      const attachments = await AttachmentService.getByParentId(localities[i].id);
-      const tmp = {
-        name: origin.name,
-        temperature: '20°C',
-        height: '70 Miles'
-      };
-      if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '');
-      if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '');
-      if (attachments[2]) tmp.image3 = PREFIX + attachments[2].url.replace('%s', '');
-      if (attachments[3]) tmp.image4 = PREFIX + attachments[3].url.replace('%s', '');
-      if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '');
-      obj.locations.push(tmp);
+      const attachments = await AttachmentService.getByPlaceId(trip.id, origin.id);
+      if (attachments.length >= 5) {
+        const tmp = {
+          name: origin.name,
+          temperature: '20°C',
+          height: '70 Miles'
+        };
+        if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '');
+        if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '');
+        if (attachments[2]) tmp.image3 = PREFIX + attachments[2].url.replace('%s', '');
+        if (attachments[3]) tmp.image4 = PREFIX + attachments[3].url.replace('%s', '');
+        if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '');
+        obj.locations.push(tmp);
+      }
+      const venues = await LocalityService.getLocalityVenues(localities[i].id);
+      for (let j=0; j < venues.length; j++){
+        const origin2 = await VenueService.getById(venues[j].venueId);
+        const attachments2 = await AttachmentService.getByPlaceId(trip.id, origin2.id);
+        if (attachments2.length >- 5) {
+          const tmp2 = {
+            name: origin2.name,
+            temperature: '20°C',
+            height: '70 Miles'
+          };
+          if (attachments2[0]) tmp2.image1 = PREFIX + attachments2[0].url.replace('%s', '');
+          if (attachments2[1]) tmp2.image2 = PREFIX + attachments2[1].url.replace('%s', '');
+          if (attachments2[2]) tmp2.image3 = PREFIX + attachments2[2].url.replace('%s', '');
+          if (attachments2[3]) tmp2.image4 = PREFIX + attachments2[3].url.replace('%s', '');
+          if (attachments2[4]) tmp2.image5 = PREFIX + attachments2[4].url.replace('%s', '');
+          obj.locations.push(tmp2);
+        }
+      }
     }
-    // obj.direction = `${obj.locations[0].name} - ${obj.locations[obj.locations.length - 1].name}`;
-    console.log(obj);
-    AttachmentService.loadRenderedVideo('1738472ace9325.mp4', 'http://ren1.maketrail.com/1738472ace9325.mp4');
-    // const client = new net.Socket();
-    // client.connect(6969, '45.32.216.6', () => {
-    //   console.log('Connected');
-    //   client.write(JSON.stringify(obj));
-    // });
-    // client.on('data', (data) => {
-    //   client.destroy(); // kill client after server's response
-    // });
+    obj.direction = `${obj.locations[0].name} - ${obj.locations[obj.locations.length - 1].name}`;
+    write(JSON.stringify(obj));
   } catch (e) {
     console.log(e);
   }

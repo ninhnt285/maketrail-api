@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
 import { resize, downloadFileHttp } from '../../lib/google/place/photo';
-import { processVideo } from '../../lib/video';
+import { processVideo, extractPreviewImage } from '../../lib/video';
 import { Type, getType } from '../../lib/idUtils';
 
 const videoMimes = ['.mkv', '.flv', '.vob', '.avi', '.mov', '.wmv', '.rm', '.rmvb', '.amv', '.mp4', '.mpg', '.mpeg', '.m4v', '.3gp'];
@@ -50,9 +50,9 @@ AttachmentService.getById = async function (user, id) {
   return null;
 };
 
-AttachmentService.getByPlaceId = async function (placeId) {
+AttachmentService.getByPlaceId = async function (parentId, placeId) {
   try {
-    const photos = await PhotoModel.find({ placeId });
+    const photos = await PhotoModel.find({ parentId, placeId });
     return photos;
   } catch (e) {
     console.log(e);
@@ -126,7 +126,8 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
         isProcessing: false,
         privacy: 0
       });
-      processVideo(item.id, videoName, uri);
+      await extractPreviewImage(videoName, uri);
+      processVideo(item.id, videoName);
     } else {
       imageName = `/photo/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file.originalname + uniqid()).digest('hex')}%s${mimeType}`;
       previewUrl = imageName.replace('%s', '_150_square');
@@ -144,7 +145,7 @@ AttachmentService.upload = async function (user, file, caption, parentId, placeI
         placeName,
         privacy: 0
       });
-      resize(uri);
+      await resize(uri);
     }
     return {
       item

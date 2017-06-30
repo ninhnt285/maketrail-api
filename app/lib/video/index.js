@@ -16,14 +16,13 @@ export async function convertToMp4(id, inputPath) {
   });
 }
 
-export async function extractPreviewImage(inputPath, outputPath) {
+export async function extractPreviewImage(inputPath, imageUri) {
+  const outputPath = path.join(__dirname, '../../../static/', imageUri);
   const child = spawnSync('ffmpeg.exe', ['-y', '-i', inputPath, '-ss', '00:00:05', '-f', 'image2', '-vframes', '1', '-s', '1280x720', outputPath]);
+  await resize(imageUri);
 }
 
-export async function processVideo(id, videoUri, imageUri) {
+export async function processVideo(id, videoUri) {
   const videoFile = path.join(__dirname, '../../../static/', videoUri);
-  const imageFile = path.join(__dirname, '../../../static/', imageUri);
-  await extractPreviewImage(videoFile, imageFile);
-  resize(imageUri);
   convertToMp4(id, videoFile);
 }
