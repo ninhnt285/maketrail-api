@@ -178,8 +178,10 @@ AttachmentService.publishVideo = async function (id) {
   await VideoModel.findByIdAndUpdate(id, { isProcessing: true });
 };
 
-AttachmentService.loadRenderedVideo = async function (file, url) {
+AttachmentService.loadRenderedVideo = async function (file, host) {
   try {
+    const url = host + file;
+    console.log(`${file} is being loaded from ${host} !`);
     const mimeType = file.substring(file.lastIndexOf('.'));
     const parentId = file.substring(0, file.lastIndexOf('.') - 1);
     const date = new Date();
@@ -192,6 +194,7 @@ AttachmentService.loadRenderedVideo = async function (file, url) {
         url: videoName,
         privacy: 0
       });
+      console.log(`${file} has been loaded from ${host} !`);
     });
   } catch (e) {
     console.log(e);

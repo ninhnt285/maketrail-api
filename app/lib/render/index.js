@@ -17,7 +17,7 @@ export function connect(host, port) {
       delete clients[host];
     });
     client.on('data', (id) => {
-      AttachmentService.loadRenderedVideo(`${id}.mp4`, `http://ren1.maketrail.com/${id}.mp4`);
+      AttachmentService.loadRenderedVideo(`${id}.mp4`, 'http://ren1.maketrail.com/');
     });
     clients[host] = client;
   } catch (e) {
@@ -32,5 +32,6 @@ export function write(data) {
     client.write('end');
   } catch (e) {
     connect('45.32.216.6', 6969);
+    write(data);
   }
 }
