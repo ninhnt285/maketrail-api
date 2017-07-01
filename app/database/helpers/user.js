@@ -96,7 +96,7 @@ UserService.changePassword = async function (user, password, newPassword) {
   try {
     const passwordHash = await generateHash(password);
     const passwordHashNew = await generateHash(newPassword);
-    const userTmp = await UserModel.findOneAndUpdate({ id: user.id, password: passwordHash }, { password: passwordHashNew });
+    const userTmp = await UserModel.findOneAndUpdate({ _id: user.id, password: passwordHash }, { password: passwordHashNew });
     if (!userTmp) {
       return {
         errors: ['Invalid password']

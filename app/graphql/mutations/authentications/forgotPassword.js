@@ -11,8 +11,8 @@ import {
 
 import UserService from '../../../database/helpers/user';
 
-const ChangePasswordMutation = mutationWithClientMutationId({
-  name: 'ChangePassword',
+const ForgotPasswordMutation = mutationWithClientMutationId({
+  name: 'ForgotPassword',
 
   inputFields: {
 
@@ -52,4 +52,4 @@ const ChangePasswordMutation = mutationWithClientMutationId({
   }
 });
 
-export default ChangePasswordMutation;
+export default ForgotPasswordMutation;

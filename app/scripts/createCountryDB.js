@@ -59,7 +59,6 @@ async function onConnected() {
               if (Array.isArray(items2)) {
                 items2.forEach(async (itemTemp2) => {
                   const item2 = itemTemp2['$'];
-                  console.log(item2.id);
                   await CountryModel.create({ name: item2.title, svgId: item2.id, parentId: tmp.svgId });
                 });
               } else {
