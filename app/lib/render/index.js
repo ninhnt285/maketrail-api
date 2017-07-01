@@ -4,7 +4,7 @@
 import AttachmentService from '../../database/helpers/attachment';
 
 const net = require('net');
-const clients = [];
+const clients = {};
 
 export function connect(host, port) {
   try {
@@ -14,18 +14,23 @@ export function connect(host, port) {
     });
     client.on('error', (err) => {
       console.log(err);
+      delete clients[host];
     });
     client.on('data', (id) => {
       AttachmentService.loadRenderedVideo(`${id}.mp4`, `http://ren1.maketrail.com/${id}.mp4`);
     });
-    clients.push(client);
+    clients[host] = client;
   } catch (e) {
     console.log(e);
   }
 }
 
 export function write(data) {
-  const client = clients[0];
-  client.write(data);
-  client.write('end');
+  const client = clients['45.32.216.6'];
+  try {
+    client.write(data);
+    client.write('end');
+  } catch (e) {
+    connect('45.32.216.6', 6969);
+  }
 }
