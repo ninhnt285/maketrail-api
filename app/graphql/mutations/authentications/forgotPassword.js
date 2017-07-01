@@ -27,10 +27,7 @@ const ForgotPasswordMutation = mutationWithClientMutationId({
       type: new GraphQLNonNull(GraphQLBoolean),
       resolve: ({ success }) => success
     },
-    accessToken: {
-      type: GraphQLString,
-      resolve: ({ accessToken }) => accessToken
-    },
+
     errors: {
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors

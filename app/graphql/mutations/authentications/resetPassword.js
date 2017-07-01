@@ -16,10 +16,6 @@ const ResetPasswordMutation = mutationWithClientMutationId({
 
   inputFields: {
 
-    email: {
-      type: GraphQLString
-    },
-
     hash: {
       type: GraphQLString
     },
@@ -45,8 +41,8 @@ const ResetPasswordMutation = mutationWithClientMutationId({
     }
   },
 
-  mutateAndGetPayload: async ({ email, hash, passwordNew }, { user }) => {
-    const res = await UserService.changePasswordNoUser(email, hash, passwordNew);
+  mutateAndGetPayload: async ({ hash, passwordNew }, { user }) => {
+    const res = await UserService.changePasswordNoUser(hash, passwordNew);
     if (res && !res.accessToken) {
       return {
         success: false,

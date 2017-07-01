@@ -3,8 +3,9 @@ import FriendshipModel from '../models/friendship';
 import StatisticModel from '../models/statistic';
 import CountryModel from '../models/country';
 import TraceModel from '../models/trace';
+import MailService from '../../lib/mail';
 import NotificationService from '../helpers/notification';
-import { generateToken } from '../../lib/token';
+import { generateToken, verifyToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
 
@@ -114,10 +115,11 @@ UserService.changePassword = async function (user, password, newPassword) {
   }
 };
 
-UserService.changePasswordNoUser = async function (email, hash, newPassword) {
+UserService.changePasswordNoUser = async function (token, newPassword) {
   try {
     const passwordHashNew = await generateHash(newPassword);
-    const userTmp = await UserModel.findOneAndUpdate({ email, password: hash }, { password: passwordHashNew });
+    const user = verifyToken(token);
+    const userTmp = await UserModel.findByIdAndUpdate(user.id, { password: passwordHashNew });
     if (!userTmp) {
       return {
         errors: ['Invalid password']
@@ -143,7 +145,8 @@ UserService.forgotPassword = async function (email) {
         errors: ['Invalid email']
       };
     }
-    // TODO: send email reset password
+    const token = generateToken(user);
+    MailService.sendResetPassMail(user.fullName, email, token);
     return '';
   } catch (e) {
     console.log(e);
@@ -295,26 +298,26 @@ UserService.getFacebookFriends = async function (userId) {
   return [];
 };
 
-UserService.getMap = async function (userId, parentId) {
+UserService.getCountries = async function (userId, parentId) {
   try {
     const items = await CountryModel.find({ parentId });
     const visiteds = await TraceModel.find({ parentId, userId });
-    return items.map((item) => {
+    const res = {};
+    items.forEach((item) => {
       for (let i = 0; i < visiteds.length; i++) {
-        if (item.id === visiteds[i].countryId) {
-          return {
-            code: item.svgId,
+        if (item.svgId === visiteds[i].svgId) {
+          res[item.svgId] = {
             name: item.name,
-            status: visiteds[i].status ? 2 : 1
+            status: visiteds[i].number > 0 ? 1 : 2
           };
         }
       }
-      return {
-        code: item.svgId,
+      res[item.svgId] = {
         name: item.name,
         status: 0
       };
     });
+    return res;
   } catch (e) {
     console.log(e);
   }
