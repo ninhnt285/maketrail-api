@@ -17,7 +17,7 @@ export function connect(host, port) {
       delete clients[host];
     });
     client.on('data', (id) => {
-      AttachmentService.loadRenderedVideo(`${id}.mp4`, 'http://ren1.maketrail.com/');
+      AttachmentService.loadRenderedVideo(id, 'http://ren1.maketrail.com/');
     });
     clients[host] = client;
   } catch (e) {

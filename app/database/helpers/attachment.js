@@ -4,6 +4,9 @@ import uniqid from 'uniqid';
 import crypto from 'crypto';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
+import TripModel from '../models/trip';
+import FeedModel from '../models/feed';
+import NotificationService from '../helpers/notification';
 import { resize, downloadFileHttp, parseDMS } from '../../lib/google/place/photo';
 import { processVideo, extractPreviewImage } from '../../lib/video';
 import { Type, getType } from '../../lib/idUtils';
@@ -178,8 +181,9 @@ AttachmentService.publishVideo = async function (id) {
   await VideoModel.findByIdAndUpdate(id, { isProcessing: true });
 };
 
-AttachmentService.loadRenderedVideo = async function (file, host) {
+AttachmentService.loadRenderedVideo = async function (id, host) {
   try {
+    const file = `${id}.mp4`;
     const url = host + file;
     console.log(`${file} is being loaded from ${host} !`);
     const mimeType = file.substring(file.lastIndexOf('.'));
@@ -188,12 +192,21 @@ AttachmentService.loadRenderedVideo = async function (file, host) {
     const videoName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file + uniqid()).digest('hex')}${mimeType}`;
     const fileName = path.join(__dirname, '../../../static/', videoName);
     downloadFileHttp(url, fileName).then(async (fileDest) => {
-      await VideoModel.create({
+      const video = await VideoModel.create({
         name: file,
         parentId,
         url: videoName,
         privacy: 0
       });
+      const item = await FeedModel.create({
+        fromId: id,
+        toId: id,
+        privacy: 0,
+        type: 3, // video
+        attachments: [video.id]
+      });
+      await TripModel.findByIdAndUpdate(id, { recentExportedVideo: video.url });
+      await NotificationService.notify(id, id, item.id, NotificationService.Type.POST);
       console.log(`${file} has been loaded from ${host} !`);
     });
   } catch (e) {

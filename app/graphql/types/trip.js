@@ -32,6 +32,12 @@ const TripType = new GraphQLObjectType({
     exportedVideo: {
       type: GraphQLBoolean
     },
+    recentExportedVideo: {
+      type: GraphQLString,
+      resolve(obj) {
+        return obj.recentExportedVideo ? PREFIX + obj.recentExportedVideo : null;
+      }
+    },
     isPublished: {
       type: GraphQLBoolean
     },

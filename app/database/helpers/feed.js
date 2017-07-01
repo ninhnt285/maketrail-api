@@ -4,7 +4,6 @@ import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
 import TripModel from '../models/trip';
 import NotificationService from '../helpers/notification';
-import { getNode, getNodeFromId } from '../helpers/node';
 import LikeModel from '../models/like';
 import { getType, Type } from '../../lib/idUtils';
 
@@ -130,7 +129,7 @@ FeedService.comment = async function (user, parentId, text) {
   }
 };
 
-FeedService.post = async function (user, toId, text, attachments, placeId, placeName) {
+FeedService.post = async function (user, toId, text, attachments, placeId = undefined, placeName = undefined) {
   try {
     let type = Activity.POST;
     let tmp = '';
