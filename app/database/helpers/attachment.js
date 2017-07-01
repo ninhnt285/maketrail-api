@@ -198,15 +198,15 @@ AttachmentService.loadRenderedVideo = async function (id, host) {
         url: videoName,
         privacy: 0
       });
+      const trip = await TripModel.findByIdAndUpdate(id, { recentExportedVideo: video.url, exporting: false });
       const item = await FeedModel.create({
-        fromId: id,
+        fromId: trip.exporter,
         toId: id,
         privacy: 0,
         type: 3, // video
         attachments: [video.id]
       });
-      await TripModel.findByIdAndUpdate(id, { recentExportedVideo: video.url });
-      await NotificationService.notify(id, id, item.id, NotificationService.Type.POST);
+      await NotificationService.notify(trip.exporter, id, item.id, NotificationService.Type.POST);
       console.log(`${file} has been loaded from ${host} !`);
     });
   } catch (e) {

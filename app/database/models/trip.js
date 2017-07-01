@@ -8,6 +8,7 @@ const tripSchema = new Schema(
     _id: Types.ObjectId,
     name: String,
     exportedVideo: Boolean,
+    exporter: String,
     privacy: Number,
     userId: String,
     previewPhotoUrl: String,

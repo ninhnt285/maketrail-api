@@ -147,12 +147,21 @@ TripService.delete = async function (user, tripId) {
 TripService.update = async function (user, tripId, args) {
   try {
     if (await this.canUpdateTrip(user, tripId)) {
+      if (args.exportedVideo && args.exportedVideo === true) {
+        const pre = await TripModel.findById(tripId);
+        if (pre.exportedVideo === true){
+          return {
+            errors: ['Trip is exporting video! Try late!']
+          };
+        }
+        args.exporter = user.id;
+      }
       const item = await TripModel.findByIdAndUpdate(tripId, { $set: args }, { new: true });
+      if (args.exporter) {
+        this.exportVideo(user, item);
+      }
       if (args.isPublished && args.isPublished === true) {
         await FeedService.publishTrip(user, tripId);
-      }
-      if (args.exportedVideo && args.exportedVideo === true) {
-        this.exportVideo(user, item);
       }
       return {
         item
