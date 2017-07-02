@@ -59,9 +59,6 @@ const UserType = new GraphQLObjectType({
     profilePicUrl: {
       type: GraphQLString,
       resolve(obj) {
-        if (obj.profilePicUrl && (obj.profilePicUrl.charAt(PREFIX) !== -1)) {
-          return obj.profilePicUrl;
-        }
         return obj.profilePicUrl ? PREFIX + obj.profilePicUrl : PREFIX + DEFAULT_IMAGE;
       }
     },

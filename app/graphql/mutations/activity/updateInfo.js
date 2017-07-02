@@ -14,6 +14,7 @@ import UserType from '../../types/user';
 import UserService from '../../../database/helpers/user';
 import { UserEdge } from '../../connections/user';
 import { edgeFromNode } from '../../../lib/connection';
+import viewer from '../../queries/viewer';
 
 const UpdateUserMutation = mutationWithClientMutationId({
   name: 'UpdateUser',
@@ -43,7 +44,8 @@ const UpdateUserMutation = mutationWithClientMutationId({
     edge: {
       type: UserEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    }
+    },
+    viewer
   },
 
   mutateAndGetPayload: async ({ ...args }, { user }) => {
