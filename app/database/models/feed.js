@@ -14,7 +14,8 @@ const feedSchema = new Schema(
     privacy: Number,
     type: Number,
     placeId: String,
-    placeName: String
+    placeName: String,
+    story: String
   }, {
     timestamps: true,
     toJSON: {

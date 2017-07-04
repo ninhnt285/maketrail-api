@@ -39,6 +39,11 @@ const FeedType = new GraphQLObjectType({
         }
       })
     },
+
+    story: {
+      type: GraphQLString
+    },
+
     privacy: {
       type: new GraphQLEnumType({
         name: 'feedPrivacy',

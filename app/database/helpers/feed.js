@@ -2,10 +2,12 @@ import FeedModel from '../models/feed';
 import CommentModel from '../models/comment';
 import PhotoModel from '../models/photo';
 import VideoModel from '../models/video';
+import UserModel from '../models/user';
 import TripModel from '../models/trip';
 import NotificationService from '../helpers/notification';
 import LikeModel from '../models/like';
 import { getType, Type } from '../../lib/idUtils';
+import { getNodeFromId } from '../helpers/node';
 
 const Activity = {
   POST: 0,
@@ -82,12 +84,20 @@ FeedService.unlike = async function (user, parentId) {
 
 FeedService.share = async function (user, toId, parentId, text) {
   try {
+    const from = await UserModel.findById(user.id);
+    let story = `${from.fullName} shared a link.`;
+    let to = from;
+    if (toId && user.id !== toId) {
+      to = await getNodeFromId(toId);
+      story = `${from.fullName} shared a link to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
+    }
     const item = await FeedModel.create({
       fromId: user.id,
       toId: toId || user.id,
       parentId,
       privacy: 0,
       type: Activity.SHARE,
+      story,
       text
     });
     await NotificationService.interest(user.id, item.id, 2);
@@ -132,6 +142,7 @@ FeedService.comment = async function (user, parentId, text) {
 FeedService.post = async function (user, toId, text, attachments, placeId = undefined, placeName = undefined) {
   try {
     let type = Activity.POST;
+    let story = '';
     let tmp = '';
     if (attachments) {
       for (let i = 0; i < attachments.length; i++) {
@@ -140,9 +151,29 @@ FeedService.post = async function (user, toId, text, attachments, placeId = unde
           type = Activity.PHOTO;
           await PhotoModel.findByIdAndUpdate(attachments[i], { placeId, placeName, parentId: toId || user.id });
         } else if (tmp === Type.VIDEO) {
-          if (tmp === '') type = Activity.VIDEO;
+          if (type === Activity.POST) type = Activity.VIDEO;
           await VideoModel.findByIdAndUpdate(attachments[i], { placeId, placeName, parentId: toId || user.id });
         }
+      }
+    }
+    const from = await UserModel.findById(user.id);
+    let to = from;
+    if (toId && user.id !== toId) {
+      to = await getNodeFromId(toId);
+      if (type === Activity.PHOTO) {
+        story = `${from.fullName} added ${attachments.length} new photos to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
+      } else if (type === Activity.VIDEO){
+        story = `${from.fullName} added ${attachments.length} new videos to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
+      } else {
+        story = `${from.fullName} posted to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
+      }
+    } else {
+      if (type === Activity.PHOTO) {
+        story = `${from.fullName} added ${attachments.length} new photos.`;
+      } else if (type === Activity.VIDEO) {
+        story = `${from.fullName} added ${attachments.length} new videos.`;
+      } else {
+        story = `${from.fullName} posted a new feed.`;
       }
     }
     const item = await FeedModel.create({
@@ -151,6 +182,7 @@ FeedService.post = async function (user, toId, text, attachments, placeId = unde
       privacy: 0,
       text,
       type,
+      story,
       placeId,
       placeName,
       attachments
@@ -173,7 +205,7 @@ FeedService.update = async function (user, feedId, args) {
     let tmp = '';
     let attachments = [];
     if (args.placeId && args.placeName) {
-      if (args.attachments){
+      if (args.attachments) {
         attachments = args.attachments;
       } else {
         const tmpItem = await FeedModel.findById(feedId);
@@ -228,11 +260,13 @@ FeedService.delete = async function (user, feedId) {
 FeedService.publishTrip = async function (user, tripId) {
   try {
     await TripModel.findByIdAndUpdate(tripId, { isPublished: true });
+    const from = await UserModel.findById(user.id);
     const item = await FeedModel.create({
       fromId: user.id,
       toId: user.id,
       privacy: 0,
       parentId: tripId,
+      story: `${from.fullName} published a new trip.`,
       type: Activity.POST
     });
     await NotificationService.interest(user.id, item.id, 2);
@@ -247,9 +281,9 @@ FeedService.publishTrip = async function (user, tripId) {
   }
 };
 
-FeedService.getStatistics = async function (id){
+FeedService.getStatistics = async function (id) {
   try {
-    const res = await Promise.all([FeedModel.count({parentId: id, type: Activity.SHARE}), LikeModel.count({ parentId: id }), CommentModel.count({parentId: id})]);
+    const res = await Promise.all([FeedModel.count({ parentId: id, type: Activity.SHARE }), LikeModel.count({ parentId: id }), CommentModel.count({ parentId: id })]);
     return {
       shareCount: res[0],
       likeCount: res[1],
@@ -261,11 +295,11 @@ FeedService.getStatistics = async function (id){
   }
 };
 
-FeedService.getLikeCount = async function (id){
+FeedService.getLikeCount = async function (id) {
   return await LikeModel.count({ parentId: id });
 };
 
-FeedService.isLiked = async function (fromId, parentId){
+FeedService.isLiked = async function (fromId, parentId) {
   try {
     const tmp = await LikeModel.findOne({ fromId, parentId });
     return !!tmp;

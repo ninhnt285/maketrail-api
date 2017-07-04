@@ -198,11 +198,11 @@ TripService.exportVideo = async function (user, trip) {
           temperature: '20°C',
           height: '70 Miles'
         };
-        if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '');
-        if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '');
-        if (attachments[2]) tmp.image3 = PREFIX + attachments[2].url.replace('%s', '');
-        if (attachments[3]) tmp.image4 = PREFIX + attachments[3].url.replace('%s', '');
-        if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '');
+        if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '_1000');
+        if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '_1000');
+        if (attachments[2]) tmp.image3 = PREFIX + attachments[2].url.replace('%s', '_1000');
+        if (attachments[3]) tmp.image4 = PREFIX + attachments[3].url.replace('%s', '_1000');
+        if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '_1000');
         obj.locations.push(tmp);
       }
       const venues = await LocalityService.getLocalityVenues(localities[i].id);
@@ -215,11 +215,11 @@ TripService.exportVideo = async function (user, trip) {
             temperature: '20°C',
             height: '70 Miles'
           };
-          if (attachments2[0]) tmp2.image1 = PREFIX + attachments2[0].url.replace('%s', '');
-          if (attachments2[1]) tmp2.image2 = PREFIX + attachments2[1].url.replace('%s', '');
-          if (attachments2[2]) tmp2.image3 = PREFIX + attachments2[2].url.replace('%s', '');
-          if (attachments2[3]) tmp2.image4 = PREFIX + attachments2[3].url.replace('%s', '');
-          if (attachments2[4]) tmp2.image5 = PREFIX + attachments2[4].url.replace('%s', '');
+          if (attachments2[0]) tmp2.image1 = PREFIX + attachments2[0].url.replace('%s', '_1000');
+          if (attachments2[1]) tmp2.image2 = PREFIX + attachments2[1].url.replace('%s', '_1000');
+          if (attachments2[2]) tmp2.image3 = PREFIX + attachments2[2].url.replace('%s', '_1000');
+          if (attachments2[3]) tmp2.image4 = PREFIX + attachments2[3].url.replace('%s', '_1000');
+          if (attachments2[4]) tmp2.image5 = PREFIX + attachments2[4].url.replace('%s', '_1000');
           obj.locations.push(tmp2);
         }
       }
