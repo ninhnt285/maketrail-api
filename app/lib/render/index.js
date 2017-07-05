@@ -42,7 +42,6 @@ function findClient() {
 
 export function write(data) {
   const client = findClient();
-  console.log(client);
   try {
     client.write(data);
     client.write('end');

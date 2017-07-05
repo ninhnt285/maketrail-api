@@ -198,7 +198,7 @@ AttachmentService.loadRenderedVideo = async function (id, host) {
         url: videoName,
         privacy: 0
       });
-      const trip = await TripModel.findByIdAndUpdate(id, { recentExportedVideo: video.url, exporting: false });
+      const trip = await TripModel.findByIdAndUpdate(id, { recentExportedVideo: video.url, exportedVideo: false });
       const item = await FeedModel.create({
         fromId: trip.exporter,
         toId: id,
