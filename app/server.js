@@ -3,7 +3,7 @@ import { PORT } from './config';
 import connectDb from './database/connectDb';
 import { prepareDir } from './lib/google/place/photo';
 import { statisticalJob } from './lib/jobs';
-import { connect } from './lib/render';
+import { listen } from './lib/render';
 
 const app = express();
 
@@ -17,7 +17,7 @@ function onConnected() {
 
 }
 
-connect('45.32.216.6', 6969);
+listen();
 connectDb(onConnected);
 prepareDir();
 statisticalJob();
