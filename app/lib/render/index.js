@@ -31,7 +31,6 @@ export function listen() {
 
     sock.on('error', (err) => {
       console.log(`CLOSED: ${err}`);
-      delete clients[sock.remoteAddress];
     });
   }).listen(PORT, HOST);
   console.log(`Server listening on ${HOST}:${PORT}`);
@@ -43,6 +42,7 @@ function findClient() {
 
 export function write(data) {
   const client = findClient();
+  console.log(client);
   try {
     client.write(data);
     client.write('end');
