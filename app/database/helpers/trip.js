@@ -196,7 +196,9 @@ TripService.exportVideo = async function (user, trip) {
         const tmp = {
           name: origin.name,
           temperature: '20°C',
-          height: '70 Miles'
+          height: '70 Miles',
+          lat: origin.location.lat,
+          lng: origin.location.lng
         };
         if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '_1000');
         if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '_1000');

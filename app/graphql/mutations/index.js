@@ -18,12 +18,16 @@ import shareMutation from './activity/share';
 import postMutation from './activity/post';
 import updateFeedMutation from './activity/updatePost';
 import deleteFeedMutation from './activity/deleteFeed';
-import commentMutation from './activity/comment';
 import updateInfoMutation from './activity/updateInfo';
 import uploadMutation from './attachment/upload';
 import updateAttachmentMutation from './attachment/update';
+import deleteAttachmentMutation from './attachment/delete';
 import followMutation from './activity/follow';
 import unfollowMutation from './activity/unfollow';
+
+import addCommentMutation from './comment/add';
+import updateCommentMutation from './comment/update';
+import deleteCommentMutation from './comment/delete';
 
 export default {
   login: loginMutation,
@@ -44,11 +48,14 @@ export default {
   addLocalityVenue: addLocalityVenueMutation,
   removeLocalityVenue: removeLocalityVenueMutation,
 
+  addComment: addCommentMutation,
+  updateComment: updateCommentMutation,
+  deleteComment: deleteCommentMutation,
+
   addLike: likeMutation,
   deleteLike: deleteLikeMutation,
   addShare: shareMutation,
   addFeed: postMutation,
-  addComment: commentMutation,
   follow: followMutation,
   unfollow: unfollowMutation,
   updateInfo: updateInfoMutation,
@@ -56,5 +63,6 @@ export default {
   deleteFeed: deleteFeedMutation,
 
   addAttachment: uploadMutation,
-  updateAttachment: updateAttachmentMutation
+  updateAttachment: updateAttachmentMutation,
+  deleteAttachment: deleteAttachmentMutation
 };

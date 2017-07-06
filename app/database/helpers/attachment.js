@@ -64,6 +64,18 @@ AttachmentService.getByPlaceId = async function (parentId, placeId) {
   return [];
 };
 
+AttachmentService.canDeleteAttachment = async function (user, attachmentId) {
+  return (user && attachmentId);
+};
+
+AttachmentService.canUpdateAttachment = async function (user, attachmentId) {
+  return (user && attachmentId);
+};
+
+AttachmentService.canAddAttachment = async function (user) {
+  return (user);
+};
+
 AttachmentService.getByParentId = async function (parentId) {
   try {
     const photos = await PhotoModel.find({ parentId });
@@ -75,17 +87,45 @@ AttachmentService.getByParentId = async function (parentId) {
   return [];
 };
 
-AttachmentService.updatePlace = async function (id, placeId, placeName) {
+AttachmentService.delete = async function (user, attachmentId) {
   try {
-    const tmp = getType(id);
-    let item = null;
-    if (tmp === Type.PHOTO) {
-      item = await PhotoModel.findByIdAndUpdate(id, { placeId, placeName });
-    } else {
-      item = await VideoModel.findByIdAndUpdate(id, { placeId, placeName });
+    if (await this.canDeleteAttachment(user, attachmentId)) {
+      const type = getType(attachmentId);
+      let res;
+      if (type === Type.VIDEO) {
+        res = await VideoModel.findByIdAndRemove(attachmentId);
+      }
+      res = await PhotoModel.findByIdAndRemove(attachmentId);
+      return {
+        item: res
+      };
     }
     return {
-      item
+      errors: ['You does not have permission to delete attachment.']
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+AttachmentService.update = async function (user, attachmentId, args) {
+  try {
+    if (await this.canUpdateAttachment(user, attachmentId)){
+      const type = getType(attachmentId);
+      let item;
+      if (type === Type.VIDEO) {
+        item = await VideoModel.findByIdAndUpdate(attachmentId, { $set: args }, { new: true });
+      }
+      item = await PhotoModel.findByIdAndUpdate(attachmentId, { $set: args }, { new: true });
+      return {
+        item
+      };
+    }
+    return {
+      errors: ['You does not have permission to update attachment.']
     };
   } catch (e) {
     console.log(e);

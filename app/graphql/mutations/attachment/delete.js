@@ -1,29 +1,27 @@
 import {
   GraphQLNonNull,
   GraphQLID,
-  GraphQLList,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLString,
+  GraphQLList
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import CommentType from '../../types/comment';
-import FeedService from '../../../database/helpers/feed';
-import { CommentEdge } from '../../connections/comment';
+import AttachmentService from '../../../database/helpers/attachment';
+import AttachmentType from '../../types/auxiliaryTypes/attachment';
+import { AttachmentEdge } from '../../connections/attachment';
 import { edgeFromNode } from '../../../lib/connection';
+import viewer from '../../queries/viewer';
 
-const CommentMutation = mutationWithClientMutationId({
-  name: 'AddComment',
+const DeleteAttachmentMutation = mutationWithClientMutationId({
+  name: 'DeleteAttachment',
 
   inputFields: {
-    parentId: {
+    id: {
       type: new GraphQLNonNull(GraphQLID)
-    },
-    text: {
-      type: GraphQLString
     }
   },
 
@@ -36,30 +34,23 @@ const CommentMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    comment: {
-      type: CommentType,
+    attachment: {
+      type: AttachmentType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: CommentEdge,
+      type: AttachmentEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    }
+    },
+    deletedId: {
+      type: GraphQLID,
+      resolve: ({ deletedId }) => deletedId
+    },
+    viewer
   },
 
-  mutateAndGetPayload: async ({ parentId, text }, { user }) => {
-    let errors = [];
-
-    if (!user) {
-      errors = [
-        'Please login to add new feed.'
-      ];
-      return {
-        success: false,
-        errors
-      };
-    }
-
-    const res = await FeedService.comment(user, parentId, text);
+  mutateAndGetPayload: async ({ id }, { user }) => {
+    const res = await AttachmentService.delete(user, id);
     if (res.errors) {
       return {
         success: false,
@@ -68,9 +59,10 @@ const CommentMutation = mutationWithClientMutationId({
     }
     return {
       success: true,
-      item: res.item
+      item: res.item,
+      deletedId: id
     };
   }
 });
 
-export default CommentMutation;
+export default DeleteAttachmentMutation;

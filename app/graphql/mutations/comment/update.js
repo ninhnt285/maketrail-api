@@ -1,36 +1,30 @@
 import {
   GraphQLNonNull,
-  GraphQLList,
+  GraphQLID,
   GraphQLBoolean,
   GraphQLString,
-  GraphQLID
+  GraphQLList
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import AttachmentType from '../../types/auxiliaryTypes/attachment';
-import AttachmentService from '../../../database/helpers/attachment';
-import { AttachmentEdge } from '../../connections/attachment';
+import CommentService from '../../../database/helpers/comment';
+import CommentType from '../../types/comment';
+import { CommentEdge } from '../../connections/comment';
 import { edgeFromNode } from '../../../lib/connection';
 
-const UpdateAttachmentMutation = mutationWithClientMutationId({
-  name: 'UpdateAttachment',
+const UpdateCommentMutation = mutationWithClientMutationId({
+  name: 'UpdateComment',
 
   inputFields: {
-    attachmentId: {
+    id: {
       type: new GraphQLNonNull(GraphQLID)
     },
-    placeId: {
-      type: GraphQLID
-    },
-    placeName: {
+    text: {
       type: GraphQLString
     },
-    caption: {
-      type: GraphQLString
-    }
   },
 
   outputFields: {
@@ -42,20 +36,20 @@ const UpdateAttachmentMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    attachment: {
-      type: AttachmentType,
+    comment: {
+      type: CommentType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: AttachmentEdge,
+      type: CommentEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ attachmentId, ...args }, { user }) => {
+  mutateAndGetPayload: async ({ id, ...args }, { user }) => {
     const newArgs = Object.assign({}, args);
     delete newArgs.clientMutationId;
-    const res = await AttachmentService.update(user, attachmentId, newArgs);
+    const res = await CommentService.update(user, id, newArgs);
     if (res.errors) {
       return {
         success: false,
@@ -69,4 +63,4 @@ const UpdateAttachmentMutation = mutationWithClientMutationId({
   }
 });
 
-export default UpdateAttachmentMutation;
+export default UpdateCommentMutation;

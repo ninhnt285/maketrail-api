@@ -30,7 +30,11 @@ const attachmentConnection = {
     if (!user) {
       return connectionFromArray([], args);
     }
-    const tmps = await Promise.all(attachments.map(attachment => AttachmentService.findById(attachment)));
+    const tmps = [];
+    for (let i = 0; i < attachments.length; i++){
+      const tmp = await AttachmentService.findById(attachments[i]);
+      if (tmp) tmps.push(tmp);
+    }
     return connectionFromArray(tmps, args);
   }
 };

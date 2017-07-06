@@ -1,34 +1,28 @@
 import {
   GraphQLNonNull,
+  GraphQLID,
   GraphQLList,
   GraphQLBoolean,
-  GraphQLString,
-  GraphQLID
+  GraphQLString
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import AttachmentType from '../../types/auxiliaryTypes/attachment';
-import AttachmentService from '../../../database/helpers/attachment';
-import { AttachmentEdge } from '../../connections/attachment';
+import CommentType from '../../types/comment';
+import CommentService from '../../../database/helpers/comment';
+import { CommentEdge } from '../../connections/comment';
 import { edgeFromNode } from '../../../lib/connection';
 
-const UpdateAttachmentMutation = mutationWithClientMutationId({
-  name: 'UpdateAttachment',
+const CommentMutation = mutationWithClientMutationId({
+  name: 'AddComment',
 
   inputFields: {
-    attachmentId: {
+    parentId: {
       type: new GraphQLNonNull(GraphQLID)
     },
-    placeId: {
-      type: GraphQLID
-    },
-    placeName: {
-      type: GraphQLString
-    },
-    caption: {
+    text: {
       type: GraphQLString
     }
   },
@@ -42,20 +36,30 @@ const UpdateAttachmentMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    attachment: {
-      type: AttachmentType,
+    comment: {
+      type: CommentType,
       resolve: ({ item }) => item
     },
     edge: {
-      type: AttachmentEdge,
+      type: CommentEdge,
       resolve: ({ item }) => edgeFromNode(item)
     }
   },
 
-  mutateAndGetPayload: async ({ attachmentId, ...args }, { user }) => {
-    const newArgs = Object.assign({}, args);
-    delete newArgs.clientMutationId;
-    const res = await AttachmentService.update(user, attachmentId, newArgs);
+  mutateAndGetPayload: async ({ parentId, text }, { user }) => {
+    let errors = [];
+
+    if (!user) {
+      errors = [
+        'Please login to comment.'
+      ];
+      return {
+        success: false,
+        errors
+      };
+    }
+
+    const res = await CommentService.add(user, parentId, text);
     if (res.errors) {
       return {
         success: false,
@@ -69,4 +73,4 @@ const UpdateAttachmentMutation = mutationWithClientMutationId({
   }
 });
 
-export default UpdateAttachmentMutation;
+export default CommentMutation;
