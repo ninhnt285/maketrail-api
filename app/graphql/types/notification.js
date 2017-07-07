@@ -2,8 +2,7 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLObjectType,
-  GraphQLString,
-  GraphQLList
+  GraphQLString
 } from 'graphql';
 
 import { nodeInterface } from '../utils/nodeDefinitions';
@@ -19,8 +18,8 @@ const NotificationType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLID)
     },
     from: {
-      type: new GraphQLList(SubjectType),
-      resolve: parentValue => parentValue.fromIds.map(fromId => getNodeFromId(fromId))
+      type: SubjectType,
+      resolve: parentValue => getNodeFromId(parentValue.fromId)
     },
 
     type: {
@@ -33,9 +32,13 @@ const NotificationType = new GraphQLObjectType({
       resolve: parentValue => getNodeFromId(parentValue.toId)
     },
 
-    sourceId: {
-      type: GraphQLID
+    story: {
+      type: GraphQLString
     },
+
+    link: {
+      type: GraphQLString
+    }
 
   }),
 

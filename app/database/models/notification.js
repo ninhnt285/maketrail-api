@@ -7,7 +7,7 @@ const notificationSchema = new Schema(
   {
     _id: Types.ObjectId,
     userId: String,
-    fromIds: [String],
+    fromId: String,
     toId: String,
     sourceId: String,
     type: String,

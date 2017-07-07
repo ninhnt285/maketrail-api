@@ -233,7 +233,7 @@ UserService.follow = async function (user1, user2) {
         errors: ['You have followed this one.']
       };
     }
-    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.create({ user1, user2 }), NotificationService.interest(user1, user2, 1)]);
+    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.create({ user1, user2 })]);
     await NotificationService.notify(user1, user2, null, NotificationService.Type.FOLLOW);
     return {
       item: res[0]
@@ -254,7 +254,7 @@ UserService.unfollow = async function (user1, user2) {
         errors: ['You have not followed this one yet.']
       };
     }
-    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.remove({ user1, user2 }), NotificationService.disinterest(user1, user2)]);
+    const res = await Promise.all([UserModel.findById(user2), FriendshipModel.remove({ user1, user2 })]);
     return {
       item: res[0]
     };
