@@ -47,25 +47,6 @@ const ViewerType = new GraphQLObjectType({
       }
     },
 
-    mapAreas: {
-      type: new GraphQLList(CountryType),
-      args: {
-        id: {
-          type: GraphQLID
-        },
-        userId: {
-          type: GraphQLID
-        }
-      },
-      resolve: async (parentValue, { id, userId }, { user }) => {
-        if (!userId) {
-          // eslint-disable-next-line no-param-reassign
-          userId = user.id;
-        }
-        return await UserService.getMap(userId, id);
-      }
-    },
-
     Trip,
     Locality,
     TripLocality,

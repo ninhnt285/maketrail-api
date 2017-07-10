@@ -8,6 +8,7 @@ import NotificationService from '../helpers/notification';
 import { generateToken, verifyToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
+import { drawUserMap } from '../../lib/map';
 
 const UserService = {};
 
@@ -298,17 +299,27 @@ UserService.getFacebookFriends = async function (userId) {
   return [];
 };
 
+UserService.getMap = async function (userId) {
+  await drawUserMap(userId);
+  return `/maps/userPng/${userId}.png`;
+};
+
 UserService.getCountries = async function (userId, parentId) {
   try {
     const items = await CountryModel.find({ parentId });
     const visiteds = await TraceModel.find({ parentId, userId });
+    const now = Math.floor((new Date().getTime() / 1000));
     const res = {};
-    items.forEach((item) => {
+    for (const item of items) {
       for (let i = 0; i < visiteds.length; i++) {
         if (item.svgId === visiteds[i].svgId) {
+          let visited = visiteds[i];
+          if (visited.arrivalTime && now > visited.arrivalTime) {
+            visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null });
+          }
           res[item.svgId] = {
             name: item.name,
-            status: visiteds[i].number > 0 ? 1 : 2
+            status: visited.number > 0 ? 1 : 2
           };
         }
       }
@@ -316,7 +327,7 @@ UserService.getCountries = async function (userId, parentId) {
         name: item.name,
         status: 0
       };
-    });
+    }
     return res;
   } catch (e) {
     console.log(e);

@@ -5,9 +5,11 @@ const { Types } = mongoose.Schema;
 const relationSchema = new Schema(
   {
     userId: Types.ObjectId,
-    countryId: String,
+    svgId: String,
     parentId: String,
-    status: Boolean
+    status: Boolean,
+    arrivalTime: Number,
+    number: { type: Number, default: 0 }
   }, {
     timestamps: true,
     toJSON: {
@@ -19,6 +21,6 @@ const relationSchema = new Schema(
   }
 );
 
-const TraceModel = mongoose.model('TraceRelation', relationSchema);
+const TraceModel = mongoose.model('Trace', relationSchema);
 
 export default TraceModel;

@@ -2,6 +2,7 @@
 import request from 'request-promise';
 import LocalityModel from '../models/locality';
 import VenueModel from '../models/venue';
+import TraceService from '../helpers/trace';
 import NotificationService from '../helpers/notification';
 import LocalityVenueRelationModel from '../models/localityVenueRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
@@ -55,6 +56,7 @@ LocalityService.add = async function (user, tripId, localityId) {
         weatherIcon: res.weather.icon,
         originLocality
       };
+      await TraceService.add(tripId, originLocality.location, tmp.arrivalTime);
       await NotificationService.notify(user.id, tripId, item.id, NotificationService.Type.ADD_LOCALITY);
       return {
         item
@@ -75,7 +77,8 @@ LocalityService.remove = async function (user, tripId, tripLocalityId) {
   try {
     if (await this.canRemoveLocality(user, tripId)) {
       const tmp = await TripLocalityRelationModel.findByIdAndRemove(tripLocalityId);
-      const locality = await LocalityModel.findById(tmp.localityId);
+      const locality = await LocalityModel.findById(tmp.localityId)
+      await TraceService.remove(tripId, locality.location);
       return {
         item: {
           id: tripLocalityId,
@@ -149,6 +152,7 @@ LocalityService.updateTripLocality = async function (user, tripLocalityId, args)
       const itemTmp = await TripLocalityRelationModel.findById(tripLocalityId);
       const originLocality = await LocalityModel.findById(itemTmp.localityId);
       if (args.arrivalTime){
+        await TraceService.add(tmp.tripId, originLocality.location, args.arrivalTime);
         args.weather = await getForecastOne(originLocality.location.lat, originLocality.location.lng, args.arrivalTime);
       }
       const item = await TripLocalityRelationModel.findByIdAndUpdate(tripLocalityId, { $set: args }, { new: true });

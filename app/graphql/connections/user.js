@@ -132,7 +132,7 @@ const suggestUserConnection = {
       if (suggesteds.length < 15) {
         const hotTravellers = await UserService.getHotUsers();
         for (let i = 0; i < hotTravellers.length; i++) {
-          if (!(followeds.includes(hotTravellers[i]))) {
+          if (user.id !== hotTravellers[i] && !(followeds.includes(hotTravellers[i]))) {
             suggesteds.push(await UserModel.findById(hotTravellers[i]));
             if (suggesteds.length === 15) break;
           }

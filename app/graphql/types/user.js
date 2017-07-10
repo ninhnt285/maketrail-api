@@ -31,6 +31,14 @@ const UserType = new GraphQLObjectType({
       type: GraphQLString,
     },
 
+    map: {
+      type: GraphQLString,
+      async resolve(obj) {
+        const url = await UserService.getMap(obj.id);
+        return url ? PREFIX + url : null;
+      }
+    },
+
     visitedNumber: {
       type: GraphQLString,
       resolve: async (parentValue) => {
