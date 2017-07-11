@@ -308,6 +308,7 @@ UserService.getCountries = async function (userId, parentId) {
   try {
     const items = await CountryModel.find({ parentId });
     const visiteds = await TraceModel.find({ parentId, userId });
+    console.log(visiteds);
     const now = Math.floor((new Date().getTime() / 1000));
     const res = {};
     for (const item of items) {
@@ -321,6 +322,7 @@ UserService.getCountries = async function (userId, parentId) {
             name: item.name,
             status: visited.number > 0 ? 1 : 2
           };
+          console.log(res[item.svgId]);
         }
       }
       res[item.svgId] = {
