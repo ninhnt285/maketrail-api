@@ -11,6 +11,7 @@ import {
 import { nodeInterface } from '../utils/nodeDefinitions';
 import FeedService from '../../database/helpers/feed';
 import SubjectType from './auxiliaryTypes/subject';
+import ObjectType from './auxiliaryTypes/object';
 import StatisticType from './auxiliaryTypes/Statistic';
 import { getNodeFromId } from '../../database/helpers/node';
 import { attachmentConnection } from '../connections/attachment';
@@ -61,7 +62,7 @@ const FeedType = new GraphQLObjectType({
     },
 
     parent: {
-      type: FeedType,
+      type: ObjectType,
       resolve: parentValue => getNodeFromId(parentValue.parentId)
     },
 

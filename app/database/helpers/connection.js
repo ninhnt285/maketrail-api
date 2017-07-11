@@ -23,35 +23,37 @@ export async function connectionFromModel(model, args, processFunc) {
   // Find arrays from args with Model and processFunc
   let sort = args.sort ? args.sort : 'createdAt';
 
-  const sortNode = args.sortNode ? args.sortNode : sort;
-
-  let skip = 0;
+  let sortNode = args.sortNode ? args.sortNode : sort;
+  let signed = false;
+  if (sortNode.charAt(0) === '-') {
+    sortNode = sortNode.substring(1, sortNode.length);
+    signed = true;
+  }
 
   const filter = Object.assign({}, args.filter);
 
   if (afterNode) {
-    filter[sort] = filter[sort] ? filter[sort] : {};
-    filter[sort].$gt = afterNode[sortNode];
+    filter[sortNode] = filter[sortNode] ? filter[sortNode] : {};
+    if (signed) {
+      filter[sortNode].$lt = afterNode[sortNode];
+    } else {
+      filter[sortNode].$gt = afterNode[sortNode];
+    }
   }
   if (beforeNode) {
-    filter[sort] = filter[sort] ? filter[sort] : {};
-    filter[sort].$lt = beforeNode[sortNode];
-  }
-
-  if ((sort === 'createdAt' || sort === '-createdAt') && filter[sort]) {
-    skip = 1;
-  }
-
-  if (sort !== 'createdAt' && sort !== '-createdAt') {
-    sort += ' createdAt';
+    filter[sortNode] = filter[sortNode] ? filter[sortNode] : {};
+    if (signed) {
+      filter[sortNode].$gt = beforeNode[sortNode];
+    } else {
+      filter[sortNode].$lt = beforeNode[sortNode];
+    }
   }
 
   const total = await model.count(args.filter);
-  const count = await model.count(filter).skip(skip);
+  const count = await model.count(filter);
   const items = await model.find(filter)
-                  .limit(limit)
-                  .skip(skip)
                   .sort(sort)
+                  .limit(limit)
                   .exec();
 
   // TODO: Need to improve
