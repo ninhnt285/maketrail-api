@@ -306,29 +306,19 @@ UserService.getMap = async function (userId) {
 
 UserService.getCountries = async function (userId, parentId) {
   try {
-    const items = await CountryModel.find({ parentId });
     const visiteds = await TraceModel.find({ parentId, userId });
-    console.log(visiteds);
     const now = Math.floor((new Date().getTime() / 1000));
     const res = {};
-    for (const item of items) {
-      for (let i = 0; i < visiteds.length; i++) {
-        if (item.svgId === visiteds[i].svgId) {
-          let visited = visiteds[i];
-          if (visited.arrivalTime && now > visited.arrivalTime) {
-            visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null });
-          }
-          res[item.svgId] = {
-            name: item.name,
-            status: visited.number > 0 ? 1 : 2
-          };
-          console.log(res[item.svgId]);
-        }
+    for (let i = 0; i < visiteds.length; i++) {
+      let visited = visiteds[i];
+      if (visited.arrivalTime && now > visited.arrivalTime) {
+        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null });
       }
-      res[item.svgId] = {
-        name: item.name,
-        status: 0
+      console.log(visited);
+      res[visited.svgId] = {
+        status: visited.number > 0 ? 1 : 2
       };
+      console.log(res[visited.svgId]);
     }
     return res;
   } catch (e) {
