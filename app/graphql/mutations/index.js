@@ -7,6 +7,7 @@ import addTripMutation from './trip/add';
 import updateTripMutation from './trip/update';
 import deleteTripMutation from './trip/delete';
 import inviteMemberMutation from './trip/invite';
+import answerInviteMutation from './trip/answer';
 import addTripLocalityMutation from './tripLocality/add'
 import updateTripLocalityMutation from './tripLocality/update';
 import removeTripLocalityMutation from './tripLocality/remove';
@@ -40,6 +41,7 @@ export default {
   updateTrip: updateTripMutation,
   deleteTrip: deleteTripMutation,
   inviteMember: inviteMemberMutation,
+  answerInvite: answerInviteMutation,
 
   addTripLocality: addTripLocalityMutation,
   updateTripLocality: updateTripLocalityMutation,

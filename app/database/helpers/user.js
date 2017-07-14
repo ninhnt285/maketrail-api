@@ -314,11 +314,9 @@ UserService.getCountries = async function (userId, parentId) {
       if (visited.arrivalTime && now > visited.arrivalTime) {
         visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null });
       }
-      console.log(visited);
       res[visited.svgId] = {
         status: visited.number > 0 ? 1 : 2
       };
-      console.log(res[visited.svgId]);
     }
     return res;
   } catch (e) {

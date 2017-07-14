@@ -11,7 +11,8 @@ NotificationService.Type = {
   POST: 'post',
   ADD_PHOTO: 'addPhoto',
   ADD_LOCALITY: 'addLocality',
-  ADD_VENUE: 'addVenue'
+  ADD_VENUE: 'addVenue',
+  INVITE_TO_TRIP: 'inviteToTrip'
 };
 
 NotificationService.notify = async function (fromId, toId, sourceId, type) {
@@ -19,8 +20,10 @@ NotificationService.notify = async function (fromId, toId, sourceId, type) {
     const obj = getType(toId);
     if (obj === Type.USER) {
       if (fromId !== toId) {
-        await NotificationModel.remove({ userId: toId, toId, type });
-        await NotificationModel.create({ userId: toId, fromId, toId, sourceId, type });
+        if (type !== this.Type.INVITE_TO_TRIP){
+          await NotificationModel.remove({userId: toId, toId, type});
+        }
+        await NotificationModel.create({userId: toId, fromId, toId, sourceId, type});
       }
     } else {
       let users = [];
@@ -42,6 +45,15 @@ NotificationService.countNotification = async function (userId) {
   } catch (e){
     console.log(e);
     return 0;
+  }
+};
+
+NotificationService.remove = async function (id) {
+  try {
+    return await NotificationModel.findByIdAndRemove(id);
+  } catch (e){
+    console.log(e);
+    return null;
   }
 };
 

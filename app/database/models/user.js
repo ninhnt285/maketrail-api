@@ -11,6 +11,9 @@ const userSchema = new Schema(
     fullName: String,
     profilePicUrl: String,
     password: String,
+    setting: {
+      allowTripInvite: { type: Number, default: 0 } // 0: anyone 1: following 2: noone
+    },
     facebook: {
       id: String,
       token: String,

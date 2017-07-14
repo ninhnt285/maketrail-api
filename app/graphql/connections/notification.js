@@ -104,6 +104,9 @@ const notificationConnection = {
           if (count > 1) added = `and ${count - 1} other people`;
           notification.story = `${from.fullName}${added} followed you.`;
           notification.link = `/user/${notification.fromId}`;
+        } else if (notification.type === NotificationService.Type.INVITE_TO_TRIP) {
+          notification.story = `${from.fullName}${added} invite you to a trip.`;
+          notification.link = `/trip/${notification.itemId}`;
         }
         return notification;
       }

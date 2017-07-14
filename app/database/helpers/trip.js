@@ -2,6 +2,7 @@ import TripModel from '../models/trip';
 import { PREFIX } from '../../config';
 import UserModel from '../models/user';
 import FeedService from '../helpers/feed';
+import UserService from '../helpers/user';
 import NotificationService from '../helpers/notification';
 import LocalityService from '../helpers/locality';
 import AttachmentService from '../helpers/attachment';
@@ -107,8 +108,15 @@ TripService.inviteMember = async function (user, tripId, userId, email) {
             };
           }
         }
-        await UserTripRelationModel.create({ userId: userTmp.id, tripId: item.id, roleId: 0 });
-        await NotificationService.interest(userTmp.id, item.id, 2);
+        if (!userTmp.setting){
+          userTmp = await UserModel.findByIdAndUpdate(userTmp.id, { setting: { allowTripInvite: 0 } });
+        }
+        if (userTmp.setting.allowTripInvite === 2 || (userTmp.setting.allowTripInvite === 1 && await UserService.isFollowed(userId, user.id) !== true)){
+          return {
+            errors: ['You does not have permission to invite member to this trip.']
+          };
+        }
+        await NotificationService.notify(user.id, userTmp.id, tripId, NotificationService.Type.INVITE_TO_TRIP);
         return {
           item: userTmp
         };
@@ -117,6 +125,24 @@ TripService.inviteMember = async function (user, tripId, userId, email) {
     return {
       errors: ['You does not have permission to invite member to this trip.']
     };
+  } catch (e) {
+    console.log(e);
+    return {
+      errors: ['Internal error']
+    };
+  }
+};
+
+TripService.answerInvite = async function (user, notificationId, choice) {
+  try {
+    const notification = await NotificationService.remove(notificationId);
+    if (choice === true) {
+      await UserTripRelationModel.create({userId: user.id, tripId: notification.sourceId, roleId: 0});
+      await NotificationService.interest(user.id, notification.sourceId, 2);
+    }
+    return {
+      success: true
+    }
   } catch (e) {
     console.log(e);
     return {
