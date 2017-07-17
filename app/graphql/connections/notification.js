@@ -106,7 +106,7 @@ const notificationConnection = {
           notification.link = `/user/${notification.fromId}`;
         } else if (notification.type === NotificationService.Type.INVITE_TO_TRIP) {
           notification.story = `${from.fullName}${added} invite you to a trip.`;
-          notification.link = `/trip/${notification.itemId}`;
+          notification.link = `/trip/${notification.sourceId}`;
         }
         return notification;
       }
