@@ -13,10 +13,6 @@ const CountryType = new GraphQLObjectType({
       type: GraphQLString
     },
 
-    name: {
-      type: GraphQLString
-    },
-
     status: {
       type: GraphQLInt
     }

@@ -6,21 +6,22 @@ import AttachmentService from '../../database/helpers/attachment';
 
 const HOST = process.env.NODE_ENV === 'production' ? '45.32.93.22' : 'localhost';
 const PORT = '6969';
-const clients = {
-  '45.32.216.6': {
-    domain: 'http://ren1.maketrail.com/',
-    sock: null
-  }
-};
+const clients = {};
 
-export function listen() {
+export function createRenderServer() {
   net.createServer((sock) => {
     // We have a connection - a socket object is assigned to the connection automatically
     console.log(`CONNECTED: ${sock.remoteAddress}:${sock.remotePort}`);
-    clients[sock.remoteAddress].sock = sock;
+    clients[sock.remoteAddress] = sock;
 
-    sock.on('data', (id) => {
-      AttachmentService.loadRenderedVideo(id, clients[sock.remoteAddress].domain);
+    sock.on('data', (data) => {
+      try {
+        const obj = JSON.parse(data);
+        console.log(obj);
+        AttachmentService.loadRenderedVideo(obj);
+      } catch (e){
+        console.log(e);
+      }
     });
 
     // Add a 'close' event handler to this instance of socket
@@ -37,7 +38,7 @@ export function listen() {
 }
 
 function findClient() {
-  return clients['45.32.216.6'].sock;
+  return clients['45.32.216.6'];
 }
 
 export function write(data) {

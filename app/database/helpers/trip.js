@@ -10,6 +10,7 @@ import VenueService from '../helpers/venue';
 import UserTripRelationModel from '../models/userTripRelation';
 import TripLocalityRelationModel from '../models/tripLocalityRelation';
 import { write } from '../../lib/render';
+import { getFileInfo } from '../../lib/google/place/photo';
 
 function genPhotoUrl() {
   return `/noImage/trip/${(new Date().getTime() % 10) + 1}%s.jpg`;
@@ -209,7 +210,7 @@ TripService.exportVideo = async function (user, trip) {
     const obj = {};
     obj.id = trip.id;
     obj.name = trip.name;
-    obj.intro = PREFIX + trip.previewPhotoUrl.replace('%s', '');
+    obj.intro = await getFileInfo(trip.previewPhotoUrl.replace('%s', ''));
     obj.audio = 'music.mp3';
     obj.locations = [];
     const localities = await TripLocalityRelationModel.find({ tripId: trip.id });
@@ -226,28 +227,28 @@ TripService.exportVideo = async function (user, trip) {
           lat: origin.location.lat,
           lng: origin.location.lng
         };
-        if (attachments[0]) tmp.image1 = PREFIX + attachments[0].url.replace('%s', '_1000');
-        if (attachments[1]) tmp.image2 = PREFIX + attachments[1].url.replace('%s', '_1000');
-        if (attachments[2]) tmp.image3 = PREFIX + attachments[2].url.replace('%s', '_1000');
-        if (attachments[3]) tmp.image4 = PREFIX + attachments[3].url.replace('%s', '_1000');
-        if (attachments[4]) tmp.image5 = PREFIX + attachments[4].url.replace('%s', '_1000');
+        if (attachments[0]) tmp.image1 = await getFileInfo(attachments[0].url.replace('%s', '_1000'));
+        if (attachments[1]) tmp.image2 = await getFileInfo(attachments[1].url.replace('%s', '_1000'));
+        if (attachments[2]) tmp.image3 = await getFileInfo(attachments[2].url.replace('%s', '_1000'));
+        if (attachments[3]) tmp.image4 = await getFileInfo(attachments[3].url.replace('%s', '_1000'));
+        if (attachments[4]) tmp.image5 = await getFileInfo(attachments[4].url.replace('%s', '_1000'));
         obj.locations.push(tmp);
       }
       const venues = await LocalityService.getLocalityVenues(localities[i].id);
       for (let j=0; j < venues.length; j++){
         const origin2 = await VenueService.getById(venues[j].venueId);
         const attachments2 = await AttachmentService.getByPlaceId(trip.id, origin2.id);
-        if (attachments2.length >- 5) {
+        if (attachments2.length >= 5) {
           const tmp2 = {
             name: origin2.name,
             temperature: '20°C',
             height: '70 Miles'
           };
-          if (attachments2[0]) tmp2.image1 = PREFIX + attachments2[0].url.replace('%s', '_1000');
-          if (attachments2[1]) tmp2.image2 = PREFIX + attachments2[1].url.replace('%s', '_1000');
-          if (attachments2[2]) tmp2.image3 = PREFIX + attachments2[2].url.replace('%s', '_1000');
-          if (attachments2[3]) tmp2.image4 = PREFIX + attachments2[3].url.replace('%s', '_1000');
-          if (attachments2[4]) tmp2.image5 = PREFIX + attachments2[4].url.replace('%s', '_1000');
+          if (attachments2[0]) tmp2.image1 = await getFileInfo(attachments2[0].url.replace('%s', '_1000'));
+          if (attachments2[1]) tmp2.image2 = await getFileInfo(attachments2[1].url.replace('%s', '_1000'));
+          if (attachments2[2]) tmp2.image3 = await getFileInfo(attachments2[2].url.replace('%s', '_1000'));
+          if (attachments2[3]) tmp2.image4 = await getFileInfo(attachments2[3].url.replace('%s', '_1000'));
+          if (attachments2[4]) tmp2.image5 = await getFileInfo(attachments2[4].url.replace('%s', '_1000'));
           obj.locations.push(tmp2);
         }
       }

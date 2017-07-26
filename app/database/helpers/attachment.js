@@ -221,33 +221,30 @@ AttachmentService.publishVideo = async function (id) {
   await VideoModel.findByIdAndUpdate(id, { isProcessing: true });
 };
 
-AttachmentService.loadRenderedVideo = async function (id, host) {
+AttachmentService.loadRenderedVideo = async function (data) {
   try {
-    const file = `${id}.mp4`;
-    const url = host + file;
-    console.log(`${file} is being loaded from ${host} !`);
-    const mimeType = file.substring(file.lastIndexOf('.'));
-    const parentId = file.substring(0, file.lastIndexOf('.') - 1);
+    const file = `${data.id}.mp4`;
+    console.log(`${file} is being loaded from ${data.url} !`);
     const date = new Date();
-    const videoName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file + uniqid()).digest('hex')}${mimeType}`;
+    const videoName = `/video/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${crypto.createHash('md5').update(file + uniqid()).digest('hex')}.mp4`;
     const fileName = path.join(__dirname, '../../../static/', videoName);
-    downloadFileHttp(url, fileName).then(async (fileDest) => {
+    downloadFileHttp(data.url, fileName).then(async (fileDest) => {
       const video = await VideoModel.create({
         name: file,
-        parentId,
+        parentId: data.id,
         url: videoName,
         privacy: 0
       });
-      const trip = await TripModel.findByIdAndUpdate(id, { recentExportedVideo: video.url, exportedVideo: false });
+      const trip = await TripModel.findByIdAndUpdate(data.id, { recentExportedVideo: video.url, exportedVideo: false });
       const item = await FeedModel.create({
         fromId: trip.exporter,
-        toId: id,
+        toId: data.id,
         privacy: 0,
         type: 3, // video
         attachments: [video.id]
       });
-      await NotificationService.notify(trip.exporter, id, item.id, NotificationService.Type.POST);
-      console.log(`${file} has been loaded from ${host} !`);
+      await NotificationService.notify(trip.exporter, data.id, item.id, NotificationService.Type.POST);
+      console.log(`${file} has been loaded from ${data.url} !`);
     });
   } catch (e) {
     console.log(e);

@@ -7,7 +7,7 @@ import sharp from 'sharp';
 import mkdirp from 'mkdirp';
 const CronJob = require('cron').CronJob;
 
-import { GOOGLE_API_KEY, FOURSQUARE_TOKEN } from '../../../config';
+import { GOOGLE_API_KEY, FOURSQUARE_TOKEN, PREFIX } from '../../../config';
 
 const dimens = [
   {
@@ -45,6 +45,16 @@ export async function resize(filename, force = false) {
       sharp(photo).rotate().resize(dimen.size[0], dimen.size[1]).toFile(fpath, null);
     }
   });
+}
+
+export async function getFileInfo(filename) {
+  const dest = path.join(__dirname, `../../../../static/${filename}`);
+  const metadata = await sharp(dest).metadata();
+  return {
+    file: PREFIX + filename,
+    width: metadata.width,
+    height: metadata.height
+  }
 }
 
 function ConvertDMSToDD(degrees, minutes, seconds, direction) {

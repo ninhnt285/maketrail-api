@@ -299,9 +299,28 @@ UserService.getFacebookFriends = async function (userId) {
   return [];
 };
 
-UserService.getMap = async function (userId) {
+UserService.getImageMap = async function (userId) {
   await drawUserMap(userId);
   return `/maps/userPng/${userId}.png`;
+};
+
+UserService.getMap = async function (userId, parentId) {
+  try {
+    const visiteds = await TraceModel.find({ parentId, userId });
+    const now = Math.floor((new Date().getTime() / 1000));
+    const res = [];
+    for (let i = 0; i < visiteds.length; i++) {
+      let visited = visiteds[i];
+      if (visited.arrivalTime && now > visited.arrivalTime) {
+        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null }, { new: true});
+      }
+      res.push({ code: visited.svgId, status: visited.number > 0 ? 1 : 2 });
+    }
+    return res;
+  } catch (e) {
+    console.log(e);
+  }
+  return [];
 };
 
 UserService.getCountries = async function (userId, parentId) {
@@ -312,7 +331,7 @@ UserService.getCountries = async function (userId, parentId) {
     for (let i = 0; i < visiteds.length; i++) {
       let visited = visiteds[i];
       if (visited.arrivalTime && now > visited.arrivalTime) {
-        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null });
+        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null }, { new: true});
       }
       res[visited.svgId] = {
         status: visited.number > 0 ? 1 : 2

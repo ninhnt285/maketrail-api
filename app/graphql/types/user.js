@@ -3,10 +3,12 @@ import {
   GraphQLString,
   GraphQLID,
   GraphQLNonNull,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLList
 } from 'graphql';
 
 import UserService from '../../database/helpers/user';
+import CountryType from './country';
 import { tripConnection } from '../connections/trip';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
@@ -34,8 +36,20 @@ const UserType = new GraphQLObjectType({
     map: {
       type: GraphQLString,
       async resolve(obj) {
-        const url = await UserService.getMap(obj.id);
+        const url = await UserService.getImageMap(obj.id);
         return url ? PREFIX + url : null;
+      }
+    },
+
+    mapAreas: {
+      type: new GraphQLList(CountryType),
+      args: {
+        parentId: {
+          type: GraphQLID
+        }
+      },
+      resolve: async (parentValue, { parentId }, { user }) => {
+        return await UserService.getMap(parentValue.id, parentId);
       }
     },
 
