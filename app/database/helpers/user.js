@@ -5,6 +5,7 @@ import CountryModel from '../models/country';
 import TraceModel from '../models/trace';
 import MailService from '../../lib/mail';
 import NotificationService from '../helpers/notification';
+import RedisService from './redis';
 import { generateToken, verifyToken } from '../../lib/token';
 import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
@@ -18,7 +19,13 @@ UserService.canGetUser = async function (user, userId) {
 
 UserService.findById = async function (id) {
   try {
-    return await UserModel.findById(id);
+    let user = await RedisService.get(id);
+    if (!user) {
+      console.log('load from db');
+      user = await UserModel.findById(id);
+      await RedisService.set(id, user);
+    }
+    return user;
   } catch (e) {
     console.log(e);
     return null;
@@ -29,7 +36,7 @@ UserService.getById = async function (user, id) {
   try {
     const bcanGetUser = await this.canGetUser(user, id);
     if (bcanGetUser) {
-      const result = await UserModel.findById(id).exec();
+      const result = await this.findById(id);
       return result;
     }
   } catch (e) {
@@ -41,6 +48,7 @@ UserService.getById = async function (user, id) {
 UserService.update = async function (user, args) {
   try {
     const item = await UserModel.findByIdAndUpdate(user.id, { $set: args }, { new: true });
+    await RedisService.set(item.id, item);
     return {
       item
     };

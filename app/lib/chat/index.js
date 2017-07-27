@@ -32,8 +32,9 @@ export function createChatServer(server) {
     });
 
     socket.on('chat', async (data) => {
-      await MessageService.add(socket.room, socket.userId, data);
-      io.sockets.in(socket.room).emit('chat', {from: socket.userId, message: data});
+      const message = await MessageService.add(socket.room, socket.userId, data);
+      console.log(message);
+      io.sockets.in(socket.room).emit('chat', { message });
     });
 
     // when the user disconnects.. perform this
