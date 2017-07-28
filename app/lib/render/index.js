@@ -4,7 +4,7 @@
 import net from 'net';
 import AttachmentService from '../../database/helpers/attachment';
 
-const HOST = process.env.NODE_ENV === 'production' ? '45.32.93.22' : 'localhost';
+const HOST = process.env.NODE_ENV === 'production' ? '45.32.211.12' : 'localhost';
 const PORT = '6969';
 const clients = {};
 

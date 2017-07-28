@@ -55,13 +55,19 @@ export async function convertGeoToId(lat, long) {
     }
 
     let svgIds = [];
+    let areaTmp = null;
     for(let location of locations[0].address_components) {
       if (location.types.indexOf('country') !== -1) {
         svgIds.push({ id: location.short_name, parentId: null});
       }
 
+      if (location.types.indexOf('administrative_area_level_2') !== -1) {
+        areaTmp = await CountryModel.findOne({ name: location.long_name }).exec();
+      }
+
       if (location.types.indexOf('administrative_area_level_1') !== -1) {
-        const area = await CountryModel.findOne({ name: location.long_name }).exec();
+        let area = await CountryModel.findOne({ name: location.long_name }).exec();
+        if (!area) area = areaTmp;
         if (area) {
           svgIds.push({ id: area.svgId, parentId: area.parentId});
         }

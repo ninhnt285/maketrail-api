@@ -21,7 +21,6 @@ UserService.findById = async function (id) {
   try {
     let user = await RedisService.get(id);
     if (!user) {
-      console.log('load from db');
       user = await UserModel.findById(id);
       await RedisService.set(id, user);
     }
