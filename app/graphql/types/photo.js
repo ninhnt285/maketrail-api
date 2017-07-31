@@ -9,6 +9,8 @@ import {
 
 import FeedService from '../../database/helpers/feed';
 import StatisticType from './auxiliaryTypes/Statistic';
+import UserType from './user';
+import { getType } from '../../lib/idUtils';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -24,6 +26,21 @@ const PhotoType = new GraphQLObjectType({
     name: {
       type: GraphQLString
     },
+
+    from: {
+      type: UserType
+    },
+
+    toId: {
+      type: GraphQLString,
+      resolve: parentValue => parentValue.parentId
+    },
+
+    toType: {
+      type: GraphQLString,
+      resolve: parentValue => getType(parentValue.parentId)
+    },
+
     placeId: {
       type: GraphQLString
     },

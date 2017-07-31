@@ -6,7 +6,7 @@ const relationSchema = new Schema(
   {
     userId: Types.ObjectId,
     svgId: String,
-    parentId: String,
+    parentId: String, // svgId of parent
     status: Boolean,
     arrivalTime: Number,
     number: { type: Number, default: 0 }

@@ -20,7 +20,7 @@ const resolveType = (data) => {
 
 const SubjectType = new GraphQLUnionType({
   name: 'SubjectType',
-  types: [TripType, UserType],
+  types: () => [TripType, UserType],
   resolveType
 });
 

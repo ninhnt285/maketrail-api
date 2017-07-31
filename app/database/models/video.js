@@ -12,6 +12,7 @@ const videoSchema = new Schema(
     url: String,
     previewUrl: String,
     privacy: Number,
+    userId: String,
     parentId: String,
     placeId: String,
     placeName: String,

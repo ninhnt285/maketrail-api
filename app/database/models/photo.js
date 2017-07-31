@@ -12,8 +12,9 @@ const photoSchema = new Schema(
     url: String,
     previewUrl: String,
     privacy: Number,
-    parentId: String,
-    placeId: String,
+    userId: String, // user upload
+    parentId: String, // destination
+    placeId: String, // check-in (locality or venue)
     placeName: String
   }, {
     timestamps: true,

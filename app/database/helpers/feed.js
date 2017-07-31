@@ -118,13 +118,16 @@ FeedService.post = async function (user, toId, text, attachments, placeId = unde
     let story = '';
     let tmp = '';
     if (attachments) {
+      if (attachments.length === 1){
+        tmp = getType(attachments[0]);
+        if (tmp === Type.PHOTO) type = Activity.PHOTO;
+        else if (tmp === Type.VIDEO) type = Activity.VIDEO;
+      }
       for (let i = 0; i < attachments.length; i++) {
         tmp = getType(attachments[i]);
         if (tmp === Type.PHOTO) {
-          type = Activity.PHOTO;
           await PhotoModel.findByIdAndUpdate(attachments[i], { placeId, placeName, parentId: toId || user.id });
         } else if (tmp === Type.VIDEO) {
-          if (type === Activity.POST) type = Activity.VIDEO;
           await VideoModel.findByIdAndUpdate(attachments[i], { placeId, placeName, parentId: toId || user.id });
         }
       }

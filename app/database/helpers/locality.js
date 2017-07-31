@@ -210,6 +210,40 @@ LocalityService.seachLocality = async function (query) {
   }
 };
 
+LocalityService.autocomplete = async function (input) {
+  try {
+    const options = {
+      method: 'GET',
+      uri: 'https://maps.googleapis.com/maps/api/place/autocomplete/json',
+      qs: {
+        key: GOOGLE_API_KEY,
+        input,
+        types: 'geocode'
+      },
+      encoding: 'utf8'
+    };
+    const res = JSON.parse(await request(options)
+      .then(ggRes => ggRes));
+    const localities = res.results;
+    const date = new Date();
+    return await Promise.all(localities.map(async (locality) => {
+      const tmp = {
+        googlePlaceId: locality.place_id,
+        types: locality.types,
+        name: locality.name,
+        description: locality.formatted_address,
+        location: locality.geometry.location,
+        previewPhotoUrl: `/locality/${date.getUTCFullYear()}/${(date.getUTCMonth() + 1)}/${locality.place_id}%s.jpg`
+      };
+      if (locality.photos && locality.photos.length > 0) tmp.photo_reference = locality.photos[0].photo_reference;
+      return await this.findOneOrCreate({ googlePlaceId: locality.place_id }, tmp);
+    }));
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 LocalityService.searchGuesthouse = async function (tripLocalityId) {
   try {
     let locality = await TripLocalityRelationModel.findById(tripLocalityId);
