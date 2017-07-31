@@ -9,11 +9,11 @@ const feedSchema = new Schema(
     fromId: String,
     toId: String,
     text: String,
-    parentId: String,
+    parentId: String, // object which be shared
     attachments: [String],
     privacy: Number,
     type: Number,
-    placeId: String,
+    placeId: String, // check-in
     placeName: String,
     story: String
   }, {

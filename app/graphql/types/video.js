@@ -12,6 +12,7 @@ import FeedService from '../../database/helpers/feed';
 import StatisticType from './auxiliaryTypes/Statistic';
 import UserType from './user';
 import { getType } from '../../lib/idUtils';
+import { getNodeFromId } from '../../database/helpers/node';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -30,7 +31,8 @@ const VideoType = new GraphQLObjectType({
     },
 
     from: {
-      type: UserType
+      type: UserType,
+      resolve: parentValue => getNodeFromId(parentValue.userId)
     },
 
     toId: {
@@ -83,7 +85,8 @@ const VideoType = new GraphQLObjectType({
     },
     statistics: {
       type: StatisticType,
-      resolve: parentValue => FeedService.getStatistics(parentValue.id)
+      // eslint-disable-next-line no-return-await
+      resolve: async parentValue => await FeedService.getStatistics(parentValue.id)
     }
   }),
 
