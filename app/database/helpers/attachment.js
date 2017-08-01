@@ -243,7 +243,7 @@ AttachmentService.loadRenderedVideo = async function (data) {
         type: 3, // video
         attachments: [video.id]
       });
-      await NotificationService.notify(trip.exporter, data.id, item.id, NotificationService.Type.POST);
+      await NotificationService.notify(trip.exporter, data.id, item.id, NotificationService.Type.EXPORT_VIDEO);
       console.log(`${file} has been loaded from ${data.url} !`);
     });
   } catch (e) {

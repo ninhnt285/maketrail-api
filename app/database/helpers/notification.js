@@ -5,14 +5,17 @@ import { getType, Type } from '../../lib/idUtils';
 const NotificationService = {};
 
 NotificationService.Type = {
-  LIKE: 'like',
-  COMMENT: 'comment',
-  FOLLOW: 'follow',
-  POST: 'post',
+  LIKE: 'like', // someone like an object -> notify object owner
+  COMMENT: 'comment', // someone like an object -> notify interested people
+  FOLLOW: 'follow', // someone follow a person -> notify that person
+  POST: 'post', // someone post to a person profile -> notify that person
   ADD_PHOTO: 'addPhoto',
-  ADD_LOCALITY: 'addLocality',
+  ADD_LOCALITY: 'addLocality', // add new locality to trip -> notify all trip member
   ADD_VENUE: 'addVenue',
-  INVITE_TO_TRIP: 'inviteToTrip'
+  INVITE_TO_TRIP: 'inviteToTrip', // invite new member -> notify
+  JOIN_TRIP: 'joinTrip', // new member join trip -> notify all trip member
+  PUBLISH_TRIP: 'publishTrip', // publish a trip -> notify all trip member
+  EXPORT_VIDEO: 'exportVideo' // export trip's video -> notify all trip member
 };
 
 NotificationService.notify = async function (fromId, toId, sourceId, type) {

@@ -137,9 +137,9 @@ FeedService.post = async function (user, toId, text, attachments, placeId = unde
     if (toId && user.id !== toId) {
       to = await getNodeFromId(toId);
       if (type === Activity.PHOTO) {
-        story = `${from.fullName} added ${attachments.length} new photos to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
+        story = `${from.fullName} added ${attachments.length} new photo to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
       } else if (type === Activity.VIDEO){
-        story = `${from.fullName} added ${attachments.length} new videos to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
+        story = `${from.fullName} added ${attachments.length} new video to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
       } else {
         story = `${from.fullName} posted to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
       }
@@ -246,6 +246,7 @@ FeedService.publishTrip = async function (user, tripId) {
       type: Activity.POST
     });
     await NotificationService.interest(user.id, item.id, 2);
+    await NotificationService.notify(user.id, tripId, item.id, NotificationService.Type.PUBLISH_TRIP);
     return {
       item
     };

@@ -6,10 +6,10 @@ const { Types } = mongoose.Schema;
 const notificationSchema = new Schema(
   {
     _id: Types.ObjectId,
-    userId: String,
-    fromId: String,
-    toId: String,
-    sourceId: String,
+    userId: String, // user receive notify
+    fromId: String, // subject make notification
+    toId: String, // affected object
+    sourceId: String, // action detail
     type: String,
     isRead: Boolean
   }, {

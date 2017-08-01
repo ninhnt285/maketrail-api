@@ -16,6 +16,7 @@ import UserModel from '../../database/models/user';
 import FeedModel from '../../database/models/feed';
 import LikeModel from '../../database/models/like';
 import CommentModel from '../../database/models/comment';
+import UserTripRelationModel from '../../database/models/userTripRelation';
 import FriendshipModel from '../../database/models/friendship';
 import { getType, Type } from '../../lib/idUtils';
 import { getNodeFromId } from '../../database/helpers/node';
@@ -39,6 +40,8 @@ function getText(type) {
     return 'video';
   } else if (type === Type.FEED) {
     return 'feed';
+  } else if (type === Type.TRIP) {
+    return 'trip';
   }
 }
 
@@ -107,6 +110,24 @@ const notificationConnection = {
         } else if (notification.type === NotificationService.Type.INVITE_TO_TRIP) {
           notification.story = `${from.fullName}${added} invite you to a trip.`;
           notification.link = `/trip/${notification.sourceId}`;
+        } else if (notification.type === NotificationService.Type.ADD_LOCALITY) {
+          const to = await getNodeFromId(notification.toId);
+          notification.story = `${from.fullName}${added} add new locality you to ${to.name}.`;
+          notification.link = `/trip/${notification.toId}`;
+        } else if (notification.type === NotificationService.Type.PUBLISH_TRIP) {
+          const to = await getNodeFromId(notification.toId);
+          notification.story = `${from.fullName}${added} published ${to.name}.`;
+          notification.link = `/feed/${notification.sourceId}`;
+        } else if (notification.type === NotificationService.Type.EXPORT_VIDEO) {
+          const to = await getNodeFromId(notification.toId);
+          notification.story = `${from.fullName}${added} exported ${to.name}'s video.`;
+          notification.link = `/feed/${notification.sourceId}`;
+        } else if (notification.type === NotificationService.Type.JOIN_TRIP) {
+          count = await UserTripRelationModel.count({ tripId: notification.toId, updatedAt: { $gt: date } });
+          if (count > 1) added = `and ${count - 1} other people`;
+          const to = await getNodeFromId(notification.toId);
+          notification.story = `${from.fullName}${added} joined ${to.name}.`;
+          notification.link = `/feed/${notification.sourceId}`;
         }
         return notification;
       }

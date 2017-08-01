@@ -140,6 +140,7 @@ TripService.answerInvite = async function (user, notificationId, choice) {
     if (choice === true) {
       await UserTripRelationModel.create({userId: user.id, tripId: notification.sourceId, roleId: 0});
       await NotificationService.interest(user.id, notification.sourceId, 2);
+      await NotificationService.notify(user.id, notification.sourceId, null, NotificationService.Type.JOIN_TRIP);
     }
     return {
       success: true
