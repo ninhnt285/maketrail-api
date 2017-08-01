@@ -56,7 +56,7 @@ LocalityService.add = async function (user, tripId, localityId) {
         weatherIcon: res.weather.icon,
         originLocality
       };
-      await TraceService.add(tripId, originLocality.location, tmp.arrivalTime);
+      await TraceService.add(tripId, originLocality.location, arrivalTime);
       await NotificationService.notify(user.id, tripId, item.id, NotificationService.Type.ADD_LOCALITY);
       return {
         item
