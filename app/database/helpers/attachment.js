@@ -54,6 +54,8 @@ AttachmentService.getById = async function (user, id) {
   return null;
 };
 
+// get attachments of a locality or venue in a trip
+// parentId = tripId, placeId = localityId || venueId
 AttachmentService.getByPlaceId = async function (parentId, placeId) {
   try {
     const photos = await PhotoModel.find({ parentId, placeId });
@@ -76,6 +78,8 @@ AttachmentService.canAddAttachment = async function (user) {
   return (user);
 };
 
+// get all attachment of a trip
+// parentId = tripId
 AttachmentService.getByParentId = async function (parentId) {
   try {
     const photos = await PhotoModel.find({ parentId });
@@ -135,6 +139,7 @@ AttachmentService.update = async function (user, attachmentId, args) {
   }
 };
 
+// parentId = tripId (if upload to trip) || userId (if upload to timeline)
 AttachmentService.upload = async function (user, file, caption, parentId, placeId, placeName) {
   if (!file) {
     return {

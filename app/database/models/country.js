@@ -9,6 +9,7 @@ const countrySchema = new Schema(
   {
     name: String,
     parentId: String,
+    children: Number,
     svgId: String,
     svgFileName: String,
     description: String,

@@ -8,25 +8,25 @@ import connectDb from '../database/connectDb';
 import CountryModel from '../database/models/country';
 
 const specialFiles = {
-  'antiguaAndBarbuda': 'antiguaBarbuda',
-  'bosniaAndHerzegovina': 'bosniaHerzegovinaCantons',
+  antiguaAndBarbuda: 'antiguaBarbuda',
+  bosniaAndHerzegovina: 'bosniaHerzegovinaCantons',
   'cocos(Keeling)Islands': 'cocosIslands',
-  'democraticRepublicOfCongo': 'congoDR',
-  'republicOfCongo': 'congo',
-  'westernSahara': 'moroccoWesternSahara',
-  'fiji': 'fijiWest',
-  'federatedStatesOfMicronesia': 'micronesia',
-  'southGeorgiaAndSouthSandwichIslands': 'georgiaSouthOssetia',
+  democraticRepublicOfCongo: 'congoDR',
+  republicOfCongo: 'congo',
+  westernSahara: 'moroccoWesternSahara',
+  fiji: 'fijiWest',
+  federatedStatesOfMicronesia: 'micronesia',
+  southGeorgiaAndSouthSandwichIslands: 'georgiaSouthOssetia',
   'guinea-Bissau': 'guineaBissau',
-  'saintKittsAndNevis': 'stKittsNevis',
-  'saintLucia': 'stLucia',
-  'macau': 'macao',
-  'saintPierreAndMiquelon': 'saintPierreMiquelon',
-  'saintHelena': 'stHelena',
-  'svalbardAndJanMayen': 'svalbardJanMayen',
-  'unitedStates': 'usaMercator',
-  'saintVincentAndTheGrenadines': 'stVincent',
-  'wallisAndFutuna': 'wallisFutuna'
+  saintKittsAndNevis: 'stKittsNevis',
+  saintLucia: 'stLucia',
+  macau: 'macao',
+  saintPierreAndMiquelon: 'saintPierreMiquelon',
+  saintHelena: 'stHelena',
+  svalbardAndJanMayen: 'svalbardJanMayen',
+  unitedStates: 'usaMercator',
+  saintVincentAndTheGrenadines: 'stVincent',
+  wallisAndFutuna: 'wallisFutuna'
 };
 
 function camelize(str) {
@@ -38,11 +38,11 @@ async function onConnected() {
 
   fs.readFile('./static/maps/svg/worldHigh.svg', 'utf8', (err, data) => {
     const parser = new xml2js.Parser();
-    parser.parseString(data.substring(0, data.length), function (err2, result) {
+    parser.parseString(data.substring(0, data.length), (err2, result) => {
       const items = result.svg.g[0].path;
       let itemsProcessed = items.length;
       items.forEach(async (itemTemp) => {
-        const item = itemTemp['$'];
+        const item = itemTemp.$;
         let svgFileName = camelize(item.title);
         if (specialFiles[svgFileName]) {
           svgFileName = specialFiles[svgFileName];
@@ -53,17 +53,18 @@ async function onConnected() {
         console.log(tmp.svgFileName);
         fs.readFile(`./static/maps/svg/${tmp.svgFileName}`, 'utf8', (err3, data2) => {
           if (!err3) {
-            let parser2 = new xml2js.Parser();
-            parser2.parseString(data2.substring(0, data2.length), function (err4, result2) {
+            const parser2 = new xml2js.Parser();
+            parser2.parseString(data2.substring(0, data2.length), async (err4, result2) => {
               const items2 = result2.svg.g[0].path;
               if (Array.isArray(items2)) {
+                await CountryModel.findByIdAndUpdate(tmp.id, {children: items2.length});
                 items2.forEach(async (itemTemp2) => {
-                  const item2 = itemTemp2['$'];
-                  await CountryModel.create({ name: item2.title, svgId: item2.id, parentId: tmp.svgId });
+                  const item2 = itemTemp2.$;
+                  await CountryModel.create({name: item2.title, svgId: item2.id, parentId: tmp.svgId});
                 });
               } else {
-                CountryModel.create({ name: items2.title, svgId: items2.id, parentId: tmp.svgId }, (err, data) => {
-                });
+                await CountryModel.findByIdAndUpdate(tmp.id, {children: 1});
+                await CountryModel.create({name: items2.title, svgId: items2.id, parentId: tmp.svgId});
               }
             });
           }

@@ -87,6 +87,7 @@ const notificationConnection = {
             notification.story = `${from.fullName}${added} posted to ${to.fullName ? to.fullName : to.name}'s Timeline.`;
           }
           notification.link = `/feed/${notification.sourceId}`;
+          notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.COMMENT) {
           const to = await getNodeFromId(notification.toId);
           count = await CommentModel.count({ parentId: notification.toId, updatedAt: { $gt: date } });
@@ -97,37 +98,46 @@ const notificationConnection = {
             notification.story = `${from.fullName}${added} commented to your ${getText(type)}.`;
           }
           notification.link = `/${getText(type)}/${notification.toId}`;
+          notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.LIKE) {
           count = await LikeModel.count({ parentId: notification.toId, updatedAt: { $gt: date } });
           if (count > 1) added = `and ${count - 1} other people`;
           notification.story = `${from.fullName}${added} liked your ${getText(type)}.`;
           notification.link = `/${getText(type)}/${notification.toId}`;
+          notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.FOLLOW) {
           count = await FriendshipModel.count({ user2: userId, updatedAt: { $gt: date } });
           if (count > 1) added = `and ${count - 1} other people`;
           notification.story = `${from.fullName}${added} followed you.`;
           notification.link = `/user/${notification.fromId}`;
+          notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.INVITE_TO_TRIP) {
-          notification.story = `${from.fullName}${added} invite you to a trip.`;
+          const source = await getNodeFromId(notification.sourceId);
+          notification.story = `${from.fullName}${added} invite you to trip ${source.name}.`;
           notification.link = `/trip/${notification.sourceId}`;
+          notification.previewImage = source.previewPhotoUrl;
         } else if (notification.type === NotificationService.Type.ADD_LOCALITY) {
           const to = await getNodeFromId(notification.toId);
           notification.story = `${from.fullName}${added} add new locality you to ${to.name}.`;
           notification.link = `/trip/${notification.toId}`;
+          notification.previewImage = to.previewPhotoUrl;
         } else if (notification.type === NotificationService.Type.PUBLISH_TRIP) {
           const to = await getNodeFromId(notification.toId);
           notification.story = `${from.fullName}${added} published ${to.name}.`;
           notification.link = `/feed/${notification.sourceId}`;
+          notification.previewImage = to.previewPhotoUrl;
         } else if (notification.type === NotificationService.Type.EXPORT_VIDEO) {
           const to = await getNodeFromId(notification.toId);
           notification.story = `${from.fullName}${added} exported ${to.name}'s video.`;
           notification.link = `/feed/${notification.sourceId}`;
+          notification.previewImage = to.previewPhotoUrl;
         } else if (notification.type === NotificationService.Type.JOIN_TRIP) {
           count = await UserTripRelationModel.count({ tripId: notification.toId, updatedAt: { $gt: date } });
           if (count > 1) added = `and ${count - 1} other people`;
           const to = await getNodeFromId(notification.toId);
           notification.story = `${from.fullName}${added} joined ${to.name}.`;
           notification.link = `/feed/${notification.sourceId}`;
+          notification.previewImage = from.profilePicUrl;
         }
         return notification;
       }

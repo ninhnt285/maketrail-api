@@ -11,6 +11,8 @@ import { generateHash } from '../../lib/hash';
 import SocialUtils from '../../lib/social';
 import { drawUserMap } from '../../lib/map';
 
+const ObjectId = require('mongoose').Types.ObjectId;
+
 const UserService = {};
 
 UserService.canGetUser = async function (user, userId) {
@@ -319,7 +321,7 @@ UserService.getMap = async function (userId, parentId) {
     for (let i = 0; i < visiteds.length; i++) {
       let visited = visiteds[i];
       if (visited.arrivalTime && now > visited.arrivalTime) {
-        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null }, { new: true});
+        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null }, { new: true });
       }
       res.push({ code: visited.svgId, status: visited.number > 0 ? 1 : 2 });
     }
@@ -338,7 +340,7 @@ UserService.getCountries = async function (userId, parentId) {
     for (let i = 0; i < visiteds.length; i++) {
       let visited = visiteds[i];
       if (visited.arrivalTime && now > visited.arrivalTime) {
-        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null }, { new: true});
+        visited = await TraceModel.findByIdAndUpdate(visited.id, { number: visited.number + 1, arrivalTime: null }, { new: true });
       }
       res[visited.svgId] = {
         status: visited.number > 0 ? 1 : 2
@@ -363,10 +365,11 @@ UserService.getVisitedNumber = async function (userId, parentId) {
 
 UserService.getFavouriteCountry = async function (userId) {
   try {
-    TraceModel.aggregate([
+    const results = await TraceModel.aggregate([
       {
         $match: {
-          userId
+          parentId: { $ne: null },
+          userId: new ObjectId(userId)
         }
       },
       {
@@ -375,12 +378,12 @@ UserService.getFavouriteCountry = async function (userId) {
           count: { $sum: 1 }
         }
       }
-    ], (err, results) => {
-      if (!err) {
-        results.sort((a, b) => a.count < b.count);
-        return (results && results.length > 0) ? results[0]._id : null;
-      }
-    });
+    ]).exec();
+    results.sort((a, b) => a.count < b.count);
+    if (results.length === 0) return null;
+    const country = await CountryModel.findOne({ svgId: results[0]._id });
+    const percent = Math.floor(results[0].count * 100 / country.children);
+    return `${country.name}: ${results[0].count}/${country.children} Cities (${percent}%)`;
   } catch (e) {
     console.log(e);
     return null;

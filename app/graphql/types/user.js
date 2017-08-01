@@ -63,8 +63,8 @@ const UserType = new GraphQLObjectType({
 
     favouriteCountry: {
       type: GraphQLString,
-      resolve: (parentValue) => {
-        return UserService.getFavouriteCountry(parentValue.id);
+      resolve: async (parentValue) => {
+        return await UserService.getFavouriteCountry(parentValue.id);
       }
     },
 
