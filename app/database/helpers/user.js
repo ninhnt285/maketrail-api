@@ -378,7 +378,7 @@ UserService.getFavouriteCountry = async function (userId) {
     ], (err, results) => {
       if (!err) {
         results.sort((a, b) => a.count < b.count);
-        return (results && results.length > 0) ? null : results[0]._id;
+        return (results && results.length > 0) ? results[0]._id : null;
       }
     });
   } catch (e) {
