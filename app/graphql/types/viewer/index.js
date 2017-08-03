@@ -2,7 +2,6 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLObjectType,
-  GraphQLList,
   GraphQLInt
 } from 'graphql';
 
@@ -11,10 +10,11 @@ import { tripConnection, tripExploreConnection } from '../../connections/trip';
 import { userConnection, suggestUserConnection } from '../../connections/user';
 import { commentConnection } from '../../connections/comment';
 import { notificationConnection } from '../../connections/notification';
+import { requestConnection } from '../../connections/request';
 import UserService from '../../../database/helpers/user';
+import FriendshipService from '../../../database/helpers/friendship';
 import NotificationService from '../../../database/helpers/notification';
 import UserType from '../user';
-import CountryType from '../country';
 import Trip from './Trip';
 import Locality from './Locality';
 import TripLocality from './TripLocality';
@@ -71,6 +71,23 @@ const ViewerType = new GraphQLObjectType({
       resolve: async (parentValue, params, { user }) => {
         return {
           unread: await NotificationService.countNotification(user.id)
+        };
+      }
+    },
+    allRequests: {
+      type: new GraphQLObjectType({
+        name: 'AllRequest',
+
+        fields: () => ({
+          unread: {
+            type: GraphQLInt
+          },
+          data: requestConnection,
+        }),
+      }),
+      resolve: async (parentValue, params, { user }) => {
+        return {
+          unread: await FriendshipService.countRequest(user.id)
         };
       }
     },

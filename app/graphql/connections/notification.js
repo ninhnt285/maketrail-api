@@ -106,16 +106,17 @@ const notificationConnection = {
           notification.link = `/${getText(type)}/${notification.toId}`;
           notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.FOLLOW) {
-          count = await FriendshipModel.count({ user2: userId, updatedAt: { $gt: date } });
+          count = await FriendshipModel.count({ user2: userId, isFriend: false, isFollow: true, updatedAt: { $gt: date } });
           if (count > 1) added = `and ${count - 1} other people`;
           notification.story = `${from.fullName}${added} followed you.`;
           notification.link = `/user/${notification.fromId}`;
           notification.previewImage = from.profilePicUrl;
-        } else if (notification.type === NotificationService.Type.INVITE_TO_TRIP) {
-          const source = await getNodeFromId(notification.sourceId);
-          notification.story = `${from.fullName}${added} invite you to trip ${source.name}.`;
-          notification.link = `/trip/${notification.sourceId}`;
-          notification.previewImage = source.previewPhotoUrl;
+        } else if (notification.type === NotificationService.Type.ACCEPT_FRIEND) {
+          count = await FriendshipModel.count({ user2: userId, isFriend: true, updatedAt: { $gt: date } });
+          if (count > 1) added = `and ${count - 1} other people`;
+          notification.story = `${from.fullName}${added} have become your friends.`;
+          notification.link = `/user/${notification.fromId}`;
+          notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.ADD_LOCALITY) {
           const to = await getNodeFromId(notification.toId);
           notification.story = `${from.fullName}${added} add new locality you to ${to.name}.`;
@@ -138,6 +139,11 @@ const notificationConnection = {
           notification.story = `${from.fullName}${added} joined ${to.name}.`;
           notification.link = `/feed/${notification.sourceId}`;
           notification.previewImage = from.profilePicUrl;
+        } else if (notification.type === NotificationService.Type.INVITE_TO_TRIP) {
+          const source = await getNodeFromId(notification.sourceId);
+          notification.story = `${from.fullName}${added} invite you to trip ${source.name}.`;
+          notification.link = `/trip/${notification.sourceId}`;
+          notification.previewImage = source.previewPhotoUrl;
         }
         return notification;
       }

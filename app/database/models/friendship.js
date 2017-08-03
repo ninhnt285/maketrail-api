@@ -6,6 +6,9 @@ const friendshipSchema = new Schema(
   {
     user1: String,
     user2: String,
+    isFriend: { type: Boolean, default: false },
+    isSentRequest: { type: Boolean, default: false },
+    isFollow: { type: Boolean, default: false }
   }, {
     timestamps: true,
     toJSON: {

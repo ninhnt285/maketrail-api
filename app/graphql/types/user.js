@@ -3,13 +3,15 @@ import {
   GraphQLString,
   GraphQLID,
   GraphQLNonNull,
-  GraphQLBoolean,
   GraphQLList
 } from 'graphql';
 
 import UserService from '../../database/helpers/user';
+import FriendshipService from '../../database/helpers/friendship';
 import CountryType from './country';
+import RelationshipType from './auxiliaryTypes/relationship';
 import { tripConnection } from '../connections/trip';
+import { friendConnection } from '../connections/user';
 import { nodeInterface } from '../utils/nodeDefinitions';
 import { PREFIX } from '../../config';
 
@@ -68,11 +70,11 @@ const UserType = new GraphQLObjectType({
       }
     },
 
-    isFollowed: {
-      type: GraphQLBoolean,
+    relationship: {
+      type: RelationshipType,
       resolve: (parentValue, params, { user }) => {
         if (user) {
-          return UserService.isFollowed(user.id, parentValue.id);
+          return FriendshipService.getRelationship(user.id, parentValue.id);
         }
         return false;
       }
@@ -85,7 +87,8 @@ const UserType = new GraphQLObjectType({
       }
     },
 
-    trips: tripConnection
+    trips: tripConnection,
+    friends: friendConnection
 
   }),
   interfaces: [nodeInterface]

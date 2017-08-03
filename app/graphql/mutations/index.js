@@ -20,11 +20,16 @@ import postMutation from './activity/post';
 import updateFeedMutation from './activity/updatePost';
 import deleteFeedMutation from './activity/deleteFeed';
 import updateInfoMutation from './activity/updateInfo';
+
 import uploadMutation from './attachment/upload';
 import updateAttachmentMutation from './attachment/update';
 import deleteAttachmentMutation from './attachment/delete';
-import followMutation from './activity/follow';
-import unfollowMutation from './activity/unfollow';
+
+import followMutation from './friendship/follow';
+import unfollowMutation from './friendship/unfollow';
+import addFriendMutation from './friendship/addFriend';
+import unfriendMutation from './friendship/unfriend';
+import answerAddFriendMutation from './friendship/answerAddFriend';
 
 import addCommentMutation from './comment/add';
 import updateCommentMutation from './comment/update';
@@ -58,11 +63,15 @@ export default {
   deleteLike: deleteLikeMutation,
   addShare: shareMutation,
   addFeed: postMutation,
-  follow: followMutation,
-  unfollow: unfollowMutation,
   updateInfo: updateInfoMutation,
   updateFeed: updateFeedMutation,
   deleteFeed: deleteFeedMutation,
+
+  addFriend: addFriendMutation,
+  unfriend: unfriendMutation,
+  answerAddFriend: answerAddFriendMutation,
+  follow: followMutation,
+  unfollow: unfollowMutation,
 
   addAttachment: uploadMutation,
   updateAttachment: updateAttachmentMutation,

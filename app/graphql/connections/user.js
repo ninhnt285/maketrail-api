@@ -1,6 +1,7 @@
 import {
   GraphQLNonNull,
-  GraphQLString
+  GraphQLString,
+  GraphQLID
 } from 'graphql';
 
 import {
@@ -10,7 +11,9 @@ import {
 
 import UserType from '../types/user';
 import UserModel from '../../database/models/user';
+import FriendshipModel from '../../database/models/friendship';
 import UserService from '../../database/helpers/user';
+import FriendshipService from '../../database/helpers/friendship';
 import UserTripRelation from '../../database/models/userTripRelation';
 import { connectionFromModel } from '../../database/helpers/connection';
 import { connectionFromArray } from '../../lib/connection';
@@ -130,7 +133,7 @@ const suggestUserConnection = {
         }
       }
       if (suggesteds.length < 15) {
-        const hotTravellers = await UserService.getHotUsers();
+        const hotTravellers = await FriendshipService.getHotUsers();
         for (let i = 0; i < hotTravellers.length; i++) {
           if (user.id !== hotTravellers[i] && !(followeds.includes(hotTravellers[i]))) {
             suggesteds.push(await UserModel.findById(hotTravellers[i]));
@@ -147,9 +150,55 @@ const suggestUserConnection = {
   }
 };
 
+const friendConnection = {
+  type: new GraphQLNonNull(UserConnection),
+
+  args: {
+    ...connectionArgs,
+    userId: {
+      type: GraphQLID
+    }
+  },
+
+  resolve: async ({ id }, { ...args, userId }, { user }) => {
+    if (!user) {
+      return connectionFromArray([], args);
+    }
+
+    try {
+      try {
+        if (getType(id) === Type.USER) {
+          userId = id;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+      if (!userId) {
+        userId = user.id;
+      }
+      const userEdges = await connectionFromModel(FriendshipModel,
+        {
+          user,
+          ...args,
+          filter: { user1: userId, isFriend: true }
+        },
+        async (r) => {
+          const userTmp = await UserModel.findById(r.user2).exec();
+          return userTmp;
+        }
+      );
+      return userEdges;
+    } catch (e) {
+      console.log(e);
+      return connectionFromArray([], args);
+    }
+  }
+};
+
 export {
   UserEdge,
   userConnection,
   memberConnection,
-  suggestUserConnection
+  suggestUserConnection,
+  friendConnection
 };

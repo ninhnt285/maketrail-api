@@ -8,6 +8,7 @@ NotificationService.Type = {
   LIKE: 'like', // someone like an object -> notify object owner
   COMMENT: 'comment', // someone like an object -> notify interested people
   FOLLOW: 'follow', // someone follow a person -> notify that person
+  ACCEPT_FRIEND: 'acceptFriend', // someone make friend with a person -> notify that person
   POST: 'post', // someone post to a person profile -> notify that person
   ADD_PHOTO: 'addPhoto',
   ADD_LOCALITY: 'addLocality', // add new locality to trip -> notify all trip member

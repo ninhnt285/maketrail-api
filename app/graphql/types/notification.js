@@ -9,7 +9,9 @@ import { nodeInterface } from '../utils/nodeDefinitions';
 import SubjectType from './auxiliaryTypes/subject';
 import ObjectType from './auxiliaryTypes/object';
 import { getNodeFromId } from '../../database/helpers/node';
+import { PREFIX } from '../../config';
 
+const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 const NotificationType = new GraphQLObjectType({
   name: 'Notification',
 
@@ -38,6 +40,13 @@ const NotificationType = new GraphQLObjectType({
 
     link: {
       type: GraphQLString
+    },
+
+    previewImage: {
+      type: GraphQLString,
+      resolve(obj) {
+        return obj.previewImage ? PREFIX + obj.previewImage : PREFIX + DEFAULT_IMAGE;
+      }
     }
 
   }),

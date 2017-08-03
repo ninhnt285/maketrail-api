@@ -11,7 +11,7 @@ import {
 } from 'graphql-relay';
 
 import UserType from '../../types/user';
-import UserService from '../../../database/helpers/user';
+import FriendshipService from '../../../database/helpers/friendship';
 import { UserEdge } from '../../connections/user';
 import { edgeFromNode } from '../../../lib/connection';
 
@@ -56,7 +56,7 @@ const FollowMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await UserService.follow(user.id, userId);
+    const res = await FriendshipService.follow(user.id, userId);
     if (res.errors) {
       return {
         success: false,

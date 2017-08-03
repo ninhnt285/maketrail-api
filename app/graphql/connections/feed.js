@@ -10,7 +10,7 @@ import {
 
 import FeedType from '../types/feed';
 import FeedModel from '../../database/models/feed';
-import UserService from '../../database/helpers/user';
+import FriendshipService from '../../database/helpers/friendship';
 import { connectionFromArray } from '../../lib/connection';
 import { connectionFromModel } from '../../database/helpers/connection';
 
@@ -40,7 +40,7 @@ const feedConnection = {
     // eslint-disable-next-line no-param-reassign
     args.sort = '-createdAt';
     if (!toId) {
-      const subjects = await UserService.getFolloweds(user.id);
+      const subjects = await FriendshipService.getFollowings(user.id);
       feedEdges = await connectionFromModel(FeedModel,
         {
           user,

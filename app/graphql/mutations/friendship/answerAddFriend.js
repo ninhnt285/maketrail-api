@@ -1,27 +1,27 @@
 import {
   GraphQLNonNull,
-  GraphQLID,
+  GraphQLString,
   GraphQLList,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLID
 } from 'graphql';
 
 import {
   mutationWithClientMutationId
 } from 'graphql-relay';
 
-import UserType from '../../types/user';
-import UserService from '../../../database/helpers/user';
-import { UserEdge } from '../../connections/user';
-import { edgeFromNode } from '../../../lib/connection';
+import FriendshipService from '../../../database/helpers/friendship';
 
-const UnfollowMutation = mutationWithClientMutationId({
-  name: 'Unfollow',
+const AnswerAddFriendMutation = mutationWithClientMutationId({
+  name: 'AnswerAddFriend',
 
   inputFields: {
     userId: {
       type: new GraphQLNonNull(GraphQLID)
     },
+    choice: {
+      type: GraphQLBoolean
+    }
   },
 
   outputFields: {
@@ -33,22 +33,14 @@ const UnfollowMutation = mutationWithClientMutationId({
       type: new GraphQLList(GraphQLString),
       resolve: ({ errors }) => errors
     },
-    user: {
-      type: UserType,
-      resolve: ({ item }) => item
-    },
-    edge: {
-      type: UserEdge,
-      resolve: ({ item }) => edgeFromNode(item)
-    }
   },
 
-  mutateAndGetPayload: async ({ userId }, { user }) => {
+  mutateAndGetPayload: async ({ userId, choice }, { user }) => {
     let errors = [];
 
     if (!user) {
       errors = [
-        'Please login to follow friend.'
+        'Please login to answer invite.'
       ];
       return {
         success: false,
@@ -56,7 +48,7 @@ const UnfollowMutation = mutationWithClientMutationId({
       };
     }
 
-    const res = await UserService.unfollow(user.id, userId);
+    const res = await FriendshipService.answerAddFriend(user, userId, choice);
     if (res.errors) {
       return {
         success: false,
@@ -64,10 +56,9 @@ const UnfollowMutation = mutationWithClientMutationId({
       };
     }
     return {
-      success: true,
-      item: res.item
+      success: true
     };
   }
 });
 
-export default UnfollowMutation;
+export default AnswerAddFriendMutation;
