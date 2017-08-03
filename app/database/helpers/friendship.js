@@ -154,7 +154,7 @@ FriendshipService.getHotUsers = async function () {
 
 FriendshipService.countRequest = async function (user2) {
   try {
-    return await FriendshipModel.count({user2, isSentRequest: true, isAnswer: false});
+    return await FriendshipModel.count({user2, isSentRequest: true});
   } catch (e){
     console.log(e);
     return 0;

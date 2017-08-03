@@ -9,7 +9,7 @@ const spawnSync = require('child_process').spawnSync;
 export async function convertToMp4(id, inputPath) {
   const outputPath = `${inputPath}_tmp`;
   fs.renameSync(inputPath, outputPath);
-  const child = spawn('ffmpeg.exe', ['-y', '-i', outputPath, '-s', '1280x720', '-c:v', 'libx264', '-crf', '23', inputPath]);
+  const child = spawn('ffmpeg', ['-y', '-i', outputPath, '-s', '1280x720', '-c:v', 'libx264', '-crf', '23', inputPath]);
   child.on('exit', () => {
     fs.unlink(outputPath);
     AttachmentService.publishVideo(id);
@@ -19,7 +19,7 @@ export async function convertToMp4(id, inputPath) {
 export async function extractPreviewImage(videoUri, imageUri) {
   const inputPath = path.join(__dirname, '../../../static/', videoUri);
   const outputPath = path.join(__dirname, '../../../static/', imageUri);
-  const child = spawnSync('ffmpeg.exe', ['-y', '-i', inputPath, '-ss', '00:00:05', '-f', 'image2', '-vframes', '1', '-s', '1280x720', outputPath]);
+  const child = spawnSync('ffmpeg', ['-y', '-i', inputPath, '-ss', '00:00:05', '-f', 'image2', '-vframes', '1', '-s', '1280x720', outputPath]);
   await resize(imageUri);
 }
 

@@ -45,7 +45,7 @@ const requestConnection = {
       {
         user,
         ...args,
-        filter: { user2: userId, isSentRequest: true, isAnswer: false }
+        filter: { user2: userId, isSentRequest: true }
       },
       async (r) => {
         const from = await UserModel.findById(r.user1);
