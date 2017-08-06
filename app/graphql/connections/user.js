@@ -121,7 +121,7 @@ const suggestUserConnection = {
     }
 
     try {
-      const followeds = await UserService.getFolloweds(user.id);
+      const followeds = await FriendshipService.getFollowings(user.id);
       const friends = await UserService.getFacebookFriends(user.id);
       const suggesteds = [];
       for (let j = 0; j < friends.length; j++) {

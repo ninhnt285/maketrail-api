@@ -53,7 +53,7 @@ const requestConnection = {
         request.id = r.id;
         request.userId = r.user1;
         request.name = from.fullName || from.username;
-        request.link = `/user/${r.user1}`;
+        request.link = `/profile/${r.user1}`;
         request.previewImage = from.profilePicUrl;
         return request;
       }

@@ -109,13 +109,13 @@ const notificationConnection = {
           count = await FriendshipModel.count({ user2: userId, isFriend: false, isFollow: true, updatedAt: { $gt: date } });
           if (count > 1) added = `and ${count - 1} other people`;
           notification.story = `${from.fullName}${added} followed you.`;
-          notification.link = `/user/${notification.fromId}`;
+          notification.link = `/profile/${notification.fromId}`;
           notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.ACCEPT_FRIEND) {
           count = await FriendshipModel.count({ user2: userId, isFriend: true, updatedAt: { $gt: date } });
           if (count > 1) added = `and ${count - 1} other people`;
           notification.story = `${from.fullName}${added} have become your friends.`;
-          notification.link = `/user/${notification.fromId}`;
+          notification.link = `/profile/${notification.fromId}`;
           notification.previewImage = from.profilePicUrl;
         } else if (notification.type === NotificationService.Type.ADD_LOCALITY) {
           const to = await getNodeFromId(notification.toId);
