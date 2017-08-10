@@ -3,9 +3,8 @@ import {
   GraphQLObjectType
 } from 'graphql';
 
-import { PREFIX } from '../../config';
+import { PREFIX } from '../../../config';
 
-const DEFAULT_IMAGE = '/noImage/noImage%s.png';
 const GuestHouseType = new GraphQLObjectType({
   name: 'GuestHouse',
 
@@ -14,6 +13,12 @@ const GuestHouseType = new GraphQLObjectType({
       type: GraphQLString,
       resolve(obj) {
         return obj.listing.name;
+      }
+    },
+    room_type: {
+      type: GraphQLString,
+      resolve(obj) {
+        return obj.listing.room_type_category;
       }
     },
     address: {

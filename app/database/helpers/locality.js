@@ -269,6 +269,11 @@ LocalityService.searchGuesthouse = async function (tripLocalityId) {
         user_lat,
         user_lng,
         location: locality.description
+      },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36',
+        'cache-control': 'no-cache',
+        'postman-token': '32f29204-f291-9aa0-5b79-e8753dfd45c1'
       }
     };
     const res = JSON.parse(await request(options)

@@ -9,7 +9,7 @@ import {
 
 import { nodeInterface } from '../utils/nodeDefinitions';
 import LocalityType from './locality';
-import GuestHouseType from './guestHouse';
+import GuestHouseType from './place/guestHouse';
 import { localityVenueConnection } from '../connections/localityVenue';
 import { recommendVenueConnection } from '../connections/venue';
 import LocalityService from '../../database/helpers/locality';
