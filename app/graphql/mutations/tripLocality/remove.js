@@ -2,7 +2,8 @@ import {
   GraphQLNonNull,
   GraphQLString,
   GraphQLList,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLID
 } from 'graphql';
 
 import {
@@ -13,6 +14,7 @@ import TripLocalityType from '../../types/tripLocality';
 import LocalityService from '../../../database/helpers/locality';
 import { TripLocalityEdge } from '../../connections/tripLocality';
 import { edgeFromNode } from '../../../lib/connection';
+import viewer from '../../queries/viewer';
 
 const RemoveTripLocalityMutation = mutationWithClientMutationId({
   name: 'RemoveTripLocality',
@@ -42,7 +44,12 @@ const RemoveTripLocalityMutation = mutationWithClientMutationId({
     edge: {
       type: TripLocalityEdge,
       resolve: ({ item }) => edgeFromNode(item)
-    }
+    },
+    deletedId: {
+      type: GraphQLID,
+      resolve: ({ deletedId }) => deletedId
+    },
+    viewer
   },
 
   mutateAndGetPayload: async ({ tripId, tripLocalityId }, { user }) => {
@@ -67,7 +74,8 @@ const RemoveTripLocalityMutation = mutationWithClientMutationId({
     }
     return {
       success: true,
-      item: res.item
+      item: res.item,
+      deletedId: tripLocalityId
     };
   }
 });
